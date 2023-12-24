@@ -12,10 +12,10 @@ dpp::slashcommand play_declaration() {
             .set_description("Play a song in the voice channel you are in");
 }
 
-void join_command(dpp::cluster& bot, const dpp::slashcommand_t& event) {
+void join_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 
     /* Get the guild */
-    dpp::guild* g = dpp::find_guild(event.command.guild_id);
+    dpp::guild *g = dpp::find_guild(event.command.guild_id);
 
     /* Get the voice channel that the bot is currently in from this server (will return nullptr if we're not in a voice channel!) */
     auto current_vc = event.from->get_voice(event.command.guild_id);
@@ -55,7 +55,7 @@ void join_command(dpp::cluster& bot, const dpp::slashcommand_t& event) {
     }
 }
 
-void play_command(dpp::cluster& bot, const dpp::slashcommand_t& event) {
+void play_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 
     dpp::guild *g = dpp::find_guild(event.command.guild_id);
 

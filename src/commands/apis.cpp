@@ -49,13 +49,14 @@ void user_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 
     user_username = user_t.format_username();
     user_avatar = user_t.get_avatar_url();
-    user_created = fmt::format("<t:{}:D>", std::to_string((int)user_t.get_creation_time()));
+    user_created = fmt::format("<t:{}:D>", std::to_string((int) user_t.get_creation_time()));
 
     user_is_bot = (user_t.is_bot()) ? dpp::unicode_emoji::white_check_mark : dpp::unicode_emoji::no_entry_sign;
     user_has_nitro = (user_t.has_nitro_classic() || user_t.has_nitro_full() || user_t.has_nitro_basic())
-                                 ? dpp::unicode_emoji::white_check_mark : dpp::unicode_emoji::no_entry_sign;
-    user_joined_server = fmt::format("<t:{}:D>", std::to_string((int)guild_user_t.joined_at));
-    user_premium = ((int)guild_user_t.premium_since > 0) ? fmt::format("<t:{}:D>", std::to_string((int)guild_user_t.premium_since)) : dpp::unicode_emoji::no_entry_sign;
+                     ? dpp::unicode_emoji::white_check_mark : dpp::unicode_emoji::no_entry_sign;
+    user_joined_server = fmt::format("<t:{}:D>", std::to_string((int) guild_user_t.joined_at));
+    user_premium = ((int) guild_user_t.premium_since > 0) ? fmt::format("<t:{}:D>", std::to_string(
+            (int) guild_user_t.premium_since)) : dpp::unicode_emoji::no_entry_sign;
 
     user_mention = user_t.get_mention();
     title = "Who is @" + user_username;
@@ -63,15 +64,16 @@ void user_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
     const int has_nitro = user_t.has_nitro_full() || user_t.has_nitro_basic() || user_t.has_nitro_classic();
     const int has_boost = guild_user_t.premium_since > 0 ? 1 : 0;
 
-    if(user == "nulzo") {
+    if (user == "nulzo") {
         prompt = "Make up really good things about a user named nulzo! They are so awesome!";
     } else {
-        prompt = fmt::format("Write a very short description of some shit about a loser who goes by the name {}.", user_username);
+        prompt = fmt::format("Write a very short description of some shit about a loser who goes by the name {}.",
+                             user_username);
     }
-    if(has_nitro == 0){
+    if (has_nitro == 0) {
         prompt += " Mention that the person doesn't have Nitro, which is lame.";
     }
-    if(has_boost == 0) {
+    if (has_boost == 0) {
         prompt += " Mention that the person doesn't boost the server, which is very lame.";
     }
 

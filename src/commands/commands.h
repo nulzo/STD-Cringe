@@ -23,18 +23,28 @@ using json = nlohmann::json;
 
 // Functions that define the slash commands presentation
 dpp::slashcommand chat_declaration();
+
 dpp::slashcommand info_declaration();
+
 dpp::slashcommand play_declaration();
+
 dpp::slashcommand join_declaration();
+
 dpp::slashcommand user_declaration();
+
 dpp::slashcommand problem_declaration();
 
 // Functions that define the logic of the slash commands
 void user_command(dpp::cluster &bot, const dpp::slashcommand_t &event);
+
 void info_command(dpp::cluster &bot, const dpp::slashcommand_t &event);
+
 void play_command(dpp::cluster &bot, const dpp::slashcommand_t &event);
+
 void join_command(dpp::cluster &bot, const dpp::slashcommand_t &event);
+
 void problem_command(dpp::cluster &bot, const dpp::slashcommand_t &event);
+
 void chat_command(dpp::cluster &bot, const dpp::slashcommand_t &event);
 
 #endif //TEMPLATEBOT_COMMANDS_H
