@@ -28,12 +28,14 @@ int main() {
         /* Create a new global command on ready event */
         if (dpp::run_once<struct register_bot_commands>()) {
             std::vector<dpp::slashcommand> commands{
-                    {info_declaration(),
-                     user_declaration(),
-                     problem_declaration(),
-                     chat_declaration(),
-                     join_declaration(),
-                     play_declaration()}
+                    {
+                            info_declaration(),
+                            user_declaration(),
+                            problem_declaration(),
+                            chat_declaration(),
+                            join_declaration(),
+                            play_declaration()
+                    }
             };
             bot.global_bulk_command_create(commands);
             bot.set_presence(dpp::presence(dpp::ps_online, dpp::at_custom, "made by @nulzo"));

@@ -1,6 +1,6 @@
 #include "utils.h"
 
-int get_request(const char* request, const char* URL, const char *auth_header, std::string &response) {
+int get_request(const char *request, const char *URL, const char *auth_header, std::string &response) {
     CURL *curl;
     CURLcode response_code;
     curl_global_init(CURL_GLOBAL_DEFAULT);
@@ -69,7 +69,7 @@ std::string open_ai_api(const std::string &prompt, std::string max_tokens, std::
 
     std::cout << response;
 
-    if (return_value != 0){
+    if (return_value != 0) {
         std::cerr << "ERROR: request failed! Falling back with error!" << std::endl;
         return "There was an error with the request";
     }
@@ -83,16 +83,16 @@ std::string discord_time_to_date(double timestamp) {
     // Calculate the elapsed time in seconds
     auto elapsedTime = static_cast<time_t>(timestamp - epoch);
     // Convert to tm structure
-    struct tm* timeinfo = std::localtime(&elapsedTime);
+    struct tm *timeinfo = std::localtime(&elapsedTime);
     // Format the date as dd/mm/yyyy
     char buffer[20];
     std::strftime(buffer, sizeof(buffer), "%d/%m/%Y", timeinfo);
     return buffer;
 }
 
-size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* output) {
+size_t WriteCallback(void *contents, size_t size, size_t nmemb, std::string *output) {
     size_t totalSize = size * nmemb;
-    output->append(static_cast<char*>(contents), totalSize);
+    output->append(static_cast<char *>(contents), totalSize);
     return totalSize;
 }
 
@@ -117,7 +117,7 @@ int get_env(std::string given_key, std::string &return_value) {
             key = matches[1];
             value = matches[2];
             // Check to see if the key matches what we're looking for
-            if (key == given_key){
+            if (key == given_key) {
                 return_value = value;
                 // Close the file
                 file.close();
