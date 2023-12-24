@@ -2,3 +2,4 @@
 cmake-build-default
 data/
 .idea
+__pycache__
