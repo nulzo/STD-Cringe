@@ -49,7 +49,7 @@ void problem_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
         }
     }
 
-     std::random_device r;
+    std::random_device r;
     std::default_random_engine e1(r());
     std::uniform_int_distribution<int> uniform_dist(0, (int) questions.size() - 1);
 
