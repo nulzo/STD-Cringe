@@ -36,12 +36,16 @@ int main() {
         log_end_slash(event.command.get_command_name(), event.command.usr.global_name, cringe_logger);
     });
 
+    bot.on_message_delete([&cringe_logger](const dpp::message_delete_t& event){
+        log_on_message_delete(event.raw_event, event.raw_event, cringe_logger);
+    });
+
     bot.on_message_create([&bot, &cringe_logger](const dpp::message_create_t& event) {
         log_on_message(event.msg.content, event.msg.author.global_name, cringe_logger);
         /* get message to edit it after */
         const dpp::snowflake msg_id = event.msg.id;
         /* here string will automatically be converted to snowflake */
-        bot.message_get(msg_id, event.msg.channel_id, [&bot, event](const dpp::confirmation_callback_t& callback) {
+        bot.message_get(msg_id, event.msg.channel_id, [&bot](const dpp::confirmation_callback_t& callback) {
             auto message = callback.get<dpp::message>();
             if(message.author.id == 405912283554906124 || message.author.id == 411399698679595009) {
                 /* change the message content and edit the message itself */
