@@ -1,5 +1,5 @@
-#ifndef TEMPLATEBOT_COMMANDS_H
-#define TEMPLATEBOT_COMMANDS_H
+#ifndef CRINGE_COMMANDS_H
+#define CRINGE_COMMANDS_H
 
 #include <dpp/dpp.h>
 #include <curl/curl.h>
@@ -34,6 +34,10 @@ dpp::slashcommand user_declaration();
 
 dpp::slashcommand problem_declaration();
 
+dpp::slashcommand message_declaration();
+
+dpp::slashcommand ethan_declaration();
+
 // Functions that define the logic of the slash commands
 void user_command(dpp::cluster &bot, const dpp::slashcommand_t &event);
 
@@ -47,4 +51,8 @@ void problem_command(dpp::cluster &bot, const dpp::slashcommand_t &event);
 
 void chat_command(dpp::cluster &bot, const dpp::slashcommand_t &event);
 
-#endif //TEMPLATEBOT_COMMANDS_H
+void message_command(dpp::cluster &bot, const dpp::slashcommand_t &event);
+
+void ethan_command(dpp::cluster &bot, const dpp::slashcommand_t &event);
+
+#endif

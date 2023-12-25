@@ -1,5 +1,5 @@
-#ifndef TEMPLATEBOT_COLORS_H
-#define TEMPLATEBOT_COLORS_H
+#ifndef CRINGE_COLORS_H
+#define CRINGE_COLORS_H
 
 namespace color {
     const int CringeOrange = 0xFF7C20;

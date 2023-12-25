@@ -79,8 +79,6 @@ void user_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 
     response = open_ai_api(prompt, "300", "gpt-3.5-turbo-1106");
 
-    std::cout << response;
-
     dpp::embed embed = dpp::embed()
             .set_color(color::CringeBlack)
             .set_title(title)
