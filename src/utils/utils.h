@@ -1,5 +1,5 @@
-#ifndef TEMPLATEBOT_UTILS_H
-#define TEMPLATEBOT_UTILS_H
+#ifndef CRINGE_UTILS_H
+#define CRINGE_UTILS_H
 
 #include <dpp/dpp.h>
 #include "colors.h"
