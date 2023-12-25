@@ -31,11 +31,11 @@ void logger(std::shared_ptr<spdlog::logger> &log, const dpp::log_t & event) {
             log->warn("{}", event.message);
             break;
         case dpp::ll_error:
-            log->error("{}{}{}", BRED, event.message, COLOR_RESET);
+            log->error("{}{}{}", RED, event.message, COLOR_RESET);
             break;
         case dpp::ll_critical:
         default:
-            log->critical("{}{}{}", BRED, event.message, COLOR_RESET);
+            log->critical("{}{}{}", RED, event.message, COLOR_RESET);
             break;
     }
 }
@@ -45,13 +45,17 @@ void log_on_start(){
 }
 
 void log_on_slash(std::string event, std::string user, std::shared_ptr<spdlog::logger> &log) {
-    log->warn("{}{} called {} command{}", BYEL, user, event, COLOR_RESET);
+    log->warn("{}{} called {} command{}", YELLOW, user, event, COLOR_RESET);
 }
 
 void log_end_slash(std::string event, std::string user, std::shared_ptr<spdlog::logger> &log) {
-    log->info("{}{} command called by {} has finished{}", BGRN, event, user, COLOR_RESET);
+    log->info("{}{} command called by {} has finished{}", GREEN, event, user, COLOR_RESET);
 }
 
 void log_on_message(const std::string& event, const std::string& user, std::shared_ptr<spdlog::logger> &log) {
-    log->info("{}{} sent a message: {}{}{}{}", BGRN, user, COLOR_RESET, BMAG, event, COLOR_RESET);
+    log->info("{}{} sent a message: {}{}{}{}", GREEN, user, COLOR_RESET, MAGENTA, event, COLOR_RESET);
+}
+
+void log_on_message_delete(std::string event, std::string user, std::shared_ptr<spdlog::logger> &log) {
+    log->error("{}{} deleted a message: {}{}", RED, user, event, COLOR_RESET);
 }
