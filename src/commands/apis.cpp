@@ -14,7 +14,7 @@ dpp::slashcommand user_declaration() {
             .add_option(dpp::command_option(dpp::co_user, "username", "The user to view", true));
 }
 
-void chat_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
+void chat_command(const dpp::slashcommand_t &event) {
     std::string prompt = std::get<std::string>(event.get_parameter("prompt"));
     event.thinking();
     std::string response = open_ai_api(prompt, "250", "gpt-3.5-turbo-1106");

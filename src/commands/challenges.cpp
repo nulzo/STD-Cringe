@@ -27,33 +27,42 @@ void problem_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
     std::string difficulty = std::get<std::string>(event.get_parameter("difficulty"));
 
     int color = color::CringeBlue;
+
     int upper_threshold = 0;
+
     int lower_threshold = 0;
+
     if (difficulty == "easy") {
         color = color::CringeGreen;
         upper_threshold = 5;
     }
+
     if (difficulty == "medium") {
         color = color::CringeYellow;
         upper_threshold = 45;
         lower_threshold = 5;
     }
+
     if (difficulty == "hard") {
         color = color::CringeRed;
         upper_threshold = 1000;
         lower_threshold = 45;
     }
-    for (int i = 0; i < data.size(); i++) {
-        if (data.at(i)["difficulty"] <= upper_threshold && data.at(i)["difficulty"] > lower_threshold) {
-            questions.push_back(data.at(i));
+
+    for (auto & i : data) {
+        if (i["difficulty"] <= upper_threshold && i["difficulty"] > lower_threshold) {
+            questions.push_back(i);
         }
     }
 
     std::random_device r;
+
     std::default_random_engine e1(r());
-    std::uniform_int_distribution<int> uniform_dist(0, (int) questions.size() - 1);
+
+    std::uniform_int_distribution uniform_dist(0, (int) questions.size() - 1);
 
     int random = uniform_dist(e1);
+
     const json problem = questions.at(random);
 
     std::string description = problem["description"];
@@ -61,6 +70,7 @@ void problem_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
     std::string id = std::to_string(static_cast<int>(problem["id"]));
     std::string points = std::to_string(static_cast<int>(problem["difficulty"]));
     std::regex regexPattern("\n\n");
+
     auto regexBegin = std::sregex_iterator(description.begin(), description.end(), regexPattern);
     auto regexEnd = std::sregex_iterator();
     int last_index = 0;
@@ -91,42 +101,17 @@ void problem_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
             )
     );
 
-    bot.on_button_click([&bot](const dpp::button_click_t &event) {
+    bot.on_button_click([](const dpp::button_click_t &event) {
         dpp::interaction_modal_response modal("solution_modal", "Your Solution");
-
-        modal.add_component(
-                dpp::component()
-                        .set_label("Solution")
-                        .set_id("solution_id")
-                        .set_type(dpp::cot_text)
-                        .set_placeholder("Your solution...")
-                        .set_min_length(1)
-                        .set_max_length(100)
-                        .set_text_style(dpp::text_short)
-        );
-
+        modal.add_component(dpp::component().set_label("Solution").set_id("solution_id").set_type(dpp::cot_text).set_placeholder("Your solution...").set_min_length(1).set_max_length(100).set_text_style(dpp::text_short));
         modal.add_row();
-        modal.add_component(
-                dpp::component()
-                        .set_label("Your Code (optional)")
-                        .set_id("code_id")
-                        .set_type(dpp::cot_text)
-                        .set_placeholder("Your code...")
-                        .set_min_length(0)
-                        .set_max_length(2000)
-                        .set_text_style(dpp::text_paragraph)
-        );
-
+        modal.add_component(dpp::component().set_label("Your Code (optional)").set_id("code_id").set_type(dpp::cot_text).set_placeholder("Your code...").set_min_length(0).set_max_length(2000).set_text_style(dpp::text_paragraph));
         event.dialog(modal);
     });
 
-    bot.on_form_submit([&bot](const dpp::form_submit_t &event) {
+    bot.on_form_submit([](const dpp::form_submit_t &event) {
         std::string v = std::get<std::string>(event.components[0].components[0].value);
-        dpp::embed embed = dpp::embed()
-                .set_color(color::CringePurple)
-                .set_title(":x: Wrong Answer :x:")
-                .set_description(event.command.get_issuing_user().global_name);
-
+        dpp::embed embed = dpp::embed().set_color(color::CringePurple).set_title(":x: Wrong Answer :x:").set_description(event.command.get_issuing_user().global_name);
         dpp::message m(event.command.channel_id, embed);
         /* Emit a reply. Form submission is still an interaction and must generate some form of reply! */
         event.reply(m);
