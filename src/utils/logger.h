@@ -17,11 +17,18 @@ const std::string CYAN = "\e[1;36m";
 const std::string WHITE = "\e[1;37m";
 
 std::shared_ptr<spdlog::logger> cringe_logging();
+
 void logger(const std::shared_ptr<spdlog::logger> &log, const dpp::log_t &event);
-void log_on_slash(std::string event, std::string user, const std::shared_ptr<spdlog::logger> &log);
-void log_on_message_delete(std::string event, std::string user, const std::shared_ptr<spdlog::logger> &log);
-void log_end_slash(std::string event, std::string user, const std::shared_ptr<spdlog::logger> &log);
-void log_on_message(const std::string& event, const std::string& user, const std::shared_ptr<spdlog::logger> &log);
+
+void log_on_slash(const std::string &event, const std::string &user, const std::shared_ptr<spdlog::logger> &log);
+
+void
+log_on_message_delete(const std::string &event, const std::string &user, const std::shared_ptr<spdlog::logger> &log);
+
+void log_end_slash(const std::string &event, const std::string &user, const std::shared_ptr<spdlog::logger> &log);
+
+void log_on_message(const std::string &event, const std::string &user, const std::shared_ptr<spdlog::logger> &log);
+
 void log_on_start();
 
 #endif //CRINGE_LOGGER_H
