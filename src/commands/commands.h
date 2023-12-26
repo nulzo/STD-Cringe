@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef CRINGE_COMMANDS_H
 #define CRINGE_COMMANDS_H
 
@@ -26,10 +28,6 @@ dpp::slashcommand chat_declaration();
 
 dpp::slashcommand info_declaration();
 
-dpp::slashcommand play_declaration();
-
-dpp::slashcommand join_declaration();
-
 dpp::slashcommand user_declaration();
 
 dpp::slashcommand problem_declaration();
@@ -43,7 +41,7 @@ void user_command(dpp::cluster &bot, const dpp::slashcommand_t &event);
 
 void info_command(dpp::cluster &bot, const dpp::slashcommand_t &event);
 
-void play_command(dpp::cluster &bot, const dpp::slashcommand_t &event);
+void play_command(const dpp::cluster &bot, const dpp::slashcommand_t &event);
 
 void join_command(dpp::cluster &bot, const dpp::slashcommand_t &event);
 

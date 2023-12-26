@@ -22,8 +22,7 @@ void logger(const std::shared_ptr<spdlog::logger> &log, const dpp::log_t &event)
 
 void log_on_slash(const std::string &event, const std::string &user, const std::shared_ptr<spdlog::logger> &log);
 
-void
-log_on_message_delete(const std::string &event, const std::string &user, const std::shared_ptr<spdlog::logger> &log);
+void log_on_message_delete(const std::string &event, const std::string &user, const std::shared_ptr<spdlog::logger> &log);
 
 void log_end_slash(const std::string &event, const std::string &user, const std::shared_ptr<spdlog::logger> &log);
 

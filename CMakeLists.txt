@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.27)
+cmake_minimum_required(VERSION 3.27)
 
 # list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 set(BOT_NAME "cringe")
@@ -24,6 +24,10 @@ add_executable(${PROJECT_NAME}
         src/listeners/message_listener.cpp
         src/utils/logger.h
         src/utils/logger.cpp
+        src/utils/embeds.cpp
+        src/utils/embeds.h
+        src/utils/icon.h
+        include/commands/voice.h
 )
 
 find_package(DPP REQUIRED)
@@ -37,7 +41,7 @@ if (DPP_FOUND)
     message("Found DPP! Yep")
     target_link_libraries(${BOT_NAME} ${DPP_LIBRARIES})
     target_include_directories(${BOT_NAME} PUBLIC ${DPP_INCLUDE_DIRS})
-else()
+else ()
     message(WARNING "Could not find DPP install. Building from source instead.")
     option(DPP_BUILD_TEST "" OFF)
 
@@ -47,7 +51,7 @@ else()
             GIT_TAG master)
 
     FetchContent_GetProperties(libdpp)
-    if(NOT libdpp_POPULATED)
+    if (NOT libdpp_POPULATED)
         FetchContent_Populate(libdpp)
         target_include_directories(${BOT_NAME} PUBLIC
                 ${libdpp_SOURCE_DIR}/include
@@ -56,7 +60,7 @@ else()
                 ${libdpp_SOURCE_DIR}
                 ${libdpp_BINARY_DIR}
                 EXCLUDE_FROM_ALL)
-    endif()
+    endif ()
 
     FetchContent_Declare(fmt
             GIT_REPOSITORY https://github.com/fmtlib/fmt.git
@@ -65,7 +69,7 @@ else()
     FetchContent_MakeAvailable(fmt)
 
     target_link_libraries(${BOT_NAME} dpp)
-endif()
+endif ()
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
@@ -85,19 +89,19 @@ string(ASCII 27 Esc)
 
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 
-if(APPLE)
-    if(CMAKE_APPLE_SILICON_PROCESSOR)
+if (APPLE)
+    if (CMAKE_APPLE_SILICON_PROCESSOR)
         set(OPENSSL_ROOT_DIR "/opt/homebrew/opt/openssl")
         set(FMT_ROOT_DIR "/opt/homebrew/Cellar/fmt/10.1.1")
-    else()
+    else ()
         set(OPENSSL_ROOT_DIR "/usr/local/opt/openssl")
         set(FMT_ROOT_DIR "/usr/local/opt/fmt/10.1.1")
-    endif()
+    endif ()
     find_package(OpenSSL REQUIRED)
     find_package(fmt REQUIRED)
-else()
+else ()
     find_package(OpenSSL REQUIRED)
-endif()
+endif ()
 
 target_include_directories(${BOT_NAME} PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include

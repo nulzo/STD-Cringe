@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef CRINGE_UTILS_H
 #define CRINGE_UTILS_H
 
