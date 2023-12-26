@@ -44,7 +44,7 @@ void message_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 
 void ethan_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
     auto target_user = bot.guild_get_member_sync(1069835760859107368, 411399698679595008);
-    target_user.set_nickname("New Nickname");
+    target_user.set_nickname("username");
     bot.guild_edit_member(target_user);
     event.reply(fmt::format("Hey, {}, checkout your username!", target_user.get_mention()));
 }

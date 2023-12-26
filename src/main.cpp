@@ -31,10 +31,7 @@ int main() {
         } else if (event.command.get_command_name() == "message") {
             message_command(bot, event);
         } else if (event.command.get_command_name() == "ethan") {
-            ethan_command(bot, event);
-        }
-        log_end_slash(event.command.get_command_name(), event.command.usr.global_name, cringe_logger);
-    });
+            ethan_command(bot, event);}log_end_slash(event.command.get_command_name(), event.command.usr.global_name, cringe_logger);});
 
     bot.on_message_delete([&cringe_logger](const dpp::message_delete_t& event){
         log_on_message_delete(event.raw_event, event.raw_event, cringe_logger);

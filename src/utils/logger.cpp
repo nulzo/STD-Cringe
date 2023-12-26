@@ -42,20 +42,22 @@ void logger(const std::shared_ptr<spdlog::logger> &log, const dpp::log_t & event
     }
 }
 
+void color_user();
+
 void log_on_start(){
     fmt::print("┌{0:─^{2}}┐\n│{1: ^{2}}│\n│{3: ^{2}}│\n└{0:─^{2}}┘\n", "", "std::cringe", 80, "version 0.0.1");
 }
 
 void log_on_slash(std::string event, std::string user, const std::shared_ptr<spdlog::logger> &log) {
-    log->warn("{}{} called {} command{}", YELLOW, user, event, COLOR_RESET);
+    log->debug("{}{} called {}\\{}{} {}command{}", CYAN, user, MAGENTA, event, COLOR_RESET, CYAN, COLOR_RESET);
 }
 
 void log_end_slash(std::string event, std::string user, const std::shared_ptr<spdlog::logger> &log) {
-    log->info("{}{} command called by {} has finished{}", GREEN, event, user, COLOR_RESET);
+    log->debug("{}\\{}{} command called by {} has ended{}", MAGENTA, event, CYAN, user, COLOR_RESET);
 }
 
 void log_on_message(const std::string& event, const std::string& user, const std::shared_ptr<spdlog::logger> &log) {
-    log->info("{}{} sent a message: {}{}{}{}", GREEN, user, COLOR_RESET, MAGENTA, event, COLOR_RESET);
+    log->info("{}{}{}sent a message: {}{}{}{}", WHITE, user,  COLOR_RESET, MAGENTA, event, COLOR_RESET);
 }
 
 void log_on_message_delete(std::string event, std::string user, const std::shared_ptr<spdlog::logger> &log) {

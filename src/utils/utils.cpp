@@ -67,8 +67,6 @@ std::string open_ai_api(const std::string &prompt, std::string max_tokens, std::
     // Call our function
     return_value = get_request(request, URL, AUTH, response);
 
-    std::cout << response;
-
     if (return_value != 0) {
         std::cerr << "ERROR: request failed! Falling back with error!" << std::endl;
         return "There was an error with the request";
@@ -96,7 +94,7 @@ size_t WriteCallback(void *contents, size_t size, size_t nmemb, std::string *out
     return totalSize;
 }
 
-int get_env(std::string given_key, std::string &return_value) {
+int get_env(const std::string_view &given_key, std::string &return_value) {
     std::string line;
     std::smatch matches;
     std::string key;

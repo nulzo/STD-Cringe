@@ -21,6 +21,6 @@ std::string discord_time_to_date(double timestamp);
 
 size_t WriteCallback(void *contents, size_t size, size_t nmemb, std::string *output);
 
-int get_env(std::string key, std::string &value);
+int get_env(const std::string_view &given_key, std::string &value);
 
 #endif

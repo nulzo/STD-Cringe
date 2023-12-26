@@ -16,7 +16,7 @@ dpp::slashcommand problem_declaration() {
 }
 
 void problem_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
-    const char *filename = "data/problems.json";
+    const char *filename = "problems.json";
 
     std::ifstream file(filename);
 
