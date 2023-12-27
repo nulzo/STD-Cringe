@@ -20,9 +20,7 @@ dpp::embed status_embed(const std::string &title, const std::string &reason, int
 dpp::embed playing_embed(int status) {
 	dpp::embed embed;
 	embed.set_color(Cringe::CringeColor::CringeOrange).set_thumbnail(Cringe::CringeIcon::MusicIcon).set_timestamp(time(nullptr));
-	if (status == Cringe::CringeStatus::NEWSONG) {
-		embed.set_title("Now Streaming").set_description("<SONG TITLE>").add_field("Author", "Some author info").add_field("Length", "<SOME LENGHT>");
-	}
+	embed.set_title("Now Streaming").set_description("Now streaming to your channel!").set_timestamp(time(nullptr));
 	return embed;
 }
 

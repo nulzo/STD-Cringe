@@ -3,14 +3,14 @@
 #include "utils/cringe.h"
 #include <algorithm>
 #include <cstdlib>
-//#include <ogg/ogg.h>
-//#include <opus/opusfile.h>
+#include <regex>
+#include <fmt/format.h>
 
 extern "C" {
-	#include <libavformat/avformat.h>
-	#include <libavcodec/avcodec.h>
-	#include <libswresample/swresample.h>
-	#include <opus/opus.h>
+#include <libavformat/avformat.h>
+#include <libavcodec/avcodec.h>
+#include <libswresample/swresample.h>
+#include <opus/opus.h>
 }
 
 
@@ -40,11 +40,11 @@ void join_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 
 	// Set flag if the channel has been found
 	auto p = event.get_parameter("channel");
-	if(p.index() != 0) {
+	if (p.index() != 0) {
 		parameter = std::get<dpp::snowflake>(event.get_parameter("channel"));
 		// Get the param (if any) and find voice channel id
 		requested_channel = bot.channel_get_sync(parameter);
-		if(!requested_channel.is_voice_channel()){
+		if (!requested_channel.is_voice_channel()) {
 			embed_reason = event.command.usr.get_mention() + " tried to invite cringe to VC, but provided a non-voice channel.";
 			embed = status_embed("CringeError::VoiceError", embed_reason, Cringe::CringeStatus::ERROR);
 			dpp::message message(event.command.channel_id, embed);
@@ -57,17 +57,17 @@ void join_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 		if (channel) {
 			auto users_vc = guild->voice_members.find(bot.me.id);
 			if (users_vc != guild->voice_members.end())
-				if(channel->channel_id == users_vc->second.channel_id) {
-				// Issue warning that cringe must be called to a channel that it is not already in
-				embed_reason = event.command.usr.get_mention() + " tried to invite cringe to VC, but it is already there.";
-				embed = status_embed("CringeError::VoiceWarning", embed_reason, Cringe::CringeStatus::WARNING);
-				dpp::message message(event.command.channel_id, embed);
-				event.reply(message);
-				return;
-			}
+				if (channel->channel_id == users_vc->second.channel_id) {
+					// Issue warning that cringe must be called to a channel that it is not already in
+					embed_reason = event.command.usr.get_mention() + " tried to invite cringe to VC, but it is already there.";
+					embed = status_embed("CringeError::VoiceWarning", embed_reason, Cringe::CringeStatus::WARNING);
+					dpp::message message(event.command.channel_id, embed);
+					event.reply(message);
+					return;
+				}
 			event.from->disconnect_voice(event.command.guild_id);
 		}
-		event.from->connect_voice(guild->id, requested_channel.id);
+		event.from->connect_voice(guild->id, requested_channel.id, true, true);
 		embed_reason = event.command.usr.get_mention() + " asked cringe to join " + requested_channel.get_mention();
 		embed = status_embed("Successfully Joined", embed_reason, Cringe::CringeStatus::SUCCESS);
 		dpp::message message(event.command.channel_id, embed);
@@ -112,14 +112,41 @@ void join_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 	event.reply(message);
 }
 
-int encode_audio_to_opus(const int16_t* pcm_data, int frame_size, unsigned char* opus_data, int max_data_size, OpusEncoder* encoder) {
+int encode_audio_to_opus(const int16_t *pcm_data, int frame_size, unsigned char *opus_data, int max_data_size, OpusEncoder *encoder) {
 	// Encode audio to OPUS
 	return opus_encode(encoder, pcm_data, frame_size, opus_data, max_data_size);
+}
 
+bool determine_if_url(const std::string &query) {
+	std::cout << "PARSING THROUGH SONG" << std::endl;
+	std::regex youtube_regex(
+			R"(^(?:(?:https?:)?\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11}))");
+	bool is_youtube_link = std::regex_match(query, youtube_regex);
+	std::cout << "DONE PARSING THROUGH SONG" << std::endl;
+	return (is_youtube_link);
+}
+
+std::string get_youtube_elements(const char *cmd) {
+	FILE *pipe = popen(cmd, "r");
+	if (!pipe) {
+		std::cerr << "Error opening pipe" << std::endl;
+	}
+	char buffer[128];
+	std::string result;
+	while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+		result += buffer;
+	}
+	return result;
 }
 
 
 void play_command(const dpp::cluster &bot, const dpp::slashcommand_t &event) {
+
+	std::string embed_reason;
+	dpp::embed embed;
+	dpp::guild *guild;
+	dpp::snowflake parameter;
+	dpp::channel requested_channel;
 
 	dpp::guild *g = dpp::find_guild(event.command.guild_id);
 
@@ -132,138 +159,173 @@ void play_command(const dpp::cluster &bot, const dpp::slashcommand_t &event) {
 		event.reply(message);
 		return;
 	}
-	v->voiceclient->set_send_audio_type(dpp::discord_voice_client::satype_live_audio);
-	avformat_network_init();
-	std::string url = "https://www.youtube.com/watch?v=MC7qoiJ5uPc";
+	v->voiceclient->set_send_audio_type(dpp::discord_voice_client::satype_overlap_audio);
 
-	const char* cmd = R"(yt-dlp -g -f bestaudio --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36" "https://www.youtube.com/watch?v=MC7qoiJ5uPc")";
-	FILE* pipe = popen(cmd, "r");
+	std::string song = std::get<std::string>(event.get_parameter("song"));
 
-	char buffer[128];
-	std::string audio_stream_url;
+	std::cout << song << std::endl;
 
-	if (!pipe) {
-		std::cerr << "Error opening pipe to youtube-dl" << std::endl;
-	}
+	event.thinking();
 
-	while (fgets(buffer, 128, pipe) != nullptr) {
-		audio_stream_url += buffer;
-	}
-
-	int res = pclose(pipe);
-
-	if (res == -1) {
-		perror("Error closing pipe to youtube-dl");
-	} else {
-		// Check if the pipe was successfully closed
-		if (WIFEXITED(res)) {
-			int exit_status = WEXITSTATUS(res);
-			if (exit_status != 0) {
-				std::cerr << "youtube-dl process exited with non-zero status: " << exit_status << std::endl;
-			}
-		} else if (WIFSIGNALED(res)) {
-			int signal_number = WTERMSIG(res);
-			std::cerr << "youtube-dl process terminated by signal: " << signal_number << std::endl;
-		} else if (WIFSIGNALED(res) == 0 && WIFEXITED(res) == 0) {
-			std::cerr << "Error closing pipe to youtube-dl: No child processes" << std::endl;
-		} else {
-			std::cerr << "Unknown exit status or termination signal from youtube-dl process" << std::endl;
-		}
-	}
-
-	// Remove newline characters from the end of the URL
-	audio_stream_url.erase(std::remove(audio_stream_url.begin(), audio_stream_url.end(), '\n'), audio_stream_url.end());
-
-	AVFormatContext* formatContext = avformat_alloc_context();
-	if (avformat_open_input(&formatContext, audio_stream_url.c_str(), nullptr, nullptr) != 0) {
-		std::cerr << "Error opening input file with FFmpeg" << std::endl;
-	}
-
-	if (avformat_find_stream_info(formatContext, nullptr) < 0) {
-		std::cerr << "Error finding stream information" << std::endl;
-		avformat_close_input(&formatContext);
-	}
-
+//	avformat_network_init();
+//	std::string url = "https://www.youtube.com/watch?v=MC7qoiJ5uPc";
+//
+//	const char* cmd = R"(yt-dlp -g -f bestaudio --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36" "https://www.youtube.com/watch?v=MC7qoiJ5uPc")";
+//	FILE* pipe = popen(cmd, "r");
+//
+//	char buffer[128];
+//	std::string audio_stream_url;
+//
+//	if (!pipe) {
+//		std::cerr << "Error opening pipe to youtube-dl" << std::endl;
+//	}
+//
+//	while (fgets(buffer, 128, pipe) != nullptr) {
+//		audio_stream_url += buffer;
+//	}
+//
+//	int res = pclose(pipe);
+//
+//	if (res == -1) {
+//		perror("Error closing pipe to youtube-dl");
+//	} else {
+//		// Check if the pipe was successfully closed
+//		if (WIFEXITED(res)) {
+//			int exit_status = WEXITSTATUS(res);
+//			if (exit_status != 0) {
+//				std::cerr << "youtube-dl process exited with non-zero status: " << exit_status << std::endl;
+//			}
+//		} else if (WIFSIGNALED(res)) {
+//			int signal_number = WTERMSIG(res);
+//			std::cerr << "youtube-dl process terminated by signal: " << signal_number << std::endl;
+//		} else if (WIFSIGNALED(res) == 0 && WIFEXITED(res) == 0) {
+//			std::cerr << "Error closing pipe to youtube-dl: No child processes" << std::endl;
+//		} else {
+//			std::cerr << "Unknown exit status or termination signal from youtube-dl process" << std::endl;
+//		}
+//	}
+//
+//	// Remove newline characters from the end of the URL
+//	audio_stream_url.erase(std::remove(audio_stream_url.begin(), audio_stream_url.end(), '\n'), audio_stream_url.end());
+//
+//	AVFormatContext* formatContext = avformat_alloc_context();
+//	if (avformat_open_input(&formatContext, audio_stream_url.c_str(), nullptr, nullptr) != 0) {
+//		std::cerr << "Error opening input file with FFmpeg" << std::endl;
+//	}
+//
+//	if (avformat_find_stream_info(formatContext, nullptr) < 0) {
+//		std::cerr << "Error finding stream information" << std::endl;
+//		avformat_close_input(&formatContext);
+//	}
+//
 //	std::cout << formatContext->audio_codec->id << std::endl;
-
-	std::cout << formatContext->duration << std::endl;
-
-	int audioStreamIndex = -1;
-
-	for (int i = 0; i < formatContext->nb_streams; ++i) {
-		if (formatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
-			std::cout << formatContext->streams[i]->codecpar->format << std::endl;
-			audioStreamIndex = i;
-			break;
-		}
-	}
-
-	if (audioStreamIndex == -1) {
-		std::cerr << "No audio stream found" << std::endl;
-		avformat_close_input(&formatContext);
-	}
-
-	AVCodecParameters* codecParameters = formatContext->streams[audioStreamIndex]->codecpar;
-	std::cout << codecParameters << std::endl;
-	auto* codec = avcodec_find_decoder(codecParameters->codec_id);
-	if (codec == nullptr) {
-		std::cerr << "Unsupported codec" << std::endl;
-		avformat_close_input(&formatContext);
-	}
-
-	// Allocate a codec context for the decoder
-	AVCodecContext* codecContext = avcodec_alloc_context3(codec);
-	if (avcodec_parameters_to_context(codecContext, codecParameters) < 0) {
-		std::cerr << "Failed to copy codec parameters to codec context" << std::endl;
-		avformat_close_input(&formatContext);
-		avcodec_free_context(&codecContext);
-	}
-
-	std::cout << codecContext->codec->long_name << std::endl;
-
-	// Open the codec
-	if (avcodec_open2(codecContext, codec, nullptr) != 0) {
-		std::cerr << "Failed to open codec" << std::endl;
-		avformat_close_input(&formatContext);
-		avcodec_free_context(&codecContext);
-	}
-
-	std::cout << codecContext->codec->long_name << std::endl;
-	std::cout << formatContext->audio_codec << std::endl;
-
-	AVPacket packet;
-	av_packet_unref(&packet);
-	av_init_packet(&packet);
-
-	AVFrame* frame = av_frame_alloc();
-
-	OpusEncoder* encoder = opus_encoder_create(48000, 2, 2049, nullptr);
+//
+//	std::cout << formatContext->duration << std::endl;
+//
+//	int audioStreamIndex = -1;
+//
+//	for (int i = 0; i < formatContext->nb_streams; ++i) {
+//		if (formatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
+//			std::cout << formatContext->streams[i]->codecpar->format << std::endl;
+//			audioStreamIndex = i;
+//			break;
+//		}
+//	}
+//
+//	if (audioStreamIndex == -1) {
+//		std::cerr << "No audio stream found" << std::endl;
+//		avformat_close_input(&formatContext);
+//	}
+//
+//	AVCodecParameters* codecParameters = formatContext->streams[audioStreamIndex]->codecpar;
+//	std::cout << codecParameters << std::endl;
+//	auto* codec = avcodec_find_decoder(codecParameters->codec_id);
+//	if (codec == nullptr) {
+//		std::cerr << "Unsupported codec" << std::endl;
+//		avformat_close_input(&formatContext);
+//	}
+//
+//	Allocate a codec context for the decoder
+//	AVCodecContext* codecContext = avcodec_alloc_context3(codec);
+//	if (avcodec_parameters_to_context(codecContext, codecParameters) < 0) {
+//		std::cerr << "Failed to copy codec parameters to codec context" << std::endl;
+//		avformat_close_input(&formatContext);
+//		avcodec_free_context(&codecContext);
+//	}
+//
+//	std::cout << codecContext->codec->long_name << std::endl;
+//
+//	// Open the codec
+//	if (avcodec_open2(codecContext, codec, nullptr) != 0) {
+//		std::cerr << "Failed to open codec" << std::endl;
+//		avformat_close_input(&formatContext);
+//		avcodec_free_context(&codecContext);
+//	}
+//
+//	std::cout << codecContext->codec->long_name << std::endl;
+//	std::cout << formatContext->audio_codec << std::endl;
+//
+//	AVPacket packet;
+//	av_packet_unref(&packet);
+//	av_init_packet(&packet);
+//
+//	AVFrame* frame = av_frame_alloc();
+//
+//	OpusEncoder* encoder = opus_encoder_create(48000, 2, 2049, nullptr);
 
 	// Set the bitrate for OPUS encoding (adjust according to your needs)
 //	opus_encoder_ctl(encoder, OPUS_SET_BITRATE(48000));
 
-	dpp::message message(event.command.channel_id, playing_embed(Cringe::CringeStatus::NEWSONG));
-	//	event.reply(message);
-	while (av_read_frame(formatContext, &packet) >= 0) {
-		if (packet.stream_index == audioStreamIndex) {
-			AVFrame* frame = av_frame_alloc();
-			if (!frame) {
-				std::cerr << "Error allocating AVFrame" << std::endl;
-				break;
-			}
+	song.erase(std::remove(song.begin(), song.end(), '\n'), song.end());
 
-			if (avcodec_receive_frame(codecContext, frame) == 0) {
-				uint8_t* buffer = nullptr;
-				int buffer_size = av_samples_alloc(&buffer, nullptr, 2, frame->nb_samples, AV_SAMPLE_FMT_S16, 0);
-
-				v->voiceclient->send_audio_raw((uint16_t*)buffer, dpp::send_audio_raw_max_length);
-
-				av_free(buffer);
-			}
-
-			av_frame_free(&frame);
-		}
-
-		av_packet_unref(&packet);
+	if (!determine_if_url(song)) {
+		embed_reason = "cringe can only parse through URL's to youtube at the moment :) Give it some time!";
+		embed = status_embed("CringeError::VoiceError", embed_reason, Cringe::CringeStatus::ERROR);
+		dpp::message message(event.command.channel_id, embed);
+		event.edit_original_response(message);
+		return;
 	}
+
+	std::cout << song << std::endl;
+
+	std::string song_streamer = "yt-dlp -f bestaudio -q --ignore-errors -o - \"" + song +
+								"\" | ffmpeg -i pipe:0 -f s16le -ac 2 -ar 48000 pipe:1";     // -loglevel quiet
+	const char *audio_codec = song_streamer.c_str();
+	std::byte buf[11520];
+
+	std::string cmd = "yt-dlp --print artist --print title --print upload_date --print duration --print thumbnail \"" + song + "\"";
+
+	std::string output = get_youtube_elements(cmd.c_str());
+
+	// Print the captured output
+	std::cout << "Command Output:\n" << output << std::endl;
+
+	std::cout << audio_codec << std::endl;
+
+	auto pipe = popen(audio_codec, "r");
+	if (!pipe) {
+		std::cout << "Failed to open Pipe" << std::endl;
+		return;
+	}
+
+	embed_reason = "Playing song to your voice channel!";
+	embed = playing_embed(Cringe::CringeStatus::SUCCESS);
+	dpp::message message(event.command.channel_id, embed);
+	event.edit_original_response(message);
+
+	size_t bytes_read;
+	while ((bytes_read = fread(buf, sizeof(std::byte), 11520, pipe)) > 0) {
+		if (bytes_read < 11520) {
+			std::cout << "11520 was bigger than bytes read: " << bytes_read << std::endl;
+			continue;
+		}
+		if (v && v->voiceclient && v->voiceclient->is_ready()) {
+			v->voiceclient->send_audio_raw((uint16_t *) buf, sizeof(buf));
+		} else {
+			std::cout << "VoiceClient was not ready" << std::endl;
+		}
+	}
+	std::cout << "Reached the end of stream" << std::endl;
+	pclose(pipe);
 }
+
