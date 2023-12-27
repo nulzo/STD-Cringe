@@ -1,4 +1,6 @@
-#include "commands.h"
+#include "commands/api.h"
+#include "utils/cringe.h"
+#include "utils/util.h"
 
 dpp::slashcommand chat_declaration() {
 	return dpp::slashcommand()
@@ -78,7 +80,7 @@ void user_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 	response = open_ai_api(prompt, "300", "gpt-3.5-turbo-1106");
 
 	dpp::embed embed = dpp::embed()
-			.set_color(color::CringeBlack)
+			.set_color(Cringe::CringeColor::CringeBlack)
 			.set_title(title)
 			.set_description(response)
 			.set_thumbnail(user_avatar)

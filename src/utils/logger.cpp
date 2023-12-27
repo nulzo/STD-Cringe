@@ -1,4 +1,4 @@
-#include "logger.h"
+#include "utils/logger.h"
 
 std::shared_ptr<spdlog::logger> cringe_logging() {
 	const std::string log_name = "std_cringe.log";

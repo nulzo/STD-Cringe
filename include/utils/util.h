@@ -4,12 +4,9 @@
 #define CRINGE_UTILS_H
 
 #include <dpp/dpp.h>
-#include "colors.h"
 #include <iostream>
-#include <ctime>
 #include <curl/curl.h>
 #include <string>
-#include <sstream>
 #include <fmt/core.h>
 #include <regex>
 

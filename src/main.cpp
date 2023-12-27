@@ -1,5 +1,8 @@
-#include "utils/utils.h"
-#include "commands/commands.h"
+#include "utils/util.h"
+#include "commands/challenge.h"
+#include "commands/misc.h"
+#include "commands/voice.h"
+#include "commands/api.h"
 #include "utils/logger.h"
 
 int main() {
