@@ -145,7 +145,7 @@ std::string get_youtube_elements(const char *cmd) {
 	return result;
 }
 
-std::vector<std::string> split_string(const std::string& input, char delimiter) {
+std::vector<std::string> split_string(const std::string &input, char delimiter) {
 	std::vector<std::string> tokens;
 	std::istringstream stream(input);
 	std::string token;
@@ -319,6 +319,7 @@ void play_command(const dpp::cluster &bot, const dpp::slashcommand_t &event) {
 								"\" | ffmpeg -i pipe:0 -f s16le -ac 2 -ar 48000 pipe:1";
 	// -loglevel quiet
 	const char *audio_codec = song_streamer.c_str();
+
 	// buf to store contents
 	std::byte buf[11520];
 
@@ -335,7 +336,7 @@ void play_command(const dpp::cluster &bot, const dpp::slashcommand_t &event) {
 	std::vector<std::string> lines = split_string(output, '\n');
 
 	// Process each line
-	for (const auto& line : lines) {
+	for (const auto &line: lines) {
 		std::cout << "Element: " << line << std::endl;
 	}
 
