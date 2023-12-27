@@ -2,7 +2,6 @@
 #include "utils/embed.h"
 #include "utils/cringe.h"
 #include <algorithm>
-#include <cstdlib>
 #include <regex>
 #include <fmt/format.h>
 
@@ -67,7 +66,7 @@ void join_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 				}
 			event.from->disconnect_voice(event.command.guild_id);
 		}
-		event.from->connect_voice(guild->id, requested_channel.id, true, true);
+		event.from->connect_voice(guild->id, requested_channel.id, false, true);
 		embed_reason = event.command.usr.get_mention() + " asked cringe to join " + requested_channel.get_mention();
 		embed = status_embed("Successfully Joined", embed_reason, Cringe::CringeStatus::SUCCESS);
 		dpp::message message(event.command.channel_id, embed);
@@ -119,24 +118,43 @@ int encode_audio_to_opus(const int16_t *pcm_data, int frame_size, unsigned char 
 
 bool determine_if_url(const std::string &query) {
 	std::cout << "PARSING THROUGH SONG" << std::endl;
+	// Regular expression to determine if a given url is from youtube
 	std::regex youtube_regex(
 			R"(^(?:(?:https?:)?\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11}))");
+	// Match the user query against the regular expression definition
 	bool is_youtube_link = std::regex_match(query, youtube_regex);
 	std::cout << "DONE PARSING THROUGH SONG" << std::endl;
 	return (is_youtube_link);
 }
 
 std::string get_youtube_elements(const char *cmd) {
+	// Get the youtube video thumbnail, author info, and song info
 	FILE *pipe = popen(cmd, "r");
+	// Check that the pipe was opened successfully
 	if (!pipe) {
 		std::cerr << "Error opening pipe" << std::endl;
 	}
+	// Allocate c style buf to store result of command
 	char buffer[128];
 	std::string result;
+	// Write contents of stdout buf to c++ style string
 	while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
 		result += buffer;
 	}
+	// Return a string of elements delimited by a newline
 	return result;
+}
+
+std::vector<std::string> split_string(const std::string& input, char delimiter) {
+	std::vector<std::string> tokens;
+	std::istringstream stream(input);
+	std::string token;
+
+	while (std::getline(stream, token, delimiter)) {
+		tokens.push_back(token);
+	}
+
+	return tokens;
 }
 
 
@@ -159,12 +177,17 @@ void play_command(const dpp::cluster &bot, const dpp::slashcommand_t &event) {
 		event.reply(message);
 		return;
 	}
+
+	// We need to set this otherwise the bot attempts to send all packets at once
+	// Note: This is expensive!!! Might need to figure out another way...
 	v->voiceclient->set_send_audio_type(dpp::discord_voice_client::satype_overlap_audio);
 
+	// Get the song that the user wishes to play
 	std::string song = std::get<std::string>(event.get_parameter("song"));
 
 	std::cout << song << std::endl;
 
+	// Set the bot to thinking. This gives us a bit more time to reply to the interaction
 	event.thinking();
 
 //	avformat_network_init();
@@ -271,14 +294,17 @@ void play_command(const dpp::cluster &bot, const dpp::slashcommand_t &event) {
 //
 //	AVFrame* frame = av_frame_alloc();
 //
-//	OpusEncoder* encoder = opus_encoder_create(48000, 2, 2049, nullptr);
+	// OpusEncoder* encoder = opus_encoder_create(48000, 2, 2049, nullptr);
 
 	// Set the bitrate for OPUS encoding (adjust according to your needs)
-//	opus_encoder_ctl(encoder, OPUS_SET_BITRATE(48000));
+	// opus_encoder_ctl(encoder, OPUS_SET_BITRATE(48000));
 
+	// Remove newline characters from the
 	song.erase(std::remove(song.begin(), song.end(), '\n'), song.end());
 
+	// First determine if the song is not a URL. Currently, we can only get URLs, but we will add the option for queries in the future.
 	if (!determine_if_url(song)) {
+		// Issue an error if the query is not a URL
 		embed_reason = "cringe can only parse through URL's to youtube at the moment :) Give it some time!";
 		embed = status_embed("CringeError::VoiceError", embed_reason, Cringe::CringeStatus::ERROR);
 		dpp::message message(event.command.channel_id, embed);
@@ -288,37 +314,57 @@ void play_command(const dpp::cluster &bot, const dpp::slashcommand_t &event) {
 
 	std::cout << song << std::endl;
 
+	// Set the url and codec, piping the audio with ffmpeg
 	std::string song_streamer = "yt-dlp -f bestaudio -q --ignore-errors -o - \"" + song +
-								"\" | ffmpeg -i pipe:0 -f s16le -ac 2 -ar 48000 pipe:1";     // -loglevel quiet
+								"\" | ffmpeg -i pipe:0 -f s16le -ac 2 -ar 48000 pipe:1";
+	// -loglevel quiet
 	const char *audio_codec = song_streamer.c_str();
+	// buf to store contents
 	std::byte buf[11520];
 
+	// string that gets all the information about the song
 	std::string cmd = "yt-dlp --print artist --print title --print upload_date --print duration --print thumbnail \"" + song + "\"";
 
+	// Extract information for the embed
 	std::string output = get_youtube_elements(cmd.c_str());
 
 	// Print the captured output
 	std::cout << "Command Output:\n" << output << std::endl;
 
+	// Split the output into lines
+	std::vector<std::string> lines = split_string(output, '\n');
+
+	// Process each line
+	for (const auto& line : lines) {
+		std::cout << "Element: " << line << std::endl;
+	}
+
 	std::cout << audio_codec << std::endl;
 
+	// Subprocess fork that runs our ffmpeg piped audio
 	auto pipe = popen(audio_codec, "r");
+
+	// Check if pipe was unsuccessful
 	if (!pipe) {
 		std::cout << "Failed to open Pipe" << std::endl;
 		return;
 	}
 
-	embed_reason = "Playing song to your voice channel!";
+	// Embed letting user know that the bot is playing
 	embed = playing_embed(Cringe::CringeStatus::SUCCESS);
 	dpp::message message(event.command.channel_id, embed);
 	event.edit_original_response(message);
 
+	// Bytes from output
 	size_t bytes_read;
+
+	// Get audio from song and pipe to discord
 	while ((bytes_read = fread(buf, sizeof(std::byte), 11520, pipe)) > 0) {
 		if (bytes_read < 11520) {
 			std::cout << "11520 was bigger than bytes read: " << bytes_read << std::endl;
 			continue;
 		}
+		// Send audio data if cringe is in an on-ready state
 		if (v && v->voiceclient && v->voiceclient->is_ready()) {
 			v->voiceclient->send_audio_raw((uint16_t *) buf, sizeof(buf));
 		} else {
