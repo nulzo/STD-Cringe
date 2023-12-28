@@ -34,6 +34,10 @@ namespace Cringe {
 		const int CringePink = 0xEC4899;
 		const int CringeBlack = 0x1E2124;
 	}
+
+	class CringeAudio{
+
+	};
 }
 
 #endif //CRINGE_CRINGE_H
