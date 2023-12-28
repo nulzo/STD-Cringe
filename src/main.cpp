@@ -4,9 +4,12 @@
 #include "commands/voice.h"
 #include "commands/api.h"
 #include "utils/logger.h"
+#include "utils/cringe.h"
 
 int main() {
 	std::string BOT_TOKEN;
+	Cringe::CringeQueue queue;
+
 	log_on_start();
 	get_env("BOT_TOKEN", BOT_TOKEN);
 
@@ -17,7 +20,7 @@ int main() {
 		logger(cringe_logger, event);
 	});
 
-	bot.on_slashcommand([&bot, &cringe_logger](const dpp::slashcommand_t &event) {
+	bot.on_slashcommand([&bot, &cringe_logger, &queue](const dpp::slashcommand_t &event) {
 		log_on_slash(event.command.get_command_name(), event.command.usr.global_name, cringe_logger);
 		if (event.command.get_command_name() == "info") {
 			info_command(bot, event);
@@ -30,7 +33,7 @@ int main() {
 		} else if (event.command.get_command_name() == "join") {
 			join_command(bot, event);
 		} else if (event.command.get_command_name() == "play") {
-			play_command(bot, event);
+			play_command(bot, event, queue);
 		} else if (event.command.get_command_name() == "message") {
 			message_command(bot, event);
 		} else if (event.command.get_command_name() == "ethan") {

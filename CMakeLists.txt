@@ -21,7 +21,11 @@ add_executable(${PROJECT_NAME}
         src/utils/logger.cpp
         src/utils/embed.cpp
         src/utils/util.cpp
-        include/utils/CringeAudio.h
+        src/utils/CringeSong.cpp
+        src/utils/CringeQueue.cpp
+        src/utils/CringeAudio.cpp
+        src/commands/voice/JoinCommand.cpp
+        src/commands/voice/PlayCommand.cpp
 )
 
 include(FindPackageHandleStandardArgs)
@@ -219,8 +223,6 @@ if (APPLE)
 else ()
     find_package(OpenSSL REQUIRED)
 endif ()
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=leak ASAN_OPTIONS=detect_leaks=1")
 
 target_include_directories(${BOT_NAME} PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
