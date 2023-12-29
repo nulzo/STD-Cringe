@@ -13,19 +13,23 @@ include_directories(${BOT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../include)
 
 add_executable(${PROJECT_NAME}
         src/main.cpp
-        src/commands/challenge.cpp
-        src/commands/voice.cpp
-        src/commands/api.cpp
-        src/commands/misc.cpp
+        src/commands/challenge/ChallengeCommand.cpp
         src/listeners/message_listener.cpp
         src/utils/logger.cpp
-        src/utils/embed.cpp
+        src/utils/CringeEmbed.cpp
         src/utils/util.cpp
-        src/utils/CringeSong.cpp
-        src/utils/CringeQueue.cpp
-        src/utils/CringeAudio.cpp
+        src/utils/audio/CringeSong.cpp
+        src/utils/audio/CringeQueue.cpp
+        src/utils/audio/CringeAudio.cpp
         src/commands/voice/JoinCommand.cpp
         src/commands/voice/PlayCommand.cpp
+        src/commands/voice/QueueCommand.cpp
+        src/commands/misc/InfoCommand.cpp
+        src/commands/misc/GetMessagesCommand.cpp
+        src/commands/misc/EthanCommand.cpp
+        src/commands/challenge/ChallengeCommand.cpp
+        src/commands/api/ChatCommand.cpp
+        src/commands/api/UserCommand.cpp
 )
 
 include(FindPackageHandleStandardArgs)
@@ -35,11 +39,6 @@ if (NOT FFmpeg_FIND_COMPONENTS)
     set(FFmpeg_FIND_COMPONENTS AVCODEC AVFORMAT AVUTIL OPUS)
 endif ()
 
-#
-### Macro: set_component_found
-#
-# Marks the given component as found if both *_LIBRARIES AND *_INCLUDE_DIRS is present.
-#
 macro(set_component_found _component )
     if (${_component}_LIBRARIES AND ${_component}_INCLUDE_DIRS)
         # message(STATUS "  - ${_component} found.")
@@ -49,12 +48,6 @@ macro(set_component_found _component )
     endif ()
 endmacro()
 
-#
-### Macro: find_component
-#
-# Checks for the given component by invoking pkgconfig and then looking up the libraries and
-# include directories.
-#
 macro(find_component _component _pkgconfig _library _header)
 
     if (NOT WIN32)
@@ -195,7 +188,7 @@ endif ()
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set_target_properties(${BOT_NAME} PROPERTIES
-        CXX_STANDARD 17
+        CXX_STANDARD 20
         CXX_STANDARD_REQUIRED ON
 )
 

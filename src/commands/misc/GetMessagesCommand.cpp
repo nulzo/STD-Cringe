@@ -22,12 +22,35 @@
  * SOFTWARE.
  */
 
-#include "listeners/message_listener.h"
+#include "commands/misc/misc.h"
+#include "utils/cringe.h"
 
-void message_listener::on_message_create(const dpp::message_create_t &event) {
-
+dpp::slashcommand message_declaration() {
+	constexpr int64_t min_val{1};
+	constexpr int64_t max_val{100};
+	return dpp::slashcommand()
+			.set_name("message")
+			.set_description("Bruh I don't even know")
+			.add_option(dpp::command_option(dpp::co_integer, "quantity",
+											"Quantity of messages to get. Max - 100.")
+								.set_min_value(min_val)
+								.set_max_value(max_val));
 }
 
-void message_listener::on_message_delete(const dpp::message_delete_t &event) {
-
+void message_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
+	int64_t limit = std::get<int64_t>(event.get_parameter("quantity"));
+	bot.messages_get(
+			event.command.channel_id, 0, 0, 0, limit,
+			[event](const dpp::confirmation_callback_t &callback) {
+				if (callback.is_error()) {
+					std::cout << callback.get_error().message << std::endl;
+					return;
+				}
+				auto messages = callback.get<dpp::message_map>();
+				std::string contents;
+				for (const auto &x: messages) {
+					contents += x.second.content + '\n';
+				}
+				event.reply(contents);
+			});
 }

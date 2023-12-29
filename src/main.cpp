@@ -1,8 +1,34 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2023 @nulzo
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 #include "utils/util.h"
-#include "commands/challenge.h"
-#include "commands/misc.h"
-#include "commands/voice.h"
-#include "commands/api.h"
+#include "commands/challenge/challenge.h"
+#include "commands/misc/misc.h"
+#include "commands/voice/PlayCommand.h"
+#include "commands/voice/JoinCommand.h"
+#include "commands/voice/QueueCommand.h"
+#include "commands/api/api.h"
 #include "utils/logger.h"
 #include "utils/cringe.h"
 
@@ -38,6 +64,8 @@ int main() {
 			message_command(bot, event);
 		} else if (event.command.get_command_name() == "ethan") {
 			ethan_command(bot, event);
+		} else if (event.command.get_command_name() == "queue") {
+			queue_command(event, queue);
 		}
 		log_end_slash(event.command.get_command_name(), event.command.usr.global_name, cringe_logger);
 	});
@@ -61,6 +89,13 @@ int main() {
 		});
 	});
 
+	bot.on_voice_track_marker([&](const dpp::voice_track_marker_t &ev) {
+		if(!queue.is_empty()){
+			Cringe::CringeSong s = queue.dequeue();
+			play_callback(s.get_url(), s.get_event());
+		}
+	});
+
 	bot.on_ready([&bot]([[maybe_unused]] const dpp::ready_t &event) {
 		/* Create a new global command on ready event */
 		if (dpp::run_once<struct register_bot_commands>()) {
@@ -73,7 +108,8 @@ int main() {
 							join_declaration(),
 							play_declaration(),
 							message_declaration(),
-							ethan_declaration()
+							ethan_declaration(),
+							queue_declaration()
 					}
 			};
 			bot.global_bulk_command_create(commands);
@@ -82,5 +118,6 @@ int main() {
 	});
 
 	bot.start(dpp::st_wait);
+
 	return 0;
 }

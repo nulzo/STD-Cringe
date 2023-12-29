@@ -22,12 +22,15 @@
  * SOFTWARE.
  */
 
-#include "listeners/message_listener.h"
+#include "commands/misc/misc.h"
 
-void message_listener::on_message_create(const dpp::message_create_t &event) {
-
+dpp::slashcommand ethan_declaration() {
+	return dpp::slashcommand().set_name("ethan").set_description("...");
 }
 
-void message_listener::on_message_delete(const dpp::message_delete_t &event) {
-
+void ethan_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
+	auto target_user = bot.guild_get_member_sync(1069835760859107368, 411399698679595008);
+	target_user.set_nickname("username");
+	bot.guild_edit_member(target_user);
+	event.reply(fmt::format("Hey, {}, checkout your username!", target_user.get_mention()));
 }

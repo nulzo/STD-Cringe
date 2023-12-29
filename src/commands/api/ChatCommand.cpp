@@ -22,12 +22,20 @@
  * SOFTWARE.
  */
 
-#include "listeners/message_listener.h"
+#include "commands/api/api.h"
+#include "utils/util.h"
+#include "utils/embed.h"
 
-void message_listener::on_message_create(const dpp::message_create_t &event) {
-
+dpp::slashcommand chat_declaration() {
+	return dpp::slashcommand()
+			.set_name("chat")
+			.set_description("Chat with cringe")
+			.add_option(dpp::command_option(dpp::co_string, "prompt", "What to ask cringe", true));
 }
 
-void message_listener::on_message_delete(const dpp::message_delete_t &event) {
-
+void chat_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
+	std::string prompt = std::get<std::string>(event.get_parameter("prompt"));
+	event.thinking();
+	std::string response = open_ai_api(prompt, "250", "gpt-3.5-turbo-1106");
+	event.edit_original_response(response);
 }

@@ -22,12 +22,39 @@
  * SOFTWARE.
  */
 
-#include "listeners/message_listener.h"
+#include "utils/cringe.h"
 
-void message_listener::on_message_create(const dpp::message_create_t &event) {
-
+void Cringe::CringeQueue::enqueue(const CringeSong& song) {
+	cringe_queue.push(song);
+	length++;
 }
 
-void message_listener::on_message_delete(const dpp::message_delete_t &event) {
+Cringe::CringeSong Cringe::CringeQueue::dequeue() {
+	length--;
+	Cringe::CringeSong song = cringe_queue.front();
+	cringe_queue.pop();
+	return song;
+}
 
+std::queue<Cringe::CringeSong> Cringe::CringeQueue::get_queue() {
+	return cringe_queue;
+}
+
+void Cringe::CringeQueue::display_queue() const {
+	if (!is_empty()) {
+		std::cout << "Song Queue:" << std::endl;
+		std::queue<Cringe::CringeSong> t_q = cringe_queue;
+	} else {
+		std::cout << "Queue is empty." << std::endl;
+	}
+}
+
+bool Cringe::CringeQueue::is_empty() const {
+	return cringe_queue.empty();
+}
+
+std::string Cringe::CringeQueue::peek() {
+	if (!is_empty()) {
+		return cringe_queue.front().get_title();
+	} else return "";
 }

@@ -3,6 +3,7 @@
 
 #include <queue>
 #include "iostream"
+#include "dpp/dpp.h"
 
 namespace Cringe {
 
@@ -45,35 +46,44 @@ namespace Cringe {
 		static bool is_yt_url(const std::string &query);
 
 		static std::string get_encoded_url(std::string song);
-
-		int codec_to_opus(const int16_t *pcm_data, int frame_size, unsigned char *opus_data, int max_data_size, OpusEncoder *encoder);
 	};
 
 	class CringeSong {
 	public:
-		CringeSong(std::string title, std::string artist, std::string thumbnail, std::string duration);
+		CringeSong(std::string title, std::string artist, std::string thumbnail, std::string duration, std::string url,
+				   dpp::slashcommand_t &event);
 
 		std::string get_title();
 
-		void set_title(std::string t);
-
 		std::string get_artist();
-
-		void set_artist(std::string a);
 
 		std::string get_thumbnail();
 
-		void set_thumbnail(std::string tn);
-
 		std::string get_formatted_duration();
 
+		std::string get_url();
+
+		dpp::slashcommand_t get_event();
+
+		void set_title(std::string t);
+
+		void set_artist(std::string a);
+
+		void set_thumbnail(std::string tn);
+
 		void set_formatted_duration(std::string fd);
+
+		void set_url(std::string u);
+
+		void set_event(dpp::slashcommand_t &e);
 
 	private:
 		std::string title;
 		std::string artist;
 		std::string thumbnail;
 		std::string duration;
+		std::string url;
+		dpp::slashcommand_t event;
 	};
 
 	class CringeQueue {
@@ -83,9 +93,11 @@ namespace Cringe {
 
 		void enqueue(const Cringe::CringeSong &song);
 
-		void dequeue();
+		Cringe::CringeSong dequeue();
 
 		std::string peek();
+
+		std::queue<CringeSong> get_queue();
 
 		void display_queue() const;
 

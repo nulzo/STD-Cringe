@@ -1,3 +1,27 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2023 @nulzo
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 #include "utils/cringe.h"
 #include <algorithm>
 #include <regex>
@@ -27,7 +51,7 @@ std::vector<std::string> Cringe::CringeAudio::get_yt_info(std::string song) {
 	std::vector<std::string> yt_data;
 	std::string data;
 	// string that gets all the information about the song
-	std::string cmd = fmt::format("yt-dlp --print artist --print title --print upload_date --print duration --print thumbnail \"{}\"", song);
+	std::string cmd = fmt::format("yt-dlp --print title --print artist --print thumbnail --print duration \"{}\"", song);
 	// Get the YouTube video thumbnail, author info, and song info
 	FILE *pipe = popen(cmd.c_str(), "r");
 	// Check that the pipe was opened successfully
@@ -44,11 +68,11 @@ std::vector<std::string> Cringe::CringeAudio::get_yt_info(std::string song) {
 		yt_data.push_back(data);
 	}
 
-	// Returns a vector with the elements <ARTIST, TITLE, UPLOAD_DATE, DURATION, THUMB_URL>
+	// Returns a vector with the elements <TITLE, ARTIST, THUMB_URL, DURATION>
 	return yt_data;
 }
 
-std::string Cringe::CringeAudio::get_encoded_url(std::string song){
+std::string Cringe::CringeAudio::get_encoded_url(std::string song) {
 	// Allocate c style buf to store result of command
 	char buffer[128];
 	// Var to store processed URL
@@ -56,7 +80,7 @@ std::string Cringe::CringeAudio::get_encoded_url(std::string song){
 	// Get the command to extract the URL
 	std::string command = fmt::format("yt-dlp --get-url -f bestaudio \"{}\"", song);
 	// Convert to a C-string
-	const char * cmd = command.c_str();
+	const char *cmd = command.c_str();
 	// Open the pipe to process to command
 	FILE *pipe = popen(cmd, "r");
 	// Check that the pipe was opened successfully
