@@ -30,6 +30,10 @@ add_executable(${PROJECT_NAME}
         src/commands/challenge/ChallengeCommand.cpp
         src/commands/api/ChatCommand.cpp
         src/commands/api/UserCommand.cpp
+        src/commands/voice/SkipCommand.cpp
+        include/commands/voice/SkipCommand.h
+        src/commands/misc/ConfessionCommand.cpp
+        include/commands/misc/ConfessionCommand.h
 )
 
 include(FindPackageHandleStandardArgs)

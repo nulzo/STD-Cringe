@@ -22,4 +22,7 @@ size_t WriteCallback(void *contents, size_t size, size_t nmemb, std::string *out
 
 int get_env(const std::string_view &given_key, std::string &value);
 
+std::string seconds_to_formatted_time(int seconds);
+
+
 #endif

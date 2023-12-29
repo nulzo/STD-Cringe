@@ -25,6 +25,7 @@
 #include "commands/voice/QueueCommand.h"
 #include "utils/cringe.h"
 #include <fmt/format.h>
+#include "utils/util.h"
 
 dpp::slashcommand queue_declaration() {
 	return dpp::slashcommand()
@@ -36,17 +37,21 @@ void queue_command(const dpp::slashcommand_t &event, Cringe::CringeQueue queue) 
 	std::string embed_reason;
 	dpp::embed embed;
 	std::queue<Cringe::CringeSong> current_queue = queue.get_queue();
-
+	int total_minutes = 0;
+	int total_songs = 0;
 	// Loop through the temporary queue
 	while (!current_queue.empty()) {
 		// Access the front element
-		Cringe::CringeSong frontElement = current_queue.front();
-		embed_reason += fmt::format("**Title**: {}\n", frontElement.get_title());
+		Cringe::CringeSong song = current_queue.front();
+		total_minutes += atoi(song.get_formatted_duration().c_str());
+		std::string song_duration = seconds_to_formatted_time(atoi(song.get_formatted_duration().c_str()));
+		embed_reason += fmt::format("\n**Title**: {}\n**Length**: {}\n", song.get_title(), song_duration);
+		total_songs++;
 		// Remove the front element from the temporary queue
 		current_queue.pop();
 	}
-	embed.set_title("Current Queue").set_color(Cringe::CringeColor::CringeOrange).set_timestamp(time(nullptr)).add_field("Tracks", embed_reason).set_thumbnail(Cringe::CringeIcon::MusicIcon);
-//	embed = status_embed("Current Queue", embed_reason, Cringe::CringeStatus::SUCCESS);
+	embed.add_field("Queue Info", fmt::format("\n**Total Songs**: {}\n**Queue Duration**: {}\n", total_songs, seconds_to_formatted_time(total_minutes)));
+	embed.set_title("Current Queue").set_color(Cringe::CringeColor::CringeOrange).add_field("Tracks", embed_reason).set_timestamp(time(nullptr)).set_thumbnail(Cringe::CringeIcon::MusicIcon);
 	dpp::message message(event.command.channel_id, embed);
 	event.reply(message);
 }

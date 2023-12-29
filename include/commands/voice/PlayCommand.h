@@ -9,7 +9,7 @@
 #include "utils/cringe.h"
 
 dpp::slashcommand play_declaration();
-void play_callback(const std::string &song, const dpp::slashcommand_t &event);
-void play_command(const dpp::cluster &bot, const dpp::slashcommand_t &event, Cringe::CringeQueue &queue);
+void play_callback(dpp::cluster &bot, Cringe::CringeSong song);
+void play_command(dpp::cluster &bot, const dpp::slashcommand_t &event, Cringe::CringeQueue &queue);
 
 #endif //CRINGE_PLAYCOMMAND_H

@@ -28,6 +28,8 @@
 #include "commands/voice/PlayCommand.h"
 #include "commands/voice/JoinCommand.h"
 #include "commands/voice/QueueCommand.h"
+#include "commands/voice/SkipCommand.h"
+#include "commands/misc/ConfessionCommand.h"
 #include "commands/api/api.h"
 #include "utils/logger.h"
 #include "utils/cringe.h"
@@ -66,6 +68,10 @@ int main() {
 			ethan_command(bot, event);
 		} else if (event.command.get_command_name() == "queue") {
 			queue_command(event, queue);
+		} else if (event.command.get_command_name() == "skip") {
+			skip_command(bot, event, queue);
+		} else if (event.command.get_command_name() == "confess") {
+			confession_command(bot, event);
 		}
 		log_end_slash(event.command.get_command_name(), event.command.usr.global_name, cringe_logger);
 	});
@@ -92,7 +98,7 @@ int main() {
 	bot.on_voice_track_marker([&](const dpp::voice_track_marker_t &ev) {
 		if(!queue.is_empty()){
 			Cringe::CringeSong s = queue.dequeue();
-			play_callback(s.get_url(), s.get_event());
+			play_callback(bot, s);
 		}
 	});
 
@@ -109,7 +115,9 @@ int main() {
 							play_declaration(),
 							message_declaration(),
 							ethan_declaration(),
-							queue_declaration()
+							queue_declaration(),
+							skip_declaration(),
+							confession_declaration(),
 					}
 			};
 			bot.global_bulk_command_create(commands);

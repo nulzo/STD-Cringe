@@ -24,6 +24,9 @@
 
 #include "utils/embed.h"
 #include "utils/cringe.h"
+#include "utils/util.h"
+#include <iomanip>
+#include "fmt/format.h"
 
 dpp::embed status_embed(const std::string &title, const std::string &reason, int status) {
 	dpp::embed embed = dpp::embed();
@@ -70,5 +73,60 @@ dpp::embed generic_embed(const std::string &icon, const std::string &title, cons
 	embed.set_thumbnail(icon);
 	embed.set_title(title);
 	embed.set_timestamp(time(nullptr));
+	return embed;
+}
+
+dpp::embed confession_embed(std::string confession) {
+	dpp::embed embed;
+	embed.set_color(Cringe::CringeColor::CringeIndigo);
+	embed.set_title("Anonymous Confession");
+	embed.set_thumbnail(Cringe::CringeIcon::ConfessionIcon);
+	embed.set_description(confession);
+	embed.set_timestamp(time(nullptr));
+	return embed;
+}
+
+dpp::embed added_to_queue_embed(Cringe::CringeSong song) {
+	dpp::embed embed;
+	embed.set_title("Successfully added").set_color(Cringe::CringeColor::CringeSuccess).set_thumbnail(Cringe::CringeIcon::SuccessIcon);
+	embed.add_field("Title", song.get_title()).add_field("URL", song.get_url());
+	return embed;
+}
+
+dpp::embed now_streaming(Cringe::CringeSong song){
+	// Define variables
+	dpp::embed embed;
+	std::string title;
+	std::string duration;
+	std::string author;
+	std::string footer;
+	std::string channel;
+	dpp::slashcommand_t event;
+
+	// Get data from the song object
+	title = song.get_title();
+	duration = seconds_to_formatted_time(atoi(song.get_formatted_duration().c_str()));
+	author = song.get_artist();
+	event = song.get_event();
+	channel = event.command.channel.get_mention();
+	footer = fmt::format("Requested by: {}", event.command.usr.global_name);
+
+	// Set the title and assign it an icon
+	embed.set_title("Now Streaming").set_thumbnail(Cringe::CringeIcon::MusicIcon);
+	// Set the title field
+	embed.add_field("Title", title);
+	// Set the URL field
+	embed.add_field("URL", song.get_url());
+	// Set the first row of embed fields
+	embed.add_field("Channel", channel, true).add_field("Duration", duration, true).add_field("Author", author, true);
+	// Set the image to the thumbnail of the YT video
+	embed.set_image(song.get_thumbnail());
+	// Set the color of the embed
+	embed.set_color(Cringe::CringeColor::CringeBlack);
+	// Set the footer to tell the server who requested the song
+	embed.set_footer(footer, event.command.usr.get_avatar_url());
+	// Add a timestamp to the embed
+	embed.set_timestamp(time(nullptr));
+
 	return embed;
 }

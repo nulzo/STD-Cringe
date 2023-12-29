@@ -67,10 +67,10 @@ std::vector<std::string> Cringe::CringeAudio::get_yt_info(std::string song) {
 	while (std::getline(stream, data, '\n')) {
 		yt_data.push_back(data);
 	}
-
 	// Returns a vector with the elements <TITLE, ARTIST, THUMB_URL, DURATION>
 	return yt_data;
 }
+
 
 std::string Cringe::CringeAudio::get_encoded_url(std::string song) {
 	// Allocate c style buf to store result of command
@@ -93,4 +93,35 @@ std::string Cringe::CringeAudio::get_encoded_url(std::string song) {
 	}
 	// Return the URL
 	return URL;
+}
+
+std::string Cringe::CringeAudio::search_command(std::string search) {
+	return fmt::format(R"(yt-dlp -f bestaudio -q --ignore-errors -o - "{}" | ffmpeg -i pipe:0 -f s16le -ac 2 -ar 48000 pipe:1)", search);
+}
+
+std::string Cringe::CringeAudio::query_to_url(std::string query) {
+	// Allocate c style buf to store result of command
+	char buffer[128];
+	// Var to store processed URL
+	std::string URL;
+	// The query to get the YouTube URL
+	std::string command = fmt::format("yt-dlp --print webpage_url \"ytsearch:{}\"", query);
+	// Convert to a C-string
+	const char *cmd = command.c_str();
+	// Open the pipe to process to command
+	FILE *pipe = popen(cmd, "r");
+	// Write contents of stdout buf to c++ style string
+	while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+		URL += buffer;
+	}
+	// Return the URL
+	return URL;
+}
+
+std::string Cringe::CringeAudio::sanitize_query(std::string query) {
+	query.erase(std::remove(query.begin(), query.end(), '\n'), query.end());
+	query.erase(std::remove(query.begin(), query.end(), '"'), query.end());
+	query.erase(std::remove(query.begin(), query.end(), '{'), query.end());
+	query.erase(std::remove(query.begin(), query.end(), '}'), query.end());
+	return query;
 }

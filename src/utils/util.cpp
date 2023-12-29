@@ -152,3 +152,10 @@ int get_env(const std::string_view &given_key, std::string &return_value) {
 	// No match
 	return -1;
 }
+
+std::string seconds_to_formatted_time(int seconds) {
+	int hours = seconds / 3600;
+	int minutes = (seconds % 3600) / 60;
+	int r_seconds = seconds % 60;
+	return fmt::format("{:02}:{:02}:{:02}", hours, minutes, r_seconds);
+}

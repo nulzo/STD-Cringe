@@ -20,6 +20,8 @@ namespace Cringe {
 		const std::string ErrorIcon = "https://i.imgur.com/rFiaIWw.png";
 		const std::string WarningIcon = "https://i.imgur.com/1lfJlup.png";
 		const std::string MusicIcon = "https://i.imgur.com/CVJNkN3.png";
+		const std::string ConfessionIcon = "https://i.imgur.com/Jd4rOxM.png";
+
 	}
 
 	namespace CringeColor {
@@ -46,6 +48,12 @@ namespace Cringe {
 		static bool is_yt_url(const std::string &query);
 
 		static std::string get_encoded_url(std::string song);
+
+		static std::string search_command(std::string search);
+
+		static std::string sanitize_query(std::string query);
+
+		static std::string query_to_url(std::string query);
 	};
 
 	class CringeSong {
@@ -106,8 +114,11 @@ namespace Cringe {
 	};
 
 	class CringeBot {
-
+		CringeSong song;
+		CringeQueue queue;
+		std::string BOT_TOKEN;
 	};
+
 }
 
 #endif //CRINGE_CRINGE_H
