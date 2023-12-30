@@ -34,6 +34,8 @@ add_executable(${PROJECT_NAME}
         include/commands/voice/SkipCommand.h
         src/commands/misc/ConfessionCommand.cpp
         include/commands/misc/ConfessionCommand.h
+        include/commands/api/RedditCommand.h
+        src/commands/api/RedditCommand.cpp
 )
 
 include(FindPackageHandleStandardArgs)

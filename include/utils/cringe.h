@@ -21,7 +21,6 @@ namespace Cringe {
 		const std::string WarningIcon = "https://i.imgur.com/1lfJlup.png";
 		const std::string MusicIcon = "https://i.imgur.com/CVJNkN3.png";
 		const std::string ConfessionIcon = "https://i.imgur.com/Jd4rOxM.png";
-
 	}
 
 	namespace CringeColor {
