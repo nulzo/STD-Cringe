@@ -27,6 +27,8 @@
 #include "utils/cringe.h"
 #include <algorithm>
 #include <fmt/format.h>
+#include "dpp/dpp.h"
+#include <dpp/unicode_emoji.h>
 
 extern "C" {
 #include <libavformat/avformat.h>
@@ -39,7 +41,12 @@ dpp::slashcommand play_declaration() {
 	return dpp::slashcommand()
 			.set_name("play")
 			.set_description("Play a song in the voice channel you are in")
-			.add_option(dpp::command_option(dpp::co_string, "song", "Song you wish to stream (either query or URL)", true));
+			.add_option(dpp::command_option(dpp::co_string, "song", "Song you wish to stream (either query or URL)", true))
+			.add_option(dpp::command_option(dpp::co_string, "filter", "Filter to apply to the song", false)
+								.add_choice(dpp::command_option_choice("Bass Boosted", std::string("bassboost")))
+								.add_choice(dpp::command_option_choice("Vaporwave", std::string("vaporwave")))
+								.add_choice(dpp::command_option_choice("Nightcore", std::string("nightcore")))
+								.add_choice(dpp::command_option_choice("In The Bathroom", std::string("bathroom"))));
 }
 
 void play_callback(dpp::cluster &bot, Cringe::CringeSong song) {
@@ -108,6 +115,18 @@ void play_command(dpp::cluster &bot, const dpp::slashcommand_t &event, Cringe::C
 	// Get the song that the user wishes to play
 	std::string song = std::get<std::string>(event.get_parameter("song"));
 
+	// Get a filter (if one was given)
+	std::string f = std::get<std::string>(event.get_parameter("filter"));
+	std::string filter;
+	Cringe::CringeFilter cringe_filter;
+
+	if (!f.empty()) {
+		if (f == "bassboost") filter = cringe_filter.BASSBOOST;
+		if (f == "vaporwave") filter = cringe_filter.VAPORWAVE;
+		if (f == "nightcore") filter = cringe_filter.NIGHTCORE;
+		if (f == "bathroom") filter = cringe_filter.INTHEBATHROOM;
+	}
+
 	// Remove newline characters from the request
 	song = Cringe::CringeAudio::sanitize_query(song);
 
@@ -133,6 +152,8 @@ void play_command(dpp::cluster &bot, const dpp::slashcommand_t &event, Cringe::C
 
 	// Set the url and codec, piping the audio with ffmpeg
 	std::string song_streamer = Cringe::CringeAudio::search_command(song);
+	// Add filter (if applicable)
+	if (!filter.empty()) song_streamer += fmt::format(" -vn -filter_complex {}", filter);
 	// Cast to c string for popen process
 	const char *audio_codec = song_streamer.c_str();
 	// buf to store contents
@@ -150,6 +171,21 @@ void play_command(dpp::cluster &bot, const dpp::slashcommand_t &event, Cringe::C
 	Cringe::CringeSong s(yt_info[0], yt_info[1], yt_info[2], yt_info[3], song, (dpp::slashcommand_t &) event);
 	// Embed letting user know that the bot is playing
 	dpp::message message(event.command.channel_id, now_streaming(s));
+	message.add_component(
+			dpp::component()
+					.add_component(
+							dpp::component()
+									.set_label(dpp::unicode_emoji::pause_button)
+									.set_style(dpp::cos_secondary)
+									.set_id("pause")
+					)
+					.add_component(
+							dpp::component()
+									.set_label(dpp::unicode_emoji::next_track)
+									.set_style(dpp::cos_secondary)
+									.set_id("next")
+					)
+	);
 	bot.message_create(message);
 	// Ephemeral embed saying that the command is playing. All events must be responded to
 	dpp::message msg(event.command.channel_id, added_to_queue_embed(s));

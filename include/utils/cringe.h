@@ -118,6 +118,14 @@ namespace Cringe {
 		std::string BOT_TOKEN;
 	};
 
+	class CringeFilter {
+	public:
+		const std::string VAPORWAVE = "\"highpass=f=50, lowpass=f=2750, aresample=48000, asetrate=48000*0.85,bass=g=5:f=110:w=0.6, compand=attacks=0:points=-80/-169|-54/-80|-49.5/-64.6|-41.1/-41.1|-25.8/-15|-10.8/-4.5|0/0|20/8.3\"";
+		const std::string INTHEBATHROOM = "\"highpass=f=10, lowpass=f=400, aresample=44100, asetrate=44100*0.85,bass=g=4:f=110:w=0.6, alimiter=1, compand=attacks=0:points=-80/-169|-54/-80|-49.5/-64.6|-41.1/-41.1|-25.8/-15|-10.8/-4.5|0/0|20/8.3\"";
+		const std::string NIGHTCORE = "\"aresample=48000, asetrate=48000*1.5\"";
+		const std::string BASSBOOST = "\"bass=g=14\"";
+	};
+
 }
 
 #endif //CRINGE_CRINGE_H

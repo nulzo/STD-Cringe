@@ -36,6 +36,6 @@ dpp::slashcommand chat_declaration() {
 void chat_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 	std::string prompt = std::get<std::string>(event.get_parameter("prompt"));
 	event.thinking();
-	std::string response = open_ai_api(prompt, "250", "gpt-3.5-turbo-1106");
+	std::string response = open_ai_api(prompt, "250", "gpt-4");
 	event.edit_original_response(response);
 }

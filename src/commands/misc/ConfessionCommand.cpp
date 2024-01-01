@@ -26,7 +26,7 @@
 #include "commands/misc/ConfessionCommand.h"
 
 dpp::slashcommand confession_declaration() {
-	return dpp::slashcommand().set_name("confess").set_description("Confess to your sins (anonymously)").add_option(dpp::command_option(dpp::co_string, "confession", "Your confession"));
+	return dpp::slashcommand().set_name("confess").set_description("Confess to your sins (anonymously)").add_option(dpp::command_option(dpp::co_string, "confession", "Your confession", true));
 }
 
 void confession_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
