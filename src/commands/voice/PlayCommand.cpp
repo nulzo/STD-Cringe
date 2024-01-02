@@ -156,7 +156,7 @@ void play_command(dpp::cluster &bot, const dpp::slashcommand_t &event, Cringe::C
 		song = Cringe::CringeAudio::query_to_url(song);
 	}
 
-	// Define the regular expression pattern to see if this is a youtube playlist
+	// Define the regular expression pattern to see if this is a YouTube playlist
 	std::regex pattern("&(start_radio=|list=)");
 
 	// Check if it is a YouTube playlist
@@ -167,7 +167,7 @@ void play_command(dpp::cluster &bot, const dpp::slashcommand_t &event, Cringe::C
 		const char * subp = subprocess.c_str();
 		std::string result;
 		// Read the output of the command into a string
-		char buffer[1024];
+		char buffer[4096];
 		// Open a pipe to run the command
 		FILE* pipe = popen(subp, "r");
 		if (!pipe) {
@@ -193,12 +193,14 @@ void play_command(dpp::cluster &bot, const dpp::slashcommand_t &event, Cringe::C
 			songs.push_back(playlist_entry);
 		}
 
+		song = songs[0];
+
 		// Display the elements in the vector
 		for (const auto& elsong : songs) {
 			// Get the YouTube upload info from the url given
 			std::vector<std::string> yt_info = Cringe::CringeAudio::get_yt_info(elsong);
 			// Make a new song to store to the queue
-			Cringe::CringeSong s(yt_info[0], yt_info[1], yt_info[2], yt_info[3], song, (dpp::slashcommand_t &) event);
+			Cringe::CringeSong s(yt_info[0], yt_info[1], yt_info[2], yt_info[3], elsong, (dpp::slashcommand_t &) event);
 			// Add song to the queue
 			queue.enqueue(s);
 			std::cout << "\n\nQUEUEING\n\n" << s.get_title() << "\n\n";
@@ -206,11 +208,13 @@ void play_command(dpp::cluster &bot, const dpp::slashcommand_t &event, Cringe::C
 		// Reply to the event letting the issuer know the song was queued
 		dpp::message message(event.command.channel_id, "Your playlist was added!");
 		event.edit_original_response(message);
-		return;
+		// Check if song is currently playing
+		if (voice->voiceclient->is_playing()) {
+			return;
+		}
 	}
-
 	// Check if queue is not empty (or if song is currently playing)
-	if (!queue.is_empty() || voice->voiceclient->is_playing()) {
+	else if (!queue.is_empty() || voice->voiceclient->is_playing()) {
 		// Get the YouTube upload info from the url given
 		std::vector<std::string> yt_info = Cringe::CringeAudio::get_yt_info(song);
 		// Make a new song to store to the queue
