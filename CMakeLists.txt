@@ -38,7 +38,6 @@ add_executable(${PROJECT_NAME}
         src/commands/api/RedditCommand.cpp
         src/commands/api/ImageCommand.cpp
         include/commands/api/ImageCommand.h
-        src/utils/audio/CringeAudioSource.cpp
 )
 
 include(FindPackageHandleStandardArgs)

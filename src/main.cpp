@@ -43,7 +43,7 @@ int main() {
 	log_on_start();
 	get_env("BOT_TOKEN", BOT_TOKEN);
 
-	dpp::cluster bot(BOT_TOKEN, dpp::i_default_intents | dpp::i_message_content);
+	dpp::cluster bot(BOT_TOKEN, dpp::i_default_intents | dpp::i_message_content, 2);
 	std::shared_ptr<spdlog::logger> cringe_logger = cringe_logging();
 
 	bot.on_log([&cringe_logger](const dpp::log_t &event) {
