@@ -34,8 +34,26 @@ dpp::slashcommand chat_declaration() {
 }
 
 void chat_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
+	event.thinking(true);
 	std::string prompt = std::get<std::string>(event.get_parameter("prompt"));
-	event.thinking();
-	std::string response = open_ai_api(prompt, "250", "gpt-4");
-	event.edit_original_response(response);
+	std::string data;
+	std::vector<std::string> result;
+	std::string response = open_ai_api(prompt, "1000", "gpt-3.5-turbo-1106");
+	std::istringstream stream(response);
+	// Loop over the string, splitting at 2k
+	if (response.length() >= 2000) {
+		while (std::getline(stream, data, '\n')) {
+			result.push_back(data);
+		}
+		for (const auto &substring: result) {
+			dpp::message msg(event.command.channel.id, substring);
+			bot.message_create(msg);
+		}
+	} else {
+		dpp::message msg(event.command.channel_id, response);
+		std::cout << "\n" << event.command.channel.id << "\n";
+		bot.message_create(msg);
+	}
+	dpp::message msg(event.command.channel.id, "Your prompt was sent!");
+	event.edit_original_response(msg);
 }

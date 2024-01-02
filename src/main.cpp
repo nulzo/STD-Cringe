@@ -31,6 +31,7 @@
 #include "commands/voice/SkipCommand.h"
 #include "commands/misc/ConfessionCommand.h"
 #include "commands/api/RedditCommand.h"
+#include "commands/api/ImageCommand.h"
 #include "commands/api/api.h"
 #include "utils/logger.h"
 #include "utils/cringe.h"
@@ -75,6 +76,8 @@ int main() {
 			confession_command(bot, event);
 		} else if (event.command.get_command_name() == "reddit") {
 			reddit_command(bot, event);
+		} else if (event.command.get_command_name() == "image") {
+			image_command(bot, event);
 		}
 		log_end_slash(event.command.get_command_name(), event.command.usr.global_name, cringe_logger);
 	});
@@ -121,7 +124,8 @@ int main() {
 							queue_declaration(),
 							skip_declaration(),
 							confession_declaration(),
-							reddit_declaration()
+							reddit_declaration(),
+							image_declaration()
 					}
 			};
 			bot.global_bulk_command_create(commands);

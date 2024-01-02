@@ -12,6 +12,6 @@ dpp::embed now_streaming(Cringe::CringeSong song);
 dpp::embed info_embed(const std::string& title, const std::string& response, const std::string& avatar_url, const std::string& mention, const std::string& created, const std::string& joined_at, const std::string& premium, const std::string& nitro, const std::string& bot);
 dpp::embed generic_embed(const std::string &icon, const std::string &title, const std::string &description, int status);
 dpp::embed added_to_queue_embed(Cringe::CringeSong song);
-dpp::embed confession_embed(std::string confession);
+dpp::embed confession_embed(const std::string& confession);
 
 #endif //CRINGE_EMBEDS_H

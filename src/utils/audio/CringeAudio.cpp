@@ -35,13 +35,11 @@ extern "C" {
 #include <opus/opus.h>
 }
 
-bool Cringe::CringeAudio::is_yt_url(const std::string &query) {
-	// Regular expression to determine if a given url is from youtube
-	std::regex youtube_regex(
-			R"(^(?:(?:https?:)?\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11}))");
+bool Cringe::CringeAudio::is_url(const std::string &query) {
+	// Regular expression to determine if a given query is a URL
+	std::regex url_regex(R"(^(https?|ftp):\/\/[^\s/$.?#].[^\s]*)");
 	// Match the user query against the regular expression definition
-	bool is_youtube_link = std::regex_match(query, youtube_regex);
-	return (is_youtube_link);
+	return std::regex_match(query, url_regex);
 }
 
 std::vector<std::string> Cringe::CringeAudio::get_yt_info(std::string song) {
@@ -51,7 +49,7 @@ std::vector<std::string> Cringe::CringeAudio::get_yt_info(std::string song) {
 	std::vector<std::string> yt_data;
 	std::string data;
 	// string that gets all the information about the song
-	std::string cmd = fmt::format("yt-dlp --print title --print artist --print thumbnail --print duration \"{}\"", song);
+	std::string cmd = fmt::format("yt-dlp --print title --print uploader --print thumbnail --print duration \"{}\"", song);
 	// Get the YouTube video thumbnail, author info, and song info
 	FILE *pipe = popen(cmd.c_str(), "r");
 	// Check that the pipe was opened successfully

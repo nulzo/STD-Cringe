@@ -47,8 +47,16 @@ void skip_command(dpp::cluster &bot, const dpp::slashcommand_t &event, Cringe::C
 		return;
 	}
 
-	if (queue.is_empty()) {
+	if (queue.is_empty() && !v->voiceclient->is_playing()) {
 		dpp::message message(event.command.channel_id, status_embed("CringeError::VoiceError", "There is no song to skip.", Cringe::CringeStatus::ERROR));
+		event.edit_original_response(message);
+		return;
+	}
+
+	if (v->voiceclient->is_playing()) {
+		v->voiceclient->skip_to_next_marker();
+		embed.set_title("Skipped song").set_color(Cringe::CringeColor::CringeSuccess).set_description("Successfully skipped song. Playing next in queue").set_timestamp(time(nullptr)).set_thumbnail(Cringe::CringeIcon::SuccessIcon);
+		dpp::message message(event.command.channel_id, embed);
 		event.edit_original_response(message);
 		return;
 	}

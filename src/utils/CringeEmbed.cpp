@@ -76,7 +76,7 @@ dpp::embed generic_embed(const std::string &icon, const std::string &title, cons
 	return embed;
 }
 
-dpp::embed confession_embed(std::string confession) {
+dpp::embed confession_embed(const std::string& confession) {
 	dpp::embed embed;
 	embed.set_color(Cringe::CringeColor::CringeIndigo);
 	embed.set_title("Anonymous Confession");
@@ -122,7 +122,7 @@ dpp::embed now_streaming(Cringe::CringeSong song){
 	// Set the image to the thumbnail of the YT video
 	embed.set_image(song.get_thumbnail());
 	// Set the color of the embed
-	embed.set_color(Cringe::CringeColor::CringeBlack);
+	embed.set_color(Cringe::CringeColor::CringeOrange);
 	// Set the footer to tell the server who requested the song
 	embed.set_footer(footer, event.command.usr.get_avatar_url());
 	// Add a timestamp to the embed

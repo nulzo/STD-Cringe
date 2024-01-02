@@ -40,11 +40,21 @@ namespace Cringe {
 		const int CringeBlack = 0x1E2124;
 	}
 
+	class CringeAudioSource {
+	public:
+		CringeAudioSource(std::string url, dpp::slashcommand_t &event);
+		std::string get_url();
+		dpp::slashcommand_t get_event();
+	private:
+		std::string url;
+		dpp::slashcommand_t event;
+	};
+
 	class CringeAudio {
 	public:
 		static std::vector<std::string> get_yt_info(std::string song);
 
-		static bool is_yt_url(const std::string &query);
+		static bool is_url(const std::string &query);
 
 		static std::string get_encoded_url(std::string song);
 
