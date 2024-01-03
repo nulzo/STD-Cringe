@@ -40,25 +40,16 @@ extern "C" {
 #include <opus/opus.h>
 }
 
-dpp::slashcommand play_declaration() {
-	return dpp::slashcommand()
-			.set_name("play")
-			.set_description("Play a song in the voice channel you are in")
-			.add_option(dpp::command_option(dpp::co_string, "song", "Song you wish to stream (either query or URL)", true))
-			.add_option(dpp::command_option(dpp::co_string, "filter", "Filter to apply to the song", false)
-								.add_choice(dpp::command_option_choice("Bass Boosted", std::string("bassboost")))
-								.add_choice(dpp::command_option_choice("Vaporwave", std::string("vaporwave")))
-								.add_choice(dpp::command_option_choice("Nightcore", std::string("nightcore")))
-								.add_choice(dpp::command_option_choice("In The Bathroom", std::string("bathroom")))
-								.add_choice(dpp::command_option_choice("Lofi", std::string("lofi")))
-								.add_choice(dpp::command_option_choice("DIM", std::string("dim"))));
-}
+//  ====================  AUXILIARY FUNCTIONS ====================
 
 void play_callback(dpp::cluster &bot, Cringe::CringeSong song) {
-	std::string filter;
 	Cringe::CringeFilter cringe_filter;
 	std::string parameter;
 	dpp::slashcommand_t event = song.get_event();
+	std::string guild;
+	std::string channel;
+	get_env("GUILD", guild);
+	get_env("MUSIC_CHANNEL", channel);
 
 	// Get the voice channel the bot is in, in this current guild.
 	dpp::voiceconn *voice = event.from->get_voice(event.command.guild_id);
@@ -69,21 +60,11 @@ void play_callback(dpp::cluster &bot, Cringe::CringeSong song) {
 		return;
 	}
 
-	// Get a filter (if one was given)
-	auto check = event.get_parameter("filter");
-	if (check.index() > 0) {
-		parameter = std::get<std::string>(check);
-		if (parameter == "bassboost") filter = cringe_filter.BASSBOOST;
-		if (parameter == "vaporwave") filter = cringe_filter.VAPORWAVE;
-		if (parameter == "nightcore") filter = cringe_filter.NIGHTCORE;
-		if (parameter == "bathroom") filter = cringe_filter.INTHEBATHROOM;
-	}
-
 	// Set the url and codec, piping the audio with ffmpeg
 	std::string song_streamer = Cringe::CringeAudio::search_command(song.get_url());
 
 	// Add filter (if applicable)
-	if (!filter.empty()) song_streamer += fmt::format(" -vn -filter_complex {}", filter);
+	if (!song.get_filter().empty()) song_streamer += fmt::format(" -vn -filter_complex {}", song.get_filter());
 
 	// Convert to a c string
 	const char *audio_codec = song_streamer.c_str();
@@ -94,9 +75,16 @@ void play_callback(dpp::cluster &bot, Cringe::CringeSong song) {
 	// Subprocess fork that runs our ffmpeg piped audio
 	auto pipe = popen(audio_codec, "r");
 
-	// Send an embed letting user know that the bot is playing
-	dpp::message message(1081850403920035931, now_streaming(song));
-	bot.message_create(message);
+	// Send in proper channel
+	if (event.command.guild_id.str() == guild) {
+		dpp::message message(channel, now_streaming(song));
+		// Send the embed
+		bot.message_create(message);
+	} else {
+		dpp::message message(event.command.channel_id, now_streaming(song));
+		// Send the embed
+		bot.message_create(message);
+	}
 
 	// Bytes from output
 	size_t bytes_read;
@@ -122,7 +110,7 @@ void ffmpeg_streamer(dpp::voiceconn *voice, const char* process, dpp::cluster &b
 	get_env("MUSIC_CHANNEL", channel);
 	// We need to set this otherwise the bot attempts to send all packets at once
 	// Note: This is expensive!!! Might need to figure out another way...
-	 voice->voiceclient->set_send_audio_type(dpp::discord_voice_client::satype_overlap_audio);
+	voice->voiceclient->set_send_audio_type(dpp::discord_voice_client::satype_overlap_audio);
 	// buf to store contents
 	std::byte buf[11520];
 	// Subprocess fork that runs our ffmpeg piped audio
@@ -185,10 +173,27 @@ void playlist_streamer(std::string song, Cringe::CringeQueue &queue, const dpp::
 		// Get the YouTube upload info from the url given
 		std::vector<std::string> yt_info = Cringe::CringeAudio::get_yt_info(playlist_entry);
 		// Make a new song to store to the queue
-		Cringe::CringeSong s(yt_info[0], yt_info[1], yt_info[2], yt_info[3], playlist_entry, (dpp::slashcommand_t &) event);
+//		Cringe::CringeSong s(yt_info[0], yt_info[1], yt_info[2], yt_info[3], playlist_entry, (dpp::slashcommand_t &) event);
 		// Add song to the queue
-		queue.enqueue(s);
+//		queue.enqueue(s);
 	}
+}
+
+//  =================  END AUXILIARY FUNCTIONS ===================
+
+
+dpp::slashcommand play_declaration() {
+	return dpp::slashcommand()
+			.set_name("play")
+			.set_description("Play a song in the voice channel you are in")
+			.add_option(dpp::command_option(dpp::co_string, "song", "Song you wish to stream (either query or URL)", true))
+			.add_option(dpp::command_option(dpp::co_string, "filter", "Filter to apply to the song", false)
+								.add_choice(dpp::command_option_choice("Bass Boosted", std::string("bassboost")))
+								.add_choice(dpp::command_option_choice("Vaporwave", std::string("vaporwave")))
+								.add_choice(dpp::command_option_choice("Nightcore", std::string("nightcore")))
+								.add_choice(dpp::command_option_choice("In The Bathroom", std::string("bathroom")))
+								.add_choice(dpp::command_option_choice("Lofi", std::string("lofi")))
+								.add_choice(dpp::command_option_choice("DIM", std::string("dim"))));
 }
 
 void play_command(dpp::cluster &bot, const dpp::slashcommand_t &event, Cringe::CringeQueue &queue) {
@@ -254,7 +259,7 @@ void play_command(dpp::cluster &bot, const dpp::slashcommand_t &event, Cringe::C
 		// Get the YouTube upload info from the url given
 		std::vector<std::string> yt_info = Cringe::CringeAudio::get_yt_info(song);
 		// Make a new song to store to the queue
-		Cringe::CringeSong s(yt_info[0], yt_info[1], yt_info[2], yt_info[3], song, (dpp::slashcommand_t &) event);
+		Cringe::CringeSong s(yt_info[0], yt_info[1], yt_info[2], yt_info[3], filter, song, (dpp::slashcommand_t &) event);
 		// Add song to the queue
 		queue.enqueue(s);
 		// Reply to the event letting the issuer know the song was queued
@@ -271,6 +276,6 @@ void play_command(dpp::cluster &bot, const dpp::slashcommand_t &event, Cringe::C
 	// Get the song information from the command
 	std::vector<std::string> yt_info = Cringe::CringeAudio::get_yt_info(song);
 	// Create a new song object and populate it with our new information
-	Cringe::CringeSong s(yt_info[0], yt_info[1], yt_info[2], yt_info[3], song, (dpp::slashcommand_t &) event);
+	Cringe::CringeSong s(yt_info[0], yt_info[1], yt_info[2], yt_info[3], filter, song, (dpp::slashcommand_t &) event);
 	ffmpeg_streamer(voice, audio_codec, bot, event, s);
 }

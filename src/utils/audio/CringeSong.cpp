@@ -47,30 +47,14 @@ std::string Cringe::CringeSong::get_url() {
 	return url;
 }
 
+std::string Cringe::CringeSong::get_filter() {
+	return filter;
+}
+
 dpp::slashcommand_t Cringe::CringeSong::get_event() {
 	return event;
 }
 
-void Cringe::CringeSong::set_title(std::string t) {
-	title = std::move(t);
-}
-
-void Cringe::CringeSong::set_artist(std::string a) {
-	artist = std::move(a);
-}
-
-void Cringe::CringeSong::set_thumbnail(std::string tn) {
-	thumbnail = std::move(tn);
-}
-
-void Cringe::CringeSong::set_formatted_duration(std::string fd) {
-	duration = std::move(fd);
-}
-
-void Cringe::CringeSong::set_url(std::string u) {
-	url = std::move(u);
-}
-
-Cringe::CringeSong::CringeSong(std::string title, std::string artist, std::string thumbnail, std::string duration, std::string url, dpp::slashcommand_t &event)
-		: title(std::move(title)), artist(std::move(artist)), thumbnail(std::move(thumbnail)), duration(std::move(duration)), url(std::move(url)), event(std::move(event)) {}
+Cringe::CringeSong::CringeSong(std::string title, std::string artist, std::string thumbnail, std::string duration, std::string filter, std::string url, dpp::slashcommand_t &event)
+		: title(std::move(title)), artist(std::move(artist)), thumbnail(std::move(thumbnail)), duration(std::move(duration)), filter(std::move(filter)), url(std::move(url)), event(std::move(event)) {}
 

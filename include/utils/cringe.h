@@ -67,7 +67,7 @@ namespace Cringe {
 
 	class CringeSong {
 	public:
-		CringeSong(std::string title, std::string artist, std::string thumbnail, std::string duration, std::string url,
+		CringeSong(std::string title, std::string artist, std::string thumbnail, std::string duration, std::string filter, std::string url,
 				   dpp::slashcommand_t &event);
 
 		std::string get_title();
@@ -80,19 +80,9 @@ namespace Cringe {
 
 		std::string get_url();
 
+		std::string get_filter();
+
 		dpp::slashcommand_t get_event();
-
-		void set_title(std::string t);
-
-		void set_artist(std::string a);
-
-		void set_thumbnail(std::string tn);
-
-		void set_formatted_duration(std::string fd);
-
-		void set_url(std::string u);
-
-		void set_event(dpp::slashcommand_t &e);
 
 	private:
 		std::string title;
@@ -101,6 +91,7 @@ namespace Cringe {
 		std::string duration;
 		std::string url;
 		dpp::slashcommand_t event;
+		std::string filter;
 	};
 
 	class CringeQueue {
@@ -133,7 +124,7 @@ namespace Cringe {
 		const std::string VAPORWAVE = "\"highpass=f=50, lowpass=f=2750, aresample=48000, asetrate=48000*0.85,bass=g=5:f=110:w=0.6, compand=attacks=0:points=-80/-169|-54/-80|-49.5/-64.6|-41.1/-41.1|-25.8/-15|-10.8/-4.5|0/0|20/8.3\"";
 		const std::string INTHEBATHROOM = "\"highpass=f=10, lowpass=f=400, aresample=44100, asetrate=44100*0.85,bass=g=4:f=110:w=0.6, alimiter=1, compand=attacks=0:points=-80/-169|-54/-80|-49.5/-64.6|-41.1/-41.1|-25.8/-15|-10.8/-4.5|0/0|20/8.3\"";
 		const std::string NIGHTCORE = "\"aresample=48000, asetrate=48000*1.5\"";
-		const std::string BASSBOOST = "\"bass=g=15:f=110:w=0.3\"";
+		const std::string BASSBOOST = "\"bass=g=20:f=110:w=0.3\"";
 		const std::string DIM = "apulsator=hz=0.09";
 		const std::string LOFI = "aresample=48000,asetrate=48000*0.9,extrastereo=m=2.5:c=disabled";
 		const std::string NOSILENCE = "\"silenceremove=1:0:-50dB\"";
