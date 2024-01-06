@@ -1,0 +1,3 @@
+/home/bruh/Desktop/STD-Cringe/cmake-build/CMakeFiles/cringe.dir
+/home/bruh/Desktop/STD-Cringe/cmake-build/CMakeFiles/edit_cache.dir
+/home/bruh/Desktop/STD-Cringe/cmake-build/CMakeFiles/rebuild_cache.dir

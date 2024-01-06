@@ -1,0 +1,16 @@
+sudo add-apt-repository universe
+sudo apt-get update
+sudo apt-get install libssl-dev
+sudo apt install libfmt-dev
+sudo apt-get install libssl-dev
+sudo apt-get install g++
+sudo apt-get install cmake
+sudo apt-get install ffmpeg
+sudo apt-get install libspdlog-dev
+sudo apt install wget
+wget -O dpp.deb https://dl.dpp.dev/
+sudo dpkg -i dpp.deb
+
+sudo apt-get install opus-tools
+sudo apt-get install libopus-dev libspdlog-dev libfmt-dev libssl-dev libavformat-dev libavcodec-dev libavutil-dev libavfilter-dev
+sudo apt-get install libcurl4-openssl-dev
