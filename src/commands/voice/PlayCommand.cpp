@@ -32,6 +32,7 @@
 #include "utils/util.h"
 #include <sstream>
 #include <thread>
+#include <future>
 
 extern "C" {
 #include <libavformat/avformat.h>
@@ -103,31 +104,13 @@ void play_callback(dpp::cluster &bot, Cringe::CringeSong song) {
 	pclose(pipe);
 }
 
-void ffmpeg_streamer(dpp::voiceconn *voice, const char* process, dpp::cluster &bot, const dpp::slashcommand_t &event, Cringe::CringeSong song) {
-	std::string guild;
-	std::string channel;
-	get_env("GUILD", guild);
-	get_env("MUSIC_CHANNEL", channel);
+void ffmpeg_streamer(dpp::voiceconn *voice, const char* process) {
 	// We need to set this otherwise the bot attempts to send all packets at once
 	// Note: This is expensive!!! Might need to figure out another way...
 	voice->voiceclient->set_send_audio_type(dpp::discord_voice_client::satype_overlap_audio);
-	// buf to store contents
-	std::byte buf[11520];
-	// Subprocess fork that runs our ffmpeg piped audio
 	auto pipe = popen(process, "r");
-	// Send in proper channel
-	if (event.command.guild_id.str() == guild) {
-		dpp::message message(channel, now_streaming(song));
-		// Send the embed
-		bot.message_create(message);
-	} else {
-		dpp::message message(event.command.channel_id, now_streaming(song));
-		// Send the embed
-		bot.message_create(message);
-	}
-	// Ephemeral embed saying that the command is playing. All events must be responded to
-	dpp::message msg(event.command.channel_id, added_to_queue_embed(song));
-	event.edit_original_response(msg);
+//	 buf to store contents
+	std::byte buf[11520];
 	// Bytes from output
 	size_t bytes_read;
 	// Get audio from song and pipe to discord
@@ -142,6 +125,7 @@ void ffmpeg_streamer(dpp::voiceconn *voice, const char* process, dpp::cluster &b
 		}
 	}
 	voice->voiceclient->insert_marker();
+
 	pclose(pipe);
 }
 
@@ -204,6 +188,11 @@ void play_command(dpp::cluster &bot, const dpp::slashcommand_t &event, Cringe::C
 	std::string filter;
 	Cringe::CringeFilter cringe_filter;
 	std::string parameter;
+	std::string guild;
+	std::string channel;
+
+	get_env("GUILD", guild);
+	get_env("MUSIC_CHANNEL", channel);
 
 	// Set the bot to thinking. This gives us a bit more time to reply to the interaction
 	event.thinking(true);
@@ -277,5 +266,19 @@ void play_command(dpp::cluster &bot, const dpp::slashcommand_t &event, Cringe::C
 	std::vector<std::string> yt_info = Cringe::CringeAudio::get_yt_info(song);
 	// Create a new song object and populate it with our new information
 	Cringe::CringeSong s(yt_info[0], yt_info[1], yt_info[2], yt_info[3], filter, song, (dpp::slashcommand_t &) event);
-	ffmpeg_streamer(voice, audio_codec, bot, event, s);
+	std::thread t(ffmpeg_streamer, voice, audio_codec);
+	// Send in proper channel
+	if (event.command.guild_id.str() == guild) {
+		dpp::message message(channel, now_streaming(s));
+		// Send the embed
+		bot.message_create(message);
+	} else {
+		dpp::message message(event.command.channel_id, now_streaming(s));
+		// Send the embed
+		bot.message_create(message);
+	}
+	// Ephemeral embed saying that the command is playing. All events must be responded to
+	dpp::message msg(event.command.channel_id, added_to_queue_embed(s));
+	event.edit_original_response(msg);
+	t.detach();
 }

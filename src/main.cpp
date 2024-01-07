@@ -43,7 +43,7 @@ int main() {
 	log_on_start();
 	get_env("BOT_TOKEN", BOT_TOKEN);
 
-	dpp::cluster bot(BOT_TOKEN, dpp::i_default_intents | dpp::i_message_content, 2);
+	dpp::cluster bot(BOT_TOKEN, dpp::i_default_intents | dpp::i_message_content);
 	std::shared_ptr<spdlog::logger> cringe_logger = cringe_logging();
 
 	bot.on_log([&cringe_logger](const dpp::log_t &event) {
@@ -63,7 +63,9 @@ int main() {
 		} else if (event.command.get_command_name() == "join") {
 			join_command(bot, event);
 		} else if (event.command.get_command_name() == "play") {
-			play_command(bot, event, queue);
+			std::thread t(play_command, std::ref(bot), event, std::ref(queue));
+//			play_command(bot, event, queue);
+			t.detach();
 		} else if (event.command.get_command_name() == "message") {
 			message_command(bot, event);
 		} else if (event.command.get_command_name() == "ethan") {

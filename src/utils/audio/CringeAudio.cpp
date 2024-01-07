@@ -94,7 +94,7 @@ std::string Cringe::CringeAudio::get_encoded_url(std::string song) {
 }
 
 std::string Cringe::CringeAudio::search_command(std::string search) {
-	return fmt::format(R"(yt-dlp -f bestaudio -q --ignore-errors -o - "{}" | ffmpeg -i pipe:0 -f s16le -ac 2 -ar 48000 pipe:1)", search);
+	return fmt::format(R"(yt-dlp -f bestaudio -o - "{}" | ffmpeg -i pipe:0 -loglevel warning -f s16le -ac 2 -ar 48000 pipe:1)", search);
 }
 
 std::string Cringe::CringeAudio::query_to_url(std::string query) {
