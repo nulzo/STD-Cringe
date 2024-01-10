@@ -9,6 +9,6 @@
 #include "utils/cringe.h"
 
 void process_slashcommand(const dpp::slashcommand_t &event,  dpp::cluster &bot, Cringe::CringeQueue &queue);
-void register_slashcommand(dpp::cluster &bot);
+void register_slashcommands(dpp::cluster &bot);
 
 #endif //CRINGE_SLASHCOMMANDLISTENER_H

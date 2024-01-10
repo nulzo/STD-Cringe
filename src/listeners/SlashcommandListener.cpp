@@ -58,7 +58,7 @@ void process_slashcommand(const dpp::slashcommand_t &event,  dpp::cluster &bot, 
 	}
 }
 
-void register_slashcommand(dpp::cluster &bot) {
+void register_slashcommands(dpp::cluster &bot) {
 	std::vector<dpp::slashcommand> commands{
 			{
 					info_declaration(),

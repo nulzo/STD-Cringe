@@ -85,11 +85,10 @@ int main() {
 	bot.on_ready([&bot]([[maybe_unused]] const dpp::ready_t &event) {
 		/* Create a new global command on ready event */
 		if (dpp::run_once<struct register_bot_commands>()) {
-			register_slashcommand(bot);
+			register_slashcommands(bot);
 		}
 	});
 
 	bot.start(dpp::st_wait);
-
 	return 0;
 }
