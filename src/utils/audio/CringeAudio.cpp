@@ -69,30 +69,6 @@ std::vector<std::string> Cringe::CringeAudio::get_yt_info(std::string song) {
 	return yt_data;
 }
 
-
-std::string Cringe::CringeAudio::get_encoded_url(std::string song) {
-	// Allocate c style buf to store result of command
-	char buffer[128];
-	// Var to store processed URL
-	std::string URL;
-	// Get the command to extract the URL
-	std::string command = fmt::format("yt-dlp --get-url -f bestaudio \"{}\"", song);
-	// Convert to a C-string
-	const char *cmd = command.c_str();
-	// Open the pipe to process to command
-	FILE *pipe = popen(cmd, "r");
-	// Check that the pipe was opened successfully
-	if (!pipe) {
-		std::cerr << "Error opening pipe" << std::endl;
-	}
-	// Write contents of stdout buf to c++ style string
-	while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
-		URL += buffer;
-	}
-	// Return the URL
-	return URL;
-}
-
 std::string Cringe::CringeAudio::search_command(std::string search) {
 	return fmt::format(R"(yt-dlp -f bestaudio -o - "{}" | ffmpeg -i pipe:0 -loglevel warning -f s16le -ac 2 -ar 48000 pipe:1)", search);
 }
@@ -114,6 +90,29 @@ std::string Cringe::CringeAudio::query_to_url(std::string query) {
 	}
 	// Return the URL
 	return URL;
+}
+
+void Cringe::CringeAudio::cringe_streamer(const std::string &ffmpeg_data, dpp::voiceconn *voice) {
+	// We need to set this otherwise the bot attempts to send all packets at once
+	// Note: This is expensive!!! Might need to figure out another way...
+	voice->voiceclient->set_send_audio_type(dpp::discord_voice_client::satype_overlap_audio);
+	// buf to store contents
+	std::byte buf[11520];
+	// Subprocess fork that runs our ffmpeg piped audio
+	auto pipe = popen(ffmpeg_data.c_str(), "r");
+	// Bytes from output
+	size_t bytes_read;
+	// Get audio from song and pipe to discord
+	while ((bytes_read = fread(buf, sizeof(std::byte), dpp::send_audio_raw_max_length, pipe)) > 0) {
+		if (bytes_read >= dpp::send_audio_raw_max_length) {
+			// Send audio data if cringe is in an on-ready state
+			if (voice->voiceclient && voice->voiceclient->is_ready()) {
+				voice->voiceclient->send_audio_raw((uint16_t *) buf, sizeof(buf));
+			}
+		}
+	}
+	voice->voiceclient->insert_marker();
+	pclose(pipe);
 }
 
 std::string Cringe::CringeAudio::sanitize_query(std::string query) {

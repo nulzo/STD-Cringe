@@ -41,6 +41,9 @@ add_executable(${PROJECT_NAME}
         include/commands/api/TalkCommand.h
         src/commands/api/TalkCommand.cpp
         include/commands/api/ChatCommand.h
+        include/commands/api/UserCommand.h
+        src/listeners/SlashcommandListener.cpp
+        include/listeners/SlashcommandListener.h
 )
 
 include(FindPackageHandleStandardArgs)

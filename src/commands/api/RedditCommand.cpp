@@ -22,7 +22,6 @@
  * SOFTWARE.
  */
 
-#include "commands/api/api.h"
 #include "utils/util.h"
 #include "utils/embed.h"
 

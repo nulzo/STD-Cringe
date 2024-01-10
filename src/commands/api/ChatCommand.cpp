@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-#include "commands/api/api.h"
+#include "commands/api/ChatCommand.h"
 #include "utils/util.h"
 #include "utils/embed.h"
 

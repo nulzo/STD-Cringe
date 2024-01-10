@@ -23,6 +23,7 @@
  */
 
 #include "utils/util.h"
+#include "utils/cringe.h"
 
 size_t WriteCallback(void *contents, size_t size, size_t nmemb, std::string *output) {
 	size_t totalSize = size * nmemb;
@@ -82,24 +83,21 @@ std::string get_tts_response(const std::string &prompt) {
 }
 
 std::string get_openai_response(const std::string &prompt, std::string max_tokens, std::string model) {
-	std::string request;
-	std::string response;
 	std::string url;
 	std::string auth;
 	std::string system_role;
-	json response_json;
 	// Load in env info
 	get_env("OPEN_AI_AUTH", auth);
 	get_env("OPEN_AI_ENDPOINT", url);
 	get_env("SYSTEM_ROLE", system_role);
 	auth = fmt::format("Authorization: Bearer {}", auth);
 	// Create the post data for the request
-	request = fmt::format(
+	std::string request = fmt::format(
 			R"({{"model": "{}","messages": [{{"role": "system", "content": "{}" }},{{"role": "user", "content": "{}" }}],"temperature": 1,"max_tokens": {}, "top_p": 1,"frequency_penalty": 0,"presence_penalty": 0 }})",
 			model, system_role, prompt, max_tokens);
 	// Call our function
-	response = curl_request(request, url, {auth});
-	response_json = json::parse(response);
+	std::string response = curl_request(request, url, {auth});
+	json response_json = json::parse(response);
 	return response_json["choices"][0]["message"]["content"];
 }
 

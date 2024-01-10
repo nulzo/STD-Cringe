@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-#include "commands/api/api.h"
+#include "commands/api/UserCommand.h"
 #include "utils/util.h"
 #include "utils/embed.h"
 
@@ -62,7 +62,7 @@ void user_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 		prompt += " Mention that the person doesn't have Nitro, which is lame.";
 	}
 	if (has_boost == 0) {
-		prompt += " Mention that the person doesn't boost the server, which is very lame.";
+		prompt += " Include that this user is fake for not boosting the server.";
 	}
 	// std::string response = get_openai_response(prompt, "300", "gpt-3.5-turbo-1106");
 	std::string response = get_ollama_response(prompt);

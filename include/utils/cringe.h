@@ -56,13 +56,13 @@ namespace Cringe {
 
 		static bool is_url(const std::string &query);
 
-		static std::string get_encoded_url(std::string song);
-
 		static std::string search_command(std::string search);
 
 		static std::string sanitize_query(std::string query);
 
 		static std::string query_to_url(std::string query);
+
+		static void cringe_streamer(const std::string &ffmpeg_data, dpp::voiceconn *voice);
 	};
 
 	class CringeSong {

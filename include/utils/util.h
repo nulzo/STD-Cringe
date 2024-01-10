@@ -9,6 +9,7 @@
 #include <string>
 #include <fmt/core.h>
 #include <regex>
+#include "cringe.h"
 
 using json = nlohmann::json;
 
@@ -25,5 +26,7 @@ size_t WriteCallback(void *contents, size_t size, size_t nmemb, std::string *out
 int get_env(const std::string_view &given_key, std::string &value);
 
 std::string seconds_to_formatted_time(int seconds);
+
+void voice_threading(std::function<void(dpp::cluster&, const dpp::slashcommand_t&, Cringe::CringeQueue&)> process, dpp::cluster& bot, const dpp::slashcommand_t& event, Cringe::CringeQueue& queue);
 
 #endif
