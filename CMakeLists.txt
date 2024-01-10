@@ -38,6 +38,9 @@ add_executable(${PROJECT_NAME}
         src/commands/api/RedditCommand.cpp
         src/commands/api/ImageCommand.cpp
         include/commands/api/ImageCommand.h
+        include/commands/api/TalkCommand.h
+        src/commands/api/TalkCommand.cpp
+        include/commands/api/ChatCommand.h
 )
 
 include(FindPackageHandleStandardArgs)

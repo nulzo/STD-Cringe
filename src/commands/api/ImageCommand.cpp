@@ -48,11 +48,7 @@ std::string image_request(const std::string &prompt) {
 	const char *AUTH = auth.c_str();
 	json_payload = fmt::format(R"({{"model": "dall-e-3", "prompt": "{}", "n": 1, "size": "1024x1024"}})", prompt);
 	request = json_payload.c_str();
-	return_value = get_request(request, URL, AUTH, response);
-	if (return_value != 0) {
-		std::cerr << "ERROR: request failed! Falling back with error!" << std::endl;
-		return "There was an error with the request";
-	}
+//	return_value = get_request(request, URL, AUTH, response);
 	responseJson = json::parse(response);
 	return responseJson["data"][0]["url"];
 }

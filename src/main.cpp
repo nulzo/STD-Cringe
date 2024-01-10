@@ -32,9 +32,18 @@
 #include "commands/misc/ConfessionCommand.h"
 #include "commands/api/RedditCommand.h"
 #include "commands/api/ImageCommand.h"
+#include "commands/api/TalkCommand.h"
 #include "commands/api/api.h"
 #include "utils/logger.h"
 #include "utils/cringe.h"
+#include <csignal>
+
+// Function to handle the SIGINT signal
+void handle_signal(int signal) {
+	std::cout << "Caught SIGINT signal (" << signal << "). Exiting gracefully." << std::endl;
+	// Additional cleanup or handling code can be added here
+	exit(signal);
+}
 
 int main() {
 	std::string BOT_TOKEN;
@@ -42,6 +51,9 @@ int main() {
 
 	log_on_start();
 	get_env("BOT_TOKEN", BOT_TOKEN);
+
+	// Register the signal handler for SIGTERM
+	signal(SIGTERM, handle_signal);
 
 	dpp::cluster bot(BOT_TOKEN, dpp::i_default_intents | dpp::i_message_content);
 	std::shared_ptr<spdlog::logger> cringe_logger = cringe_logging();
@@ -80,6 +92,8 @@ int main() {
 			reddit_command(bot, event);
 		} else if (event.command.get_command_name() == "image") {
 			image_command(bot, event);
+		} else if(event.command.get_command_name() == "talk") {
+			talk_command(bot, event);
 		}
 		log_end_slash(event.command.get_command_name(), event.command.usr.global_name, cringe_logger);
 	});
@@ -127,7 +141,8 @@ int main() {
 							skip_declaration(),
 							confession_declaration(),
 							reddit_declaration(),
-							image_declaration()
+							image_declaration(),
+							talk_declaration()
 					}
 			};
 			bot.global_bulk_command_create(commands);

@@ -24,79 +24,83 @@
 
 #include "utils/util.h"
 
-int get_request(const char *request, const char *URL, const char *auth_header, std::string &response) {
+size_t WriteCallback(void *contents, size_t size, size_t nmemb, std::string *output) {
+	size_t totalSize = size * nmemb;
+	output->append(static_cast<char *>(contents), totalSize);
+	return totalSize;
+}
+
+std::string curl_request(const std::string &post_data, const std::string &url, const std::vector<std::string>& header = {}) {
 	CURL *curl;
 	CURLcode response_code;
+	std::string response;
 	curl_global_init(CURL_GLOBAL_DEFAULT);
 	curl = curl_easy_init();
-
 	if (curl) {
 		struct curl_slist *headers = nullptr;
-
+		// Append the headers to the curl linked list
 		headers = curl_slist_append(headers, "Content-Type: application/json");
-		headers = curl_slist_append(headers, auth_header);
-
-		curl_easy_setopt(curl, CURLOPT_URL, URL);
+		// If the user passed in headers, iterate through and assign them to the linked list
+		if (!header.empty()){
+			for (const std::string& head : header) {
+				headers = curl_slist_append(headers, head.c_str());
+			}
+		}
+		// Set options
+		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, request);
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, post_data.c_str());
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-
 		// Set the response data variable as the cURL write callback data
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
-
 		// Perform the HTTP request
 		response_code = curl_easy_perform(curl);
-
+		// Check if the response was OK
 		if (response_code == CURLE_OK) {
 			curl_easy_cleanup(curl);
 			curl_slist_free_all(headers);
 			curl_global_cleanup();
-			return 0;
+			return response;
 		} else {
 			std::cerr << "cURL request failed: " << curl_easy_strerror(response_code) << std::endl;
-			return -1;
 		}
 	}
-	return -1;
+	return R"({"error": "Request Failed!"})";
 }
 
-std::string open_ai_api(const std::string &prompt, std::string max_tokens, std::string model) {
-	const char *request;
-	int return_value;
+std::string get_ollama_response(const std::string &prompt) {
+	std::string endpoint;
+	std::string model;
+	get_env("OLLAMA_ENDPOINT", endpoint);
+	get_env("OLLAMA_MODEL", model);
+	auto res = json::parse(curl_request(fmt::format(R"({{ "model": "{}", "prompt": "{}", "stream": false }})", model, prompt), endpoint));
+	return res.contains("response") ? res["response"] : res["error"];
+}
+
+std::string get_tts_response(const std::string &prompt) {
+	return curl_request(prompt, "https://play.ht/api/v2/tts/stream");
+}
+
+std::string get_openai_response(const std::string &prompt, std::string max_tokens, std::string model) {
+	std::string request;
 	std::string response;
 	std::string url;
 	std::string auth;
-	std::string json_payload;
 	std::string system_role;
-	json responseJson;
-
+	json response_json;
 	// Load in env info
 	get_env("OPEN_AI_AUTH", auth);
 	get_env("OPEN_AI_ENDPOINT", url);
 	get_env("SYSTEM_ROLE", system_role);
 	auth = fmt::format("Authorization: Bearer {}", auth);
-
-	// To c_strs for cURL
-	const char *URL = url.c_str();
-	const char *AUTH = auth.c_str();
-
-	// Do this on this line and split up the call to .c_str(), otherwise we can accidentally leave a dangling pointer
-	json_payload = fmt::format(
-			R"({{"model": "{}","messages": [{{"role": "system","content": "{}" }},{{"role": "user", "content": "{}" }}],"temperature": 1,"max_tokens": {}, "top_p": 1,"frequency_penalty": 0,"presence_penalty": 0 }})",
+	// Create the post data for the request
+	request = fmt::format(
+			R"({{"model": "{}","messages": [{{"role": "system", "content": "{}" }},{{"role": "user", "content": "{}" }}],"temperature": 1,"max_tokens": {}, "top_p": 1,"frequency_penalty": 0,"presence_penalty": 0 }})",
 			model, system_role, prompt, max_tokens);
-
-	// Set the request body to a c_str since that is what cURL expects
-	request = json_payload.c_str();
-
 	// Call our function
-	return_value = get_request(request, URL, AUTH, response);
-
-	if (return_value != 0) {
-		std::cerr << "ERROR: request failed! Falling back with error!" << std::endl;
-		return "There was an error with the request";
-	}
-	responseJson = json::parse(response);
-	return responseJson["choices"][0]["message"]["content"];
+	response = curl_request(request, url, {auth});
+	response_json = json::parse(response);
+	return response_json["choices"][0]["message"]["content"];
 }
 
 std::string discord_time_to_date(double timestamp) {
@@ -110,12 +114,6 @@ std::string discord_time_to_date(double timestamp) {
 	char buffer[20];
 	std::strftime(buffer, sizeof(buffer), "%d/%m/%Y", timeinfo);
 	return buffer;
-}
-
-size_t WriteCallback(void *contents, size_t size, size_t nmemb, std::string *output) {
-	size_t totalSize = size * nmemb;
-	output->append(static_cast<char *>(contents), totalSize);
-	return totalSize;
 }
 
 int get_env(const std::string_view &given_key, std::string &return_value) {
