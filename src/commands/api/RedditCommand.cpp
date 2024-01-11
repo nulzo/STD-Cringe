@@ -53,7 +53,7 @@ json parse_reddit_response(const std::string &res) {
 	response["media"] = pre_response["media"];
 	response["media_embed"] = pre_response["secure_media_embed"];
 	response["upvotes"] = pre_response["ups"];
-	response["downvotes"] = pre_response["downs"];
+	response["comments"] = pre_response["num_comments"];
 	return response;
 }
 

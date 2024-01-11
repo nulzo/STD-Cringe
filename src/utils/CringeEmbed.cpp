@@ -98,26 +98,37 @@ dpp::embed reddit_embed(json data) {
 	std::string title = data["title"];
 	std::string description = data["description"];
 	int creation = data["time_created"];
-	std::string downvotes = to_string(data["downvotes"]);
+	std::string comments = to_string(data["comments"]);
 	std::string upvotes = to_string(data["upvotes"]);
+	auto media = data["media"];
 	float ratio = data["upvote_ratio"];
 	dpp::embed embed;
 	embed.set_color(Cringe::CringeColor::CringeOrange)
 	.set_title("Cringe Crawler")
 	.set_thumbnail(Cringe::CringeIcon::SnailIcon)
+	.add_field("", "+-----------------------------------------------------------------+")
 	.add_field("Subreddit", subreddit, true)
 	.add_field("Author", author, true)
 	.add_field("Posted", fmt::format("<t:{}:D>", creation), true)
+	.add_field("Comments", comments, true)
 	.add_field("Upvotes", upvotes, true)
-	.add_field("Downvotes", downvotes, true)
-	.add_field("Upvote Ratio", fmt::format("{}%", ratio * 100), true);
+	.add_field("Upvote Ratio", fmt::format("{}%", ratio * 100), true)
+	.add_field("", "+-----------------------------------------------------------------+");
+
 	if (!title.empty()) {
 		embed.add_field("Title", title);
+		embed.add_field("", "+-----------------------------------------------------------------+");
 	}
 	if (!description.empty()) {
 		embed.add_field("Description", description);
+		embed.add_field("", "+-----------------------------------------------------------------+");
 	}
 	embed.set_timestamp(time(nullptr));
+	if(!media.empty() && media.contains("oembed")) {
+		if (media["oembed"].contains("thumbnail_url")){
+			embed.set_image(media["oembed"]["thumbnail_url"]);
+		}
+	}
 	return embed;
 }
 
