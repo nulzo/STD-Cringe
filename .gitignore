@@ -3,3 +3,5 @@ cmake-build-default
 data/
 .idea
 __pycache__
+.DS_Store
+std_cringe.log
