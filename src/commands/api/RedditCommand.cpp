@@ -38,52 +38,31 @@ dpp::slashcommand reddit_declaration() {
 
 }
 
+json parse_reddit_response(const std::string &res) {
+	json pre_response;
+	json response;
+	pre_response = json::parse(res);
+	pre_response = pre_response["data"]["children"][0]["data"];
+	response["subreddit"] = pre_response["subreddit_name_prefixed"];
+	response["title"] = pre_response["title"];
+	response["author"] = pre_response["author"];
+	response["description"] = pre_response["selftext"];
+	response["upvote_ratio"] = pre_response["upvote_ratio"];
+	response["time_created"] = pre_response["created"];
+	response["url"] = pre_response["url"];
+	response["media"] = pre_response["media"];
+	response["media_embed"] = pre_response["secure_media_embed"];
+	response["upvotes"] = pre_response["ups"];
+	response["downvotes"] = pre_response["downs"];
+	return response;
+}
+
 void reddit_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
+	event.thinking();
 	std::string subreddit = std::get<std::string>(event.get_parameter("subreddit"));
 	std::string top = std::get<std::string>(event.get_parameter("top"));
-	std::string URL = fmt::format("https://www.reddit.com/r/{}/top/.json?sort=top&limit=1&t={}", subreddit, top);
-	event.thinking();
-	json responseJson;
-	// Allocate c style buf to store result of command
-	char buffer[128];
-	// Var to store processed URL
-	std::string response;
-	// Get the command to extract the URL
-	std::string command = fmt::format("curl -X GET -L \"{}\"", URL);
-	// Convert to a C-string
-	const char *cmd = command.c_str();
-	// Open the pipe to process to command
-	FILE *pipe = popen(cmd, "r");
-	// Check that the pipe was opened successfully
-	if (!pipe) {
-		std::cerr << "Error opening pipe" << std::endl;
-	}
-	// Write contents of stdout buf to c++ style string
-	while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
-		response += buffer;
-	}
-
-	responseJson = json::parse(response);
-	std::cout << responseJson;
-//
-//	std::cout << responseJson["data"]["children"][0] << "\n";
-//	std::cout << responseJson["data"]["children"][0]["data"]["title"] << "\n";
-
-	std::string title = responseJson["data"]["children"][0]["data"]["title"];
-	std::string author = responseJson["data"]["children"][0]["data"]["author"];
-	std::string description = responseJson["data"]["children"][0]["data"]["selftext"];
-	std::string thumbnail = responseJson["data"]["children"][0]["data"]["thumbnail"];
-	std::string header = fmt::format("r/{} :: {}", subreddit, author);
-	std::string image = responseJson["data"]["children"][0]["data"]["url_overridden_by_dest"];
-
-	dpp::embed e;
-	e.set_thumbnail(thumbnail)
-	.set_color(Cringe::CringeColor::CringeOrange)
-	.set_title("r/" + subreddit)
-	.add_field("Title", title, true)
-	.add_field("Description", description).set_image(image);
-
-	dpp::message msg(event.command.channel_id, e);
-
+	std::string response = get_reddit_response(subreddit, top);
+	json response_data = parse_reddit_response(response);
+	dpp::message msg(event.command.channel_id, reddit_embed(response_data).set_footer(fmt::format("Queried by: {}", event.command.usr.username), event.command.usr.get_avatar_url()));
 	event.edit_original_response(msg);
 }

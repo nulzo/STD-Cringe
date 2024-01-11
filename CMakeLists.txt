@@ -114,7 +114,7 @@ target_link_libraries(${BOT_NAME}
         ${OPENSSL_CRYPTO_LIBRARY}
         ${OPENSSL_SSL_LIBRARY}
         ${CURL_LIBRARIES}
-        fmt::fmt
+        ${FMT_LIBRARIES}
         spdlog::spdlog
         ${DPP_LIBRARIES}
         ${FFMPEG_LIBRARIES}

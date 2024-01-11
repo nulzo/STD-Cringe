@@ -13,5 +13,6 @@ dpp::embed info_embed(const std::string& title, const std::string& response, con
 dpp::embed generic_embed(const std::string &icon, const std::string &title, const std::string &description, int status);
 dpp::embed added_to_queue_embed(Cringe::CringeSong song);
 dpp::embed confession_embed(const std::string& confession);
+dpp::embed reddit_embed(nlohmann::json data);
 
 #endif //CRINGE_EMBEDS_H

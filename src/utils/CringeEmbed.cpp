@@ -25,7 +25,6 @@
 #include "utils/embed.h"
 #include "utils/cringe.h"
 #include "utils/util.h"
-#include <iomanip>
 #include "fmt/format.h"
 
 dpp::embed status_embed(const std::string &title, const std::string &reason, int status) {
@@ -90,6 +89,35 @@ dpp::embed added_to_queue_embed(Cringe::CringeSong song) {
 	dpp::embed embed;
 	embed.set_title("Successfully added").set_color(Cringe::CringeColor::CringeSuccess).set_thumbnail(Cringe::CringeIcon::SuccessIcon);
 	embed.add_field("Title", song.get_title()).add_field("URL", song.get_url());
+	return embed;
+}
+
+dpp::embed reddit_embed(json data) {
+	std::string author = data["author"];
+	std::string subreddit = data["subreddit"];
+	std::string title = data["title"];
+	std::string description = data["description"];
+	int creation = data["time_created"];
+	std::string downvotes = to_string(data["downvotes"]);
+	std::string upvotes = to_string(data["upvotes"]);
+	float ratio = data["upvote_ratio"];
+	dpp::embed embed;
+	embed.set_color(Cringe::CringeColor::CringeOrange)
+	.set_title("Cringe Crawler")
+	.set_thumbnail(Cringe::CringeIcon::SnailIcon)
+	.add_field("Subreddit", subreddit, true)
+	.add_field("Author", author, true)
+	.add_field("Posted", fmt::format("<t:{}:D>", creation), true)
+	.add_field("Upvotes", upvotes, true)
+	.add_field("Downvotes", downvotes, true)
+	.add_field("Upvote Ratio", fmt::format("{}%", ratio * 100), true);
+	if (!title.empty()) {
+		embed.add_field("Title", title);
+	}
+	if (!description.empty()) {
+		embed.add_field("Description", description);
+	}
+	embed.set_timestamp(time(nullptr));
 	return embed;
 }
 

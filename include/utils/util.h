@@ -29,4 +29,6 @@ std::string seconds_to_formatted_time(int seconds);
 
 void voice_threading(std::function<void(dpp::cluster&, const dpp::slashcommand_t&, Cringe::CringeQueue&)> process, dpp::cluster& bot, const dpp::slashcommand_t& event, Cringe::CringeQueue& queue);
 
+std::string get_reddit_response(const std::string &subreddit, const std::string &filter);
+
 #endif

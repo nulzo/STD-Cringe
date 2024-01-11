@@ -82,6 +82,28 @@ std::string get_tts_response(const std::string &prompt) {
 	return curl_request(prompt, "https://play.ht/api/v2/tts/stream");
 }
 
+std::string get_reddit_response(const std::string &subreddit, const std::string &filter) {
+	std::string URL = fmt::format("https://old.reddit.com/r/{}/top/.json?sort=top&limit=1&t={}", subreddit, filter);
+	// Get the command to extract the URL
+	std::string command = fmt::format("curl -X GET -L \"{}\"", URL);
+	char buffer[128];
+	std::string response;
+	// Convert to a C-string
+	const char *cmd = command.c_str();
+	// Open the pipe to process to command
+	FILE *pipe = popen(cmd, "r");
+	// Check that the pipe was opened successfully
+	if (!pipe) {
+		std::cerr << "Error opening pipe" << std::endl;
+	}
+	// Write contents of stdout buf to c++ style string
+	while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+		response += buffer;
+	}
+
+	return response;
+}
+
 std::string get_openai_response(const std::string &prompt, std::string max_tokens, std::string model) {
 	std::string url;
 	std::string auth;
