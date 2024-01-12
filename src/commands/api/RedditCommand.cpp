@@ -51,6 +51,7 @@ json parse_reddit_response(const std::string &res) {
 	response["time_created"] = pre_response["created"];
 	response["url"] = pre_response["url"];
 	response["media"] = pre_response["media"];
+	response["embed"] = pre_response["media_embed"];
 	response["media_embed"] = pre_response["secure_media_embed"];
 	response["upvotes"] = pre_response["ups"];
 	response["comments"] = pre_response["num_comments"];

@@ -153,7 +153,7 @@ void play_command(dpp::cluster &bot, const dpp::slashcommand_t &event, Cringe::C
 		// Get the YouTube upload info from the url given
 		std::vector<std::string> yt_info = Cringe::CringeAudio::get_yt_info(request);
 		// Make a new song to store to the queue
-		Cringe::CringeSong song(yt_info[0], yt_info[1], yt_info[2], yt_info[3], filter, request, (dpp::slashcommand_t &) event);
+		Cringe::CringeSong song(yt_info[0], yt_info[1], yt_info[2], yt_info[3], yt_info[4], yt_info[5], yt_info[6], yt_info[7], filter, request, (dpp::slashcommand_t &) event);
 		// Add song to the queue
 		queue.enqueue(song);
 		// Reply to the event letting the issuer know the song was queued
@@ -168,7 +168,7 @@ void play_command(dpp::cluster &bot, const dpp::slashcommand_t &event, Cringe::C
 	// Get the song information from the command
 	std::vector<std::string> yt_info = Cringe::CringeAudio::get_yt_info(request);
 	// Create a new song object and populate it with our new information
-	Cringe::CringeSong song(yt_info[0], yt_info[1], yt_info[2], yt_info[3], filter, request, (dpp::slashcommand_t &) event);
+	Cringe::CringeSong song(yt_info[0], yt_info[1], yt_info[2], yt_info[3], yt_info[4], yt_info[5], yt_info[6], yt_info[7], filter, request, (dpp::slashcommand_t &) event);
 	// Send in proper channel
 	dpp::message message(event.command.channel_id, now_streaming(song));
 	// Send the embed

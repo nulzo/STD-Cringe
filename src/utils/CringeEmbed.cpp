@@ -101,6 +101,7 @@ dpp::embed reddit_embed(json data) {
 	std::string comments = to_string(data["comments"]);
 	std::string upvotes = to_string(data["upvotes"]);
 	auto media = data["media"];
+	auto e = data["media_embed"];
 	float ratio = data["upvote_ratio"];
 	dpp::embed embed;
 	embed.set_color(Cringe::CringeColor::CringeOrange)
@@ -147,19 +148,20 @@ dpp::embed now_streaming(Cringe::CringeSong song){
 	duration = seconds_to_formatted_time(atoi(song.get_formatted_duration().c_str()));
 	author = song.get_artist();
 	event = song.get_event();
-	channel = event.command.channel.get_mention();
+	channel = find_channel(event.from->get_voice(event.command.guild_id)->channel_id)->get_mention();
 	footer = fmt::format("Requested by: {}", event.command.usr.global_name);
-
 	// Set the title and assign it an icon
 	embed.set_title("Now Streaming").set_thumbnail(Cringe::CringeIcon::MusicIcon);
 	// Set the title field
 	embed.add_field("Title", title);
+	embed.add_field("Author", author);
 	// Set the URL field
 	embed.add_field("URL", song.get_url());
 	// Set the first row of embed fields
-	embed.add_field("Channel", channel, true).add_field("Duration", duration, true).add_field("Author", author, true);
+	embed.add_field("Streaming in", channel, true).add_field("Duration", duration, true).add_field("Upload Date", fmt::format("<t:{}:D>", song.get_upload_date()), true);;
 	// Set the image to the thumbnail of the YT video
 	embed.set_image(song.get_thumbnail());
+	embed.add_field("Comments", song.get_comments(), true).add_field("Views", song.get_view_count(), true).add_field("Subscribers", song.get_subscribers(), true);
 	// Set the color of the embed
 	embed.set_color(Cringe::CringeColor::CringeOrange);
 	// Set the footer to tell the server who requested the song
