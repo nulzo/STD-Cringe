@@ -51,10 +51,26 @@ std::string Cringe::CringeSong::get_filter() {
 	return filter;
 }
 
+std::string Cringe::CringeSong::get_upload_date(){
+	return upload_date;
+}
+
+std::string Cringe::CringeSong::get_comments(){
+	return comment_count;
+}
+
+std::string Cringe::CringeSong::get_subscribers(){
+	return subscriber_count;
+}
+
+std::string Cringe::CringeSong::get_view_count() {
+	return view_count;
+}
+
 dpp::slashcommand_t Cringe::CringeSong::get_event() {
 	return event;
 }
 
-Cringe::CringeSong::CringeSong(std::string title, std::string artist, std::string thumbnail, std::string duration, std::string filter, std::string url, dpp::slashcommand_t &event)
-		: title(std::move(title)), artist(std::move(artist)), thumbnail(std::move(thumbnail)), duration(std::move(duration)), filter(std::move(filter)), url(std::move(url)), event(std::move(event)) {}
+Cringe::CringeSong::CringeSong(std::string title, std::string artist, std::string thumbnail, std::string duration, std::string view_count, std::string comment_count, std::string upload_date, std::string subscriber_count, std::string filter, std::string url, dpp::slashcommand_t &event)
+		: title(std::move(title)), artist(std::move(artist)), thumbnail(std::move(thumbnail)), duration(std::move(duration)), filter(std::move(filter)), url(std::move(url)), upload_date(std::move(upload_date)), comment_count(std::move(comment_count)), subscriber_count(std::move(subscriber_count)), view_count(std::move(view_count)),  event(std::move(event)) {}
 

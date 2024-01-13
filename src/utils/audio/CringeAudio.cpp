@@ -49,7 +49,7 @@ std::vector<std::string> Cringe::CringeAudio::get_yt_info(std::string song) {
 	std::vector<std::string> yt_data;
 	std::string data;
 	// string that gets all the information about the song
-	std::string cmd = fmt::format("yt-dlp --print title --print uploader --print thumbnail --print duration \"{}\"", song);
+	std::string cmd = fmt::format("yt-dlp -s --print title --print channel --print thumbnail --print duration --print view_count --print comment_count --print epoch --print channel_follower_count \"{}\"", song);
 	// Get the YouTube video thumbnail, author info, and song info
 	FILE *pipe = popen(cmd.c_str(), "r");
 	// Check that the pipe was opened successfully
@@ -65,7 +65,7 @@ std::vector<std::string> Cringe::CringeAudio::get_yt_info(std::string song) {
 	while (std::getline(stream, data, '\n')) {
 		yt_data.push_back(data);
 	}
-	// Returns a vector with the elements <TITLE, ARTIST, THUMB_URL, DURATION>
+	// Returns a vector with the elements <TITLE, ARTIST, THUMB_URL, DURATION, VIEWS, COMMENTS, UPLOADDATE, SUBSCRIBERS>
 	return yt_data;
 }
 
