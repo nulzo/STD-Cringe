@@ -69,8 +69,7 @@ namespace Cringe {
 
 	class CringeSong {
 	public:
-		CringeSong(std::string title, std::string artist, std::string thumbnail, std::string duration, std::string filter, std::string url,
-				   dpp::slashcommand_t &event);
+		CringeSong(std::string title, std::string artist, std::string thumbnail, std::string duration, std::string filter, std::string url, std::string upload_date, std::string comment_count,std::string subscriber_count, std::string view_count, dpp::slashcommand_t &event);
 
 		std::string get_title();
 
@@ -84,7 +83,15 @@ namespace Cringe {
 
 		std::string get_filter();
 
+		std::string get_subscribers();
+
+		std::string get_view_count();
+
+		std::string get_comments();
+
 		dpp::slashcommand_t get_event();
+
+		std::string get_upload_date();
 
 	private:
 		std::string title;
@@ -92,6 +99,10 @@ namespace Cringe {
 		std::string thumbnail;
 		std::string duration;
 		std::string url;
+		std::string upload_date;
+		std::string comment_count;
+		std::string subscriber_count;
+		std::string view_count;
 		dpp::slashcommand_t event;
 		std::string filter;
 	};
