@@ -104,7 +104,7 @@ void join_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 
 
 	// Check to see if the issuing user is not in a voice channel and issue error if they did not provide an option of where to go
-	if (!guild->connect_member_voice(event.command.get_issuing_user().id)) {
+	if (!guild->connect_member_voice(event.command.get_issuing_user().id, false, true)) {
 		embed_reason = "You must be in a VC, or specify a channel if you wish to invite cringe to VC.";
 		embed = status_embed("CringeError::VoiceError", embed_reason, Cringe::CringeStatus::ERROR);
 		dpp::message message(event.command.channel_id, embed);
