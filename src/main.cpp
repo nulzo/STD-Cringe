@@ -28,6 +28,11 @@
 #include "utils/cringe.h"
 #include <csignal>
 #include "listeners/SlashcommandListener.h"
+#include <sndfile.h>
+
+#define SAMPLE_RATE 44100
+#define CHANNELS 1
+#define FILE_NAME "output.wav"
 
 // Function to handle the SIGINT signal
 void handle_signal(int signal) {
@@ -39,11 +44,11 @@ void handle_signal(int signal) {
 int main() {
 	std::string BOT_TOKEN;
 	get_env("BOT_TOKEN", BOT_TOKEN);
+	dpp::cluster bot(BOT_TOKEN, dpp::i_default_intents | dpp::i_message_content);
 	Cringe::CringeQueue queue;
 	log_on_start();
 	// Register the signal handler for SIGTERM
 	signal(SIGTERM, handle_signal);
-	dpp::cluster bot(BOT_TOKEN, dpp::i_default_intents | dpp::i_message_content);
 	std::shared_ptr<spdlog::logger> cringe_logger = cringe_logging();
 
 	bot.on_log([&cringe_logger](const dpp::log_t &event) {
@@ -54,6 +59,25 @@ int main() {
 		log_on_slash(event.command.get_command_name(), event.command.usr.global_name, cringe_logger);
 		process_slashcommand(event, bot, queue);
 		log_end_slash(event.command.get_command_name(), event.command.usr.global_name, cringe_logger);
+	});
+
+	bot.on_voice_user_talking([&bot, &cringe_logger](const dpp::voice_user_talking_t &user) {
+		if(user.user_id == 411399698679595008) {
+			std::cout << "\nEthan is talking\n";
+		}
+		std::cout << "\nEthan is talking\n";
+	});
+
+	bot.on_voice_receive([](const dpp::voice_receive_t &e) {
+		if(e.user_id == 411399698679595008) {
+			FILE *fd = fopen("./ethan.pcm", "a+");
+			fwrite(e.audio_data.c_str(), 1, e.audio_size, fd);
+			fclose(fd);
+		} else if (e.user_id == 405912283554906123) {
+			FILE *fd = fopen("./klim.pcm", "a+");
+			fwrite(e.audio_data.c_str(), 1, e.audio_size, fd);
+			fclose(fd);
+		}
 	});
 
 	bot.on_message_delete([&cringe_logger](const dpp::message_delete_t &event) {
