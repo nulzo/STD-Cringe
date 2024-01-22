@@ -57,12 +57,10 @@ int main() {
 	});
 
 	bot.on_voice_receive([](const dpp::voice_receive_t &e) {
-		if(e.user_id == 411399698679595008) {
-			FILE *fd = fopen("./ethan.pcm", "a+");
-			fwrite(e.audio_data.c_str(), 1, e.audio_size, fd);
-			fclose(fd);
-		} else if (e.user_id == 405912283554906123) {
-			FILE *fd = fopen("./klim.pcm", "a+");
+		dpp::user* user = find_user(e.user_id);
+		if(user->global_name != "nulzo" && !user->is_bot()) {
+			std::string filepath = fmt::format("./{}.opus", user->global_name);
+			FILE *fd = fopen(filepath.c_str(), "a+");
 			fwrite(e.audio_data.c_str(), 1, e.audio_size, fd);
 			fclose(fd);
 		}
