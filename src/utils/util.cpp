@@ -117,6 +117,7 @@ std::string get_ollama_chat(const std::string &prompt) {
 	std::string endpoint;
 	get_env("LOCAL_ENDPOINT", endpoint);
 	endpoint = endpoint + "/api/v1/chat";
+	std::cout << endpoint << std::endl;
 	auto res = curl_post(fmt::format(R"({{ "chat": "{}"}})", prompt), endpoint);
 	return res.contains("response") ? res["response"] : res["error"];
 }

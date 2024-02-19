@@ -44,15 +44,7 @@ void image_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 	std::string binaryData = base64_decode(image);
 	dpp::message message(channel, "");
 	message.add_file("imagine.jpg", binaryData);
-	dpp::embed embed;
-	std::string response = fmt::format("{} - {}", prompt, event.command.usr.get_mention());
-	embed.set_color(Cringe::CringeColor::CringeOrange)
-			.set_title("Cringe Imagination")
-			.set_thumbnail(Cringe::CringeIcon::SnailIcon)
-			.set_description(response)
-			.set_image("attachment://imagine.jpg")
-			.set_timestamp(time(nullptr))
-			.set_footer(fmt::format("Imagined by: {}", event.command.usr.global_name), event.command.usr.get_avatar_url());
+	dpp::embed embed = imagine_embed(prompt, "imagine.jpg", event);
 	message.add_embed(embed);
 	bot.message_create(message);
 	dpp::message ephemeral_reply(event.command.channel.id, fmt::format("cringe has responded to your chat in {}!", bot.channel_get_sync(channel).get_mention()));

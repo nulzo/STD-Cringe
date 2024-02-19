@@ -133,6 +133,39 @@ dpp::embed reddit_embed(json data) {
 	return embed;
 }
 
+dpp::embed chat_embed(std::string &prompt, std::string &response, const dpp::slashcommand_t &event) {
+	dpp::embed embed;
+	embed.set_thumbnail(Cringe::CringeIcon::LightningIcon).set_title("Cringe Chat")
+	.add_field(fmt::format("{} asked", event.command.usr.username), prompt)
+	.add_field("cringe replied", response)
+	.set_color(Cringe::CringeColor::CringeOrange)
+	.set_timestamp(time(nullptr))
+	.set_footer("ask cringe a question with /chat!", Cringe::CringeIcon::ChatIcon);
+	return embed;
+}
+
+dpp::embed imagine_embed(const std::string &prompt, const std::string &image_file, const dpp::slashcommand_t &event) {
+	dpp::embed embed;
+	embed.set_thumbnail(Cringe::CringeIcon::AperatureIcon).set_title("Cringe Image Generation")
+			.set_description(fmt::format("{} - requested by {}", prompt, event.command.usr.get_mention()))
+			.set_image(fmt::format("attachment://{}", image_file))
+			.set_color(Cringe::CringeColor::CringeOrange)
+			.set_timestamp(time(nullptr))
+			.set_footer("have cringe generate an image with /imagine!", Cringe::CringeIcon::ChatIcon);
+	return embed;
+}
+
+dpp::embed describe_embed(const std::string &response, const dpp::attachment& image, const dpp::slashcommand_t &event) {
+	dpp::embed embed;
+	embed.set_thumbnail(Cringe::CringeIcon::ScrollIcon).set_title("Cringe Image Describer")
+			.set_description(response)
+			.set_image(image.url)
+			.set_color(Cringe::CringeColor::CringeOrange)
+			.set_timestamp(time(nullptr))
+			.set_footer("describe an image with /describe!", Cringe::CringeIcon::ChatIcon);
+	return embed;
+}
+
 dpp::embed now_streaming(Cringe::CringeSong song){
 	// Define variables
 	dpp::embed embed;

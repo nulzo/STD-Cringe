@@ -39,7 +39,8 @@ void chat_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 	std::string channel;
 	get_env("CRINGE_CHAT_CHANNEL", channel);
 	// Query the ollama endpoint with the prompt the user provided
-	std::string response = get_ollama_chat(std::get<std::string>(event.get_parameter("prompt")));
+	std::string prompt = std::get<std::string>(event.get_parameter("prompt"));
+	std::string response = get_ollama_chat(prompt);
 	// Make the replies
 	if(response.length() >= 1750) {
 		for (size_t i = 0; i < response.length(); i += 1750) {
@@ -49,7 +50,8 @@ void chat_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 		}
 	}
 	else {
-		dpp::message cringe_response(channel, fmt::format("**{}:** *{}*\n**cringe**: {}", event.command.usr.username, std::get<std::string>(event.get_parameter("prompt")), response));
+		dpp::embed embed = chat_embed(prompt, response, event);
+		dpp::message cringe_response(channel, embed);
 		// Issue the replies
 		bot.message_create(cringe_response);
 	}

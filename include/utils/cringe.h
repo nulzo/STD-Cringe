@@ -23,6 +23,12 @@ namespace Cringe {
 		const std::string ConfessionIcon = "https://i.imgur.com/Jd4rOxM.png";
 		const std::string BugIcon = "https://i.imgur.com/g05RXES.png";
 		const std::string SnailIcon = "https://i.imgur.com/d9Vv18z.png";
+		const std::string LightningIcon = "https://i.imgur.com/VJJQ6xV.png";
+		const std::string TerminalIcon = "https://i.imgur.com/NX8obER.png";
+		const std::string ScrollIcon = "https://i.imgur.com/z9tgqcZ.png";
+		const std::string ChatIcon = "https://i.imgur.com/a0ko0LY.png";
+		const std::string BirdIcon = "https://i.imgur.com/mEHAb3s.png";
+		const std::string AperatureIcon = "https://i.imgur.com/RVmZ4ig.png";
 	}
 
 	namespace CringeColor {

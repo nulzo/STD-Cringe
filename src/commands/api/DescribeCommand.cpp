@@ -30,28 +30,21 @@ dpp::slashcommand describe_declaration() {
 	return dpp::slashcommand()
 			.set_name("describe")
 			.set_description("Describe an image")
-			.add_option(dpp::command_option(dpp::co_attachment, "file", "Select an image"));
+			.add_option(dpp::command_option(dpp::co_attachment, "image", "Select an image"));
 }
 
 void describe_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 	// Set the command to thinking and set it to ephemeral
 	event.thinking(true);
 	std::string response;
-	dpp::embed embed;
 	std::string channel;
 	get_env("CRINGE_TESTING_CHANNEL", channel);
 	/* Get the file id from the parameter attachment. */
-	dpp::snowflake file_id = std::get<dpp::snowflake>(event.get_parameter("file"));
+	dpp::snowflake image = std::get<dpp::snowflake>(event.get_parameter("image"));
 	/* Get the attachment that the user inputted from the file id. */
-	dpp::attachment att = event.command.get_resolved_attachment(file_id);
-	response = get_ollama_describe(att.url);
-	embed.set_color(Cringe::CringeColor::CringeOrange)
-			.set_title("Cringe Describer")
-			.set_thumbnail(Cringe::CringeIcon::SnailIcon)
-			.set_description(response)
-			.set_image(att.url)
-			.set_timestamp(time(nullptr))
-			.set_footer(fmt::format("Requested by: {}", event.command.usr.global_name), event.command.usr.get_avatar_url());
+	dpp::attachment attachment = event.command.get_resolved_attachment(image);
+	response = get_ollama_describe(attachment.url);
+	dpp::embed embed = describe_embed(response, attachment, event);
 	/* Reply with the file as a URL. */
 	dpp::message msg(channel, embed);
 	bot.message_create(msg);
