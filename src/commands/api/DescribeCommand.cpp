@@ -35,9 +35,11 @@ dpp::slashcommand describe_declaration() {
 
 void describe_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 	// Set the command to thinking and set it to ephemeral
-	event.thinking();
+	event.thinking(true);
 	std::string response;
 	dpp::embed embed;
+	std::string channel;
+	get_env("CRINGE_TESTING_CHANNEL", channel);
 	/* Get the file id from the parameter attachment. */
 	dpp::snowflake file_id = std::get<dpp::snowflake>(event.get_parameter("file"));
 	/* Get the attachment that the user inputted from the file id. */
@@ -51,6 +53,8 @@ void describe_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 			.set_timestamp(time(nullptr))
 			.set_footer(fmt::format("Requested by: {}", event.command.usr.global_name), event.command.usr.get_avatar_url());
 	/* Reply with the file as a URL. */
-	dpp::message msg(event.command.channel_id, embed);
-	event.edit_original_response(msg);
+	dpp::message msg(channel, embed);
+	bot.message_create(msg);
+	dpp::message ephemeral_reply(event.command.channel.id, fmt::format("cringe has responded to your chat in {}!", bot.channel_get_sync(channel).get_mention()));
+	event.edit_original_response(ephemeral_reply);
 }

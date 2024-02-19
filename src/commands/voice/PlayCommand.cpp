@@ -108,6 +108,8 @@ dpp::slashcommand play_declaration() {
 void play_command(dpp::cluster &bot, const dpp::slashcommand_t &event, Cringe::CringeQueue &queue) {
 	// Set the bot to thinking. This gives us a bit more time to reply to the interaction
 	event.thinking(true);
+	std::string channel;
+	get_env("CRINGE_MUSIC_CHANNEL", channel);
 	// Get the voice channel the bot is in, in this current guild.
 	dpp::voiceconn *voice = event.from->get_voice(event.command.guild_id);
 	// If the voice channel was invalid, or there is an issue with it, then tell the user.
@@ -170,7 +172,7 @@ void play_command(dpp::cluster &bot, const dpp::slashcommand_t &event, Cringe::C
 	// Create a new song object and populate it with our new information
 	Cringe::CringeSong song(yt_info[0], yt_info[1], yt_info[2], yt_info[3], yt_info[4], yt_info[5], yt_info[6], yt_info[7], filter, request, (dpp::slashcommand_t &) event);
 	// Send in proper channel
-	dpp::message message(event.command.channel_id, now_streaming(song));
+	dpp::message message(channel, now_streaming(song));
 	// Send the embed
 	bot.message_create(message);
 	// Ephemeral embed saying that the command is playing. All events must be responded to

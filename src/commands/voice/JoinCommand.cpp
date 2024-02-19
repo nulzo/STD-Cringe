@@ -41,7 +41,7 @@ void join_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 	dpp::guild *guild;
 	dpp::snowflake parameter;
 	dpp::channel requested_channel;
-
+	event.thinking(true);
 	// Get the guild of issued command
 	guild = dpp::find_guild(event.command.guild_id);
 
@@ -55,7 +55,7 @@ void join_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 			embed_reason = event.command.usr.get_mention() + " tried to invite cringe to VC, but provided a non-voice channel.";
 			embed = status_embed("CringeError::VoiceError", embed_reason, Cringe::CringeStatus::ERROR);
 			dpp::message message(event.command.channel_id, embed);
-			event.reply(message);
+			event.edit_original_response(message);
 			return;
 		}
 
@@ -69,7 +69,7 @@ void join_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 					embed_reason = event.command.usr.get_mention() + " tried to invite cringe to VC, but it is already there.";
 					embed = status_embed("CringeError::VoiceWarning", embed_reason, Cringe::CringeStatus::WARNING);
 					dpp::message message(event.command.channel_id, embed);
-					event.reply(message);
+					event.edit_original_response(message);
 					return;
 				}
 			event.from->disconnect_voice(event.command.guild_id);
@@ -78,7 +78,7 @@ void join_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 		embed_reason = event.command.usr.get_mention() + " asked cringe to join " + requested_channel.get_mention();
 		embed = status_embed("Successfully Joined", embed_reason, Cringe::CringeStatus::SUCCESS);
 		dpp::message message(event.command.channel_id, embed);
-		event.reply(message);
+		event.edit_original_response(message);
 		return;
 	}
 
@@ -95,7 +95,7 @@ void join_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 			embed_reason = event.command.usr.get_mention() + " tried to invite cringe to VC, but it is already there.";
 			embed = status_embed("CringeError::VoiceWarning", embed_reason, Cringe::CringeStatus::WARNING);
 			dpp::message message(event.command.channel_id, embed);
-			event.reply(message);
+			event.edit_original_response(message);
 			return;
 		}
 		// At this point, cringe is being called into a channel that it is currently not in (although it is in another channel)
@@ -108,7 +108,7 @@ void join_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 		embed_reason = "You must be in a VC, or specify a channel if you wish to invite cringe to VC.";
 		embed = status_embed("CringeError::VoiceError", embed_reason, Cringe::CringeStatus::ERROR);
 		dpp::message message(event.command.channel_id, embed);
-		event.reply(message);
+		event.edit_original_response(message);
 		return;
 	}
 
@@ -116,5 +116,5 @@ void join_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 	embed_reason = event.command.usr.get_mention() + " asked cringe to join.";
 	embed = status_embed("Successfully Joined", embed_reason, Cringe::CringeStatus::SUCCESS);
 	dpp::message message(event.command.channel_id, embed);
-	event.reply(message);
+	event.edit_original_response(message);
 }

@@ -37,10 +37,12 @@ dpp::slashcommand image_declaration() {
 
 void image_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 	std::string prompt = std::get<std::string>(event.get_parameter("prompt"));
-	event.thinking();
+	event.thinking(true);
+	std::string channel;
+	get_env("CRINGE_TESTING_CHANNEL", channel);
 	std::string image = get_image(prompt);
 	std::string binaryData = base64_decode(image);
-	dpp::message message(event.command.channel_id, "");
+	dpp::message message(channel, "");
 	message.add_file("imagine.jpg", binaryData);
 	dpp::embed embed;
 	std::string response = fmt::format("{} - {}", prompt, event.command.usr.get_mention());
@@ -52,5 +54,7 @@ void image_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 			.set_timestamp(time(nullptr))
 			.set_footer(fmt::format("Imagined by: {}", event.command.usr.global_name), event.command.usr.get_avatar_url());
 	message.add_embed(embed);
-	event.edit_original_response(message);
+	bot.message_create(message);
+	dpp::message ephemeral_reply(event.command.channel.id, fmt::format("cringe has responded to your chat in {}!", bot.channel_get_sync(channel).get_mention()));
+	event.edit_original_response(ephemeral_reply);
 }
