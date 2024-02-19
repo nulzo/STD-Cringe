@@ -39,6 +39,10 @@ add_executable(${PROJECT_NAME}
         include/commands/api/UserCommand.h
         src/listeners/SlashcommandListener.cpp
         include/listeners/SlashcommandListener.h
+        src/commands/api/DescribeCommand.cpp
+        include/commands/api/DescribeCommand.h
+        include/utils/base64.h
+        src/utils/base64.cpp
 )
 
 include(FindPackageHandleStandardArgs)

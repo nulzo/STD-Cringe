@@ -37,11 +37,22 @@ void chat_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 	// Set the command to thinking and set it to ephemeral
 	event.thinking(true);
 	// Query the ollama endpoint with the prompt the user provided
-	std::string response = get_ollama_response(std::get<std::string>(event.get_parameter("prompt")));
+	std::string response = get_ollama_chat(std::get<std::string>(event.get_parameter("prompt")));
 	// Make the replies
-	dpp::message cringe_response(event.command.channel_id, fmt::format("**{}:** *{}*\n**cringe**: {}", event.command.usr.username, std::get<std::string>(event.get_parameter("prompt")), response));
+	std::cout << response << "\n\n";
+	if(response.length() >= 1000) {
+		for (size_t i = 0; i < response.length(); i += 1000) {
+			std::string chunk = response.substr(i, 1000);
+			std::cout << chunk.length() << "\n\n";
+			dpp::message cringe_response(event.command.channel_id, fmt::format("[part]: {}\n**cringe**: {}", (i / 1000) + 1, chunk));
+			bot.message_create(cringe_response);
+		}
+	}
+	else {
+		dpp::message cringe_response(event.command.channel_id, fmt::format("**{}:** *{}*\n**cringe**: {}", event.command.usr.username, std::get<std::string>(event.get_parameter("prompt")), response));
+		// Issue the replies
+		bot.message_create(cringe_response);
+	}
 	dpp::message ephemeral_reply(event.command.channel.id, "Your prompt was sent!");
-	// Issue the replies
-	bot.message_create(cringe_response);
 	event.edit_original_response(ephemeral_reply);
 }

@@ -56,16 +56,6 @@ int main() {
 		log_end_slash(event.command.get_command_name(), event.command.usr.global_name, cringe_logger);
 	});
 
-	bot.on_voice_receive([](const dpp::voice_receive_t &e) {
-		dpp::user* user = find_user(e.user_id);
-		if(user->global_name != "nulzo" && !user->is_bot()) {
-			std::string filepath = fmt::format("./{}.opus", user->global_name);
-			FILE *fd = fopen(filepath.c_str(), "a+");
-			fwrite(e.audio_data.c_str(), 1, e.audio_size, fd);
-			fclose(fd);
-		}
-	});
-
 	bot.on_message_delete([&cringe_logger](const dpp::message_delete_t &event) {
 		log_on_message_delete(event.raw_event, event.raw_event, cringe_logger);
 	});
@@ -86,7 +76,7 @@ int main() {
 	});
 
 	bot.on_voice_track_marker([&queue, &bot](const dpp::voice_track_marker_t &ev) {
-		if(!queue.is_empty()) {
+		if (!queue.is_empty()) {
 			Cringe::CringeSong s = queue.dequeue();
 			play_callback(bot, s);
 		}

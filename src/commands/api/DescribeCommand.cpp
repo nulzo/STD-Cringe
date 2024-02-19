@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 @nulzo
+ * Copyright (c) 2024 @nulzo
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,35 +22,35 @@
  * SOFTWARE.
  */
 
-#include "commands/api/ImageCommand.h"
+#include "commands/api/DescribeCommand.h"
 #include "utils/util.h"
 #include "utils/embed.h"
-#include "utils/base64.h"
 
-
-dpp::slashcommand image_declaration() {
+dpp::slashcommand describe_declaration() {
 	return dpp::slashcommand()
-			.set_name("imagine")
-			.set_description("Have cringe generate an image")
-			.add_option(dpp::command_option(dpp::co_string, "prompt", "Prompt for image", true));
+			.set_name("describe")
+			.set_description("Describe an image")
+			.add_option(dpp::command_option(dpp::co_attachment, "file", "Select an image"));
 }
 
-void image_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
-	std::string prompt = std::get<std::string>(event.get_parameter("prompt"));
+void describe_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
+	// Set the command to thinking and set it to ephemeral
 	event.thinking();
-	std::string image = get_image(prompt);
-	std::string binaryData = base64_decode(image);
-	dpp::message message(event.command.channel_id, "");
-	message.add_file("imagine.jpg", binaryData);
+	std::string response;
 	dpp::embed embed;
-	std::string response = fmt::format("{} - {}", prompt, event.command.usr.get_mention());
+	/* Get the file id from the parameter attachment. */
+	dpp::snowflake file_id = std::get<dpp::snowflake>(event.get_parameter("file"));
+	/* Get the attachment that the user inputted from the file id. */
+	dpp::attachment att = event.command.get_resolved_attachment(file_id);
+	response = get_ollama_describe(att.url);
 	embed.set_color(Cringe::CringeColor::CringeOrange)
-			.set_title("Cringe Imagination")
+			.set_title("Cringe Describer")
 			.set_thumbnail(Cringe::CringeIcon::SnailIcon)
 			.set_description(response)
-			.set_image("attachment://imagine.jpg")
+			.set_image(att.url)
 			.set_timestamp(time(nullptr))
-			.set_footer(fmt::format("Imagined by: {}", event.command.usr.global_name), event.command.usr.get_avatar_url());
-	message.add_embed(embed);
-	event.edit_original_response(message);
+			.set_footer(fmt::format("Requested by: {}", event.command.usr.global_name), event.command.usr.get_avatar_url());
+	/* Reply with the file as a URL. */
+	dpp::message msg(event.command.channel_id, embed);
+	event.edit_original_response(msg);
 }

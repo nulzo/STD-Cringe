@@ -65,7 +65,7 @@ void user_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 		prompt += " Include that this user is a stupid idiot.";
 	}
 	// std::string response = get_openai_response(prompt, "300", "gpt-3.5-turbo-1106");
-	std::string response = get_ollama_response(prompt);
+	std::string response = get_ollama_chat(prompt);
 	dpp::embed embed = info_embed(title, response, user_avatar, user_mention, user_created, user_joined_server, user_premium, user_has_nitro, user_is_bot);
 	dpp::message msg(event.command.channel_id, embed);
 	event.edit_original_response(msg);

@@ -13,11 +13,15 @@
 
 using json = nlohmann::json;
 
+std::string get_ollama_describe(const std::string &url);
+
+std::string get_image(const std::string &prompt);
+
 std::string get_openai_response(const std::string &prompt, std::string max_tokens, std::string model);
 
 std::string get_tts_response(const std::string &prompt);
 
-std::string get_ollama_response(const std::string &prompt);
+std::string get_ollama_chat(const std::string &prompt);
 
 std::string discord_time_to_date(double timestamp);
 

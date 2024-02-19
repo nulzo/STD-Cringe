@@ -11,6 +11,7 @@
 #include "commands/api/TalkCommand.h"
 #include "commands/api/ChatCommand.h"
 #include "commands/api/UserCommand.h"
+#include "commands/api/DescribeCommand.h"
 
 void process_slashcommand(const dpp::slashcommand_t &event,  dpp::cluster &bot, Cringe::CringeQueue &queue) {
 	if (event.command.get_command_name() == "info") {
@@ -50,11 +51,14 @@ void process_slashcommand(const dpp::slashcommand_t &event,  dpp::cluster &bot, 
 	else if (event.command.get_command_name() == "reddit") {
 		reddit_command(bot, event);
 	}
-	else if (event.command.get_command_name() == "image") {
+	else if (event.command.get_command_name() == "imagine") {
 		image_command(bot, event);
 	}
 	else if(event.command.get_command_name() == "talk") {
 		talk_command(bot, event);
+	}
+	else if(event.command.get_command_name() == "describe") {
+		describe_command(bot, event);
 	}
 }
 
@@ -74,7 +78,8 @@ void register_slashcommands(dpp::cluster &bot) {
 					confession_declaration(),
 					reddit_declaration(),
 					image_declaration(),
-					talk_declaration()
+					talk_declaration(),
+					describe_declaration()
 			}
 	};
 	bot.global_bulk_command_create(commands);
