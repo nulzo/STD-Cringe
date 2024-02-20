@@ -16,36 +16,29 @@ namespace Cringe {
 	}
 
 	namespace CringeIcon {
-		const std::string SuccessIcon = "https://i.imgur.com/rpSPSCk.png";
-		const std::string ErrorIcon = "https://i.imgur.com/rFiaIWw.png";
-		const std::string WarningIcon = "https://i.imgur.com/1lfJlup.png";
-		const std::string MusicIcon = "https://i.imgur.com/CVJNkN3.png";
-		const std::string ConfessionIcon = "https://i.imgur.com/Jd4rOxM.png";
-		const std::string BugIcon = "https://i.imgur.com/g05RXES.png";
-		const std::string SnailIcon = "https://i.imgur.com/d9Vv18z.png";
-		const std::string LightningIcon = "https://i.imgur.com/VJJQ6xV.png";
-		const std::string TerminalIcon = "https://i.imgur.com/NX8obER.png";
-		const std::string ScrollIcon = "https://i.imgur.com/z9tgqcZ.png";
-		const std::string ChatIcon = "https://i.imgur.com/a0ko0LY.png";
-		const std::string BirdIcon = "https://i.imgur.com/mEHAb3s.png";
-		const std::string AperatureIcon = "https://i.imgur.com/RVmZ4ig.png";
+		const std::string SuccessIcon = "https://i.imgur.com/MLtOxom.png";
+		const std::string ErrorIcon = "https://i.imgur.com/X57XzX7.png";
+		const std::string WarningIcon = "https://i.imgur.com/6TA8UGp.png";
+		const std::string MusicIcon = "https://i.imgur.com/OdDMcQc.png";
+		const std::string ConfessionIcon = "https://i.imgur.com/mfQPfgd.png";
+		const std::string LightningIcon = "https://i.imgur.com/LqMfdxQ.png";
+		const std::string TerminalIcon = "https://i.imgur.com/tIdsnXA.png";
+		const std::string ScrollIcon = "https://i.imgur.com/enf2hpR.png";
+		const std::string ChatIcon = "https://i.imgur.com/COOT47N.png";
+		const std::string AperatureIcon = "https://i.imgur.com/U33KuA6.png";
+		const std::string InfoIcon = "https://i.imgur.com/2lZ8HBa.png";
 	}
 
 	namespace CringeColor {
 		// Cringe Brand Color
-		const int CringeOrange = 0xFF9000;
+		const int CringePrimary = 0xA69EE3;
+		const int CringeSecondary = 0x445EBF;
+		const int CringeDark = 0x201E30;
+		const int CringeAccent = 0xC1A0D3;
 		// Cringe Status Colors
-		const int CringeError = 0xEF5350;
-		const int CringeSuccess = 0x10b981;
-		const int CringeWarning = 0xFBBF24;
-		const int CringeInfo = 0x06B6D4;
-		// Cringe Standard Colors
-		const int CringeWhite = 0xF1F5F9;
-		const int CringeBlue = 0x7391C8;
-		const int CringePurple = 0x8B5CF6;
-		const int CringeIndigo = 0x6366F1;
-		const int CringePink = 0xEC4899;
-		const int CringeBlack = 0x1E2124;
+		const int CringeError = 0xDC5968;
+		const int CringeSuccess = 0x7EC99C;
+		const int CringeWarning = 0xFCE0B1;
 	}
 
 	class CringeAudioSource {

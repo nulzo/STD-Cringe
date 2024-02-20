@@ -45,14 +45,14 @@ dpp::embed status_embed(const std::string &title, const std::string &reason, int
 
 dpp::embed playing_embed(int status) {
 	dpp::embed embed;
-	embed.set_color(Cringe::CringeColor::CringeOrange).set_thumbnail(Cringe::CringeIcon::MusicIcon).set_timestamp(time(nullptr));
+	embed.set_color(Cringe::CringeColor::CringePrimary).set_thumbnail(Cringe::CringeIcon::MusicIcon).set_timestamp(time(nullptr));
 	embed.set_title("Now Streaming").set_description("Now streaming to your channel!").set_timestamp(time(nullptr));
 	return embed;
 }
 
 dpp::embed info_embed(const std::string& title, const std::string& response, const std::string& avatar_url, const std::string& mention, const std::string& created, const std::string& joined_at, const std::string& premium, const std::string& nitro, const std::string& bot) {
 	return dpp::embed()
-			.set_color(Cringe::CringeColor::CringeBlack)
+			.set_color(Cringe::CringeColor::CringeDark)
 			.set_title(title)
 			.set_description(response)
 			.set_thumbnail(avatar_url)
@@ -77,7 +77,7 @@ dpp::embed generic_embed(const std::string &icon, const std::string &title, cons
 
 dpp::embed confession_embed(const std::string& confession) {
 	dpp::embed embed;
-	embed.set_color(Cringe::CringeColor::CringeIndigo);
+	embed.set_color(Cringe::CringeColor::CringePrimary);
 	embed.set_title("Anonymous Confession");
 	embed.set_thumbnail(Cringe::CringeIcon::ConfessionIcon);
 	embed.set_description(confession);
@@ -104,9 +104,9 @@ dpp::embed reddit_embed(json data) {
 	auto e = data["media_embed"];
 	float ratio = data["upvote_ratio"];
 	dpp::embed embed;
-	embed.set_color(Cringe::CringeColor::CringeOrange)
+	embed.set_color(Cringe::CringeColor::CringePrimary)
 	.set_title("Cringe Crawler")
-	.set_thumbnail(Cringe::CringeIcon::SnailIcon)
+	.set_thumbnail(Cringe::CringeIcon::LightningIcon)
 	.add_field("", "+-----------------------------------------------------------------+")
 	.add_field("Subreddit", subreddit, true)
 	.add_field("Author", author, true)
@@ -135,12 +135,12 @@ dpp::embed reddit_embed(json data) {
 
 dpp::embed chat_embed(std::string &prompt, std::string &response, const dpp::slashcommand_t &event) {
 	dpp::embed embed;
-	embed.set_thumbnail(Cringe::CringeIcon::LightningIcon).set_title("Cringe Chat")
+	embed.set_thumbnail(Cringe::CringeIcon::ChatIcon).set_title("Cringe Chat")
 	.add_field(fmt::format("{} asked", event.command.usr.username), prompt)
 	.add_field("cringe replied", response)
-	.set_color(Cringe::CringeColor::CringeOrange)
+	.set_color(Cringe::CringeColor::CringePrimary)
 	.set_timestamp(time(nullptr))
-	.set_footer("ask a question with /chat!", Cringe::CringeIcon::ChatIcon);
+	.set_footer("ask a question with /chat!", "https://cdn.discordapp.com/avatars/1186860332845629511/2b20f3636a5bd288bca2eb197badf556.png");
 	return embed;
 }
 
@@ -149,9 +149,9 @@ dpp::embed imagine_embed(const std::string &prompt, const std::string &image_fil
 	embed.set_thumbnail(Cringe::CringeIcon::AperatureIcon).set_title("Cringe Image Generation")
 			.set_description(fmt::format("{} - requested by {}", prompt, event.command.usr.get_mention()))
 			.set_image(fmt::format("attachment://{}", image_file))
-			.set_color(Cringe::CringeColor::CringeOrange)
+			.set_color(Cringe::CringeColor::CringePrimary)
 			.set_timestamp(time(nullptr))
-			.set_footer("generate an image with /imagine!", Cringe::CringeIcon::ChatIcon);
+			.set_footer("generate an image with /imagine!", "https://cdn.discordapp.com/avatars/1186860332845629511/2b20f3636a5bd288bca2eb197badf556.png");
 	return embed;
 }
 
@@ -160,9 +160,9 @@ dpp::embed describe_embed(const std::string &response, const dpp::attachment& im
 	embed.set_thumbnail(Cringe::CringeIcon::ScrollIcon).set_title("Cringe Image Describer")
 			.set_description(response)
 			.set_image(image.url)
-			.set_color(Cringe::CringeColor::CringeOrange)
+			.set_color(Cringe::CringeColor::CringePrimary)
 			.set_timestamp(time(nullptr))
-			.set_footer("describe an image with /describe!", Cringe::CringeIcon::ChatIcon);
+			.set_footer("describe an image with /describe!", "https://cdn.discordapp.com/avatars/1186860332845629511/2b20f3636a5bd288bca2eb197badf556.png");
 	return embed;
 }
 
@@ -196,7 +196,7 @@ dpp::embed now_streaming(Cringe::CringeSong song){
 	embed.set_image(song.get_thumbnail());
 	embed.add_field("Comments", song.get_comments(), true).add_field("Views", song.get_view_count(), true).add_field("Subscribers", song.get_subscribers(), true);
 	// Set the color of the embed
-	embed.set_color(Cringe::CringeColor::CringeOrange);
+	embed.set_color(Cringe::CringeColor::CringePrimary);
 	// Set the footer to tell the server who requested the song
 	embed.set_footer(footer, event.command.usr.get_avatar_url());
 	// Add a timestamp to the embed

@@ -51,7 +51,7 @@ void queue_command(const dpp::slashcommand_t &event, Cringe::CringeQueue queue) 
 		current_queue.pop();
 	}
 	embed.add_field("Queue Info", fmt::format("\n**Total Songs**: {}\n**Queue Duration**: {}\n", total_songs, seconds_to_formatted_time(total_minutes)));
-	embed.set_title("Current Queue").set_color(Cringe::CringeColor::CringeOrange).add_field("Tracks", embed_reason).set_timestamp(time(nullptr)).set_thumbnail(Cringe::CringeIcon::MusicIcon);
+	embed.set_title("Current Queue").set_color(Cringe::CringeColor::CringePrimary).add_field("Tracks", embed_reason).set_timestamp(time(nullptr)).set_thumbnail(Cringe::CringeIcon::MusicIcon);
 	dpp::message message(1081850403920035931, embed);
 	event.reply(message);
 }

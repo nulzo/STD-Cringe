@@ -32,13 +32,14 @@ dpp::slashcommand info_declaration() {
 }
 
 void info_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
+	std::cout << bot.user_get_sync(1186860332845629511).get_avatar_url();
 	dpp::embed embed = dpp::embed()
-			.set_color(Cringe::CringeColor::CringeOrange)
+			.set_color(Cringe::CringeColor::CringePrimary)
 			.set_title("std::cringe bot")
 			.set_description(
 					"Probably the **most based** discord bot you've *ever* seen in your life. Python? Never heard of it. Javascript? That shit ain't nothing to me, man. This bot right here was coded in pure C++, fuck you know about it? Put simply - this bot runs laps around your run-of-the-mill shitty bot coded in some rinky-dink language. Get real, get hard, get **cringe**.")
 			.set_thumbnail(
-					"https://cdn.discordapp.com/attachments/994332421753425951/1187180553821225000/Black_And_White_Aesthetic_Minimalist_Modern_Simple_Typography_Coconut_Cosmetics_Logo.png?ex=6595f30c&is=65837e0c&hm=546158d3750abdbaf01a83d3800061494ceda3f0341b08a01dcc8becf29aa567&")
+					"https://cdn.discordapp.com/avatars/1186860332845629511/2b20f3636a5bd288bca2eb197badf556.png")
 			.add_field(
 					"Creator",
 					bot.user_get_sync(933796468731568191).get_mention(),

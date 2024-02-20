@@ -51,25 +51,25 @@ void problem_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 
 	std::string difficulty = std::get<std::string>(event.get_parameter("difficulty"));
 
-	int color = Cringe::CringeColor::CringeBlack;
+	int color = Cringe::CringeColor::CringeDark;
 
 	int upper_threshold = 0;
 
 	int lower_threshold = 0;
 
 	if (difficulty == "easy") {
-		color = Cringe::CringeColor::CringeBlack;
+		color = Cringe::CringeColor::CringeDark;
 		upper_threshold = 5;
 	}
 
 	if (difficulty == "medium") {
-		color = Cringe::CringeColor::CringeBlack;
+		color = Cringe::CringeColor::CringeDark;
 		upper_threshold = 45;
 		lower_threshold = 5;
 	}
 
 	if (difficulty == "hard") {
-		color = Cringe::CringeColor::CringeBlack;
+		color = Cringe::CringeColor::CringeDark;
 		upper_threshold = 1000;
 		lower_threshold = 45;
 	}
@@ -136,7 +136,7 @@ void problem_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 
 	bot.on_form_submit([](const dpp::form_submit_t &event) {
 		std::string v = std::get<std::string>(event.components[0].components[0].value);
-		dpp::embed embed = dpp::embed().set_color(Cringe::CringeColor::CringePurple).set_title(":x: Wrong Answer :x:").set_description(event.command.get_issuing_user().global_name);
+		dpp::embed embed = dpp::embed().set_color(Cringe::CringeColor::CringePrimary).set_title(":x: Wrong Answer :x:").set_description(event.command.get_issuing_user().global_name);
 		dpp::message m(event.command.channel_id, embed);
 		/* Emit a reply. Form submission is still an interaction and must generate some form of reply! */
 		event.reply(m);
