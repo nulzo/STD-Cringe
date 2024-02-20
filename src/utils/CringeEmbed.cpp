@@ -140,7 +140,7 @@ dpp::embed chat_embed(std::string &prompt, std::string &response, const dpp::sla
 	.add_field("cringe replied", response)
 	.set_color(Cringe::CringeColor::CringeOrange)
 	.set_timestamp(time(nullptr))
-	.set_footer("ask cringe a question with /chat!", Cringe::CringeIcon::ChatIcon);
+	.set_footer("ask a question with /chat!", Cringe::CringeIcon::ChatIcon);
 	return embed;
 }
 
@@ -151,7 +151,7 @@ dpp::embed imagine_embed(const std::string &prompt, const std::string &image_fil
 			.set_image(fmt::format("attachment://{}", image_file))
 			.set_color(Cringe::CringeColor::CringeOrange)
 			.set_timestamp(time(nullptr))
-			.set_footer("have cringe generate an image with /imagine!", Cringe::CringeIcon::ChatIcon);
+			.set_footer("generate an image with /imagine!", Cringe::CringeIcon::ChatIcon);
 	return embed;
 }
 

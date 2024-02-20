@@ -33,7 +33,7 @@ namespace Cringe {
 
 	namespace CringeColor {
 		// Cringe Brand Color
-		const int CringeOrange = 0xFF7C20;
+		const int CringeOrange = 0xFF9000;
 		// Cringe Status Colors
 		const int CringeError = 0xEF5350;
 		const int CringeSuccess = 0x10b981;
