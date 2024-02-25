@@ -36,8 +36,7 @@ dpp::slashcommand chat_declaration() {
 void chat_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 	// Set the command to thinking and set it to ephemeral
 	event.thinking(true);
-	std::string channel;
-	get_env("CRINGE_CHAT_CHANNEL", channel);
+	std::string channel = get_env("CRINGE_CHAT_CHANNEL");
 	// Query the ollama endpoint with the prompt the user provided
 	std::string prompt = std::get<std::string>(event.get_parameter("prompt"));
 	std::string response = get_ollama_chat(prompt);

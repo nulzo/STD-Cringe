@@ -32,7 +32,6 @@ dpp::slashcommand info_declaration() {
 }
 
 void info_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
-	std::cout << bot.user_get_sync(1186860332845629511).get_avatar_url();
 	dpp::embed embed = dpp::embed()
 			.set_color(Cringe::CringeColor::CringePrimary)
 			.set_title("std::cringe bot")

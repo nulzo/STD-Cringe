@@ -114,28 +114,28 @@ std::string curl_request(const std::string &post_data, const std::string &url, c
 }
 
 std::string get_ollama_chat(const std::string &prompt) {
-	std::string endpoint;
-	get_env("LOCAL_ENDPOINT", endpoint);
-	endpoint = endpoint + "/api/v1/chat";
-	std::cout << endpoint << std::endl;
-	auto res = curl_post(fmt::format(R"({{ "chat": "{}"}})", prompt), endpoint);
+	std::string endpoint = get_env("LOCAL_ENDPOINT") + "/api/v1/chat";
+	auto res = curl_post(fmt::format(R"({{ "chat": "{}" }})", prompt), endpoint);
 	return res.contains("response") ? res["response"] : res["error"];
 }
 
+json post(const std::string &request, const std::string &endpoint) {
+	std::string url = get_env("LOCAL_ENDPOINT") + endpoint;
+	return curl_post(request, url);
+}
+
 std::string get_ollama_describe(const std::string &url) {
-	std::string endpoint;
-	get_env("LOCAL_ENDPOINT", endpoint);
+	std::string endpoint = get_env("LOCAL_ENDPOINT");
 	endpoint = endpoint + "/api/v1/describe";
 	auto res = curl_post(fmt::format(R"({{ "url": "{}"}})", url), endpoint);
 	return res.contains("response") ? res["response"] : res["error"];
 }
 
 std::string get_image(const std::string &prompt) {
-	std::string endpoint;
-	get_env("LOCAL_ENDPOINT", endpoint);
+	std::string endpoint = get_env("LOCAL_ENDPOINT");
 	endpoint = endpoint + "/api/v1/generate";
 	auto res = curl_post(fmt::format(R"({{ "prompt": "{}"}})", prompt), endpoint);
-	return res["image"];
+	return res["response"];
 }
 
 std::string get_tts_response(const std::string &prompt) {
@@ -164,71 +164,96 @@ std::string get_reddit_response(const std::string &subreddit, const std::string 
 	return response;
 }
 
-std::string get_openai_response(const std::string &prompt, std::string max_tokens, std::string model) {
-	std::string url;
-	std::string auth;
-	std::string system_role;
-	// Load in env info
-	get_env("OPEN_AI_AUTH", auth);
-	get_env("OPEN_AI_ENDPOINT", url);
-	get_env("SYSTEM_ROLE", system_role);
-	auth = fmt::format("Authorization: Bearer {}", auth);
-	// Create the post data for the request
-	std::string request = fmt::format(
-			R"({{"model": "{}","messages": [{{"role": "system", "content": "{}" }},{{"role": "user", "content": "{}" }}],"temperature": 1,"max_tokens": {}, "top_p": 1,"frequency_penalty": 0,"presence_penalty": 0 }})",
-			model, system_role, prompt, max_tokens);
-	// Call our function
-	std::string response = curl_request(request, url, {auth});
-	json response_json = json::parse(response);
-	return response_json["choices"][0]["message"]["content"];
+constexpr bool is_whitespace(char c) {
+	return c == ' ' || c == '\t' || c == '\n' || c == '\r';
 }
 
-std::string discord_time_to_date(double timestamp) {
-	// Set the epoch time for Jan 1, 2015
-	const time_t epoch = 1420070400; // January 1, 2015, 00:00:00 (GMT)
-	// Calculate the elapsed time in seconds
-	auto elapsedTime = static_cast<time_t>(timestamp - epoch);
-	// Convert to tm structure
-	struct tm *timeinfo = std::localtime(&elapsedTime);
-	// Format the date as dd/mm/yyyy
-	char buffer[20];
-	std::strftime(buffer, sizeof(buffer), "%d/%m/%Y", timeinfo);
-	return buffer;
+constexpr std::string_view trim_whitespace(std::string_view str) {
+	size_t start = 0;
+	size_t end = str.length();
+
+	while (start < end && is_whitespace(str[start])) {
+		++start;
+	}
+
+	while (end > start && is_whitespace(str[end - 1])) {
+		--end;
+	}
+
+	return str.substr(start, end - start);
 }
 
-int get_env(const std::string_view &given_key, std::string &return_value) {
+constexpr std::string_view get_key_value(const std::string_view& line, bool is_key) {
+	size_t equalPos = line.find('=');
+	return trim_whitespace(is_key ? line.substr(0, equalPos) : line.substr(equalPos + 1));
+}
+//
+//constexpr std::string_view get_env(const std::string_view& given_key, const std::string_view& lines) {
+//	size_t startPos = 0;
+//	size_t endPos = lines.find('\n');
+//
+//	while (endPos != std::string_view::npos) {
+//		const std::string_view line = lines.substr(startPos, endPos - startPos);
+//
+//		if (line.find('=') != std::string::npos && line.find('=') > 0) {
+//			const std::string_view key = get_key_value(line, true);
+//			const std::string_view value = get_key_value(line, false);
+//
+//			if (key == given_key) {
+//				return value;
+//			}
+//		}
+//
+//		startPos = endPos + 1;
+//		endPos = lines.find('\n', startPos);
+//	}
+//
+//	return "";
+//}
+//
+inline std::string get_env(const std::string_view &given_key) {
 	std::string line;
-	std::smatch matches;
 	std::string key;
 	std::string value;
 	std::ifstream file(".env");
+
 	// Open the .env file and error if can't open
 	if (!file.is_open()) {
 		std::cerr << "Error opening file." << std::endl;
-		return -1;
+		return "";
 	}
+
 	// Read and parse the file line by line
 	while (std::getline(file, line)) {
-		// Regex to split on equal sign
-		std::regex pattern("([^=]+)=(.+)");
-		// Match the input against the regex pattern
-		if (std::regex_match(line, matches, pattern)) {
-			// Extract values from the regex matching
-			key = matches[1];
-			value = matches[2];
+		// Find the position of the equal sign
+		size_t equalPos = line.find('=');
+
+		// Check if the line contains an equal sign and it is not the first character
+		if (equalPos != std::string::npos && equalPos > 0) {
+			// Extract key and value based on the position of the equal sign
+			key = line.substr(0, equalPos);
+			value = line.substr(equalPos + 1);
+
+			// Trim leading and trailing whitespaces from key and value
+			key.erase(0, key.find_first_not_of(" \t"));
+			key.erase(key.find_last_not_of(" \t") + 1);
+			value.erase(0, value.find_first_not_of(" \t"));
+			value.erase(value.find_last_not_of(" \t") + 1);
+
 			// Check to see if the key matches what we're looking for
 			if (key == given_key) {
-				return_value = value;
 				// Close the file
 				file.close();
-				return 0;
+				return value;
 			}
 		}
 	}
+
 	// Close the file
 	file.close();
+
 	// No match
-	return -1;
+	return "";
 }
 
 std::string seconds_to_formatted_time(int seconds) {

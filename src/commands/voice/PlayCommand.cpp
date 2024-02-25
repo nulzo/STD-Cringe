@@ -108,8 +108,7 @@ dpp::slashcommand play_declaration() {
 void play_command(dpp::cluster &bot, const dpp::slashcommand_t &event, Cringe::CringeQueue &queue) {
 	// Set the bot to thinking. This gives us a bit more time to reply to the interaction
 	event.thinking(true);
-	std::string channel;
-	get_env("CRINGE_MUSIC_CHANNEL", channel);
+	const std::string channel = get_env("CRINGE_MUSIC_CHANNEL");
 	// Get the voice channel the bot is in, in this current guild.
 	dpp::voiceconn *voice = event.from->get_voice(event.command.guild_id);
 	// If the voice channel was invalid, or there is an issue with it, then tell the user.

@@ -13,9 +13,9 @@
 
 using json = nlohmann::json;
 
-std::string get_ollama_describe(const std::string &url);
-
 std::string get_image(const std::string &prompt);
+
+json post(const std::string &request, const std::string &endpoint);
 
 std::string get_openai_response(const std::string &prompt, std::string max_tokens, std::string model);
 
@@ -27,7 +27,7 @@ std::string discord_time_to_date(double timestamp);
 
 size_t WriteCallback(void *contents, size_t size, size_t nmemb, std::string *output);
 
-int get_env(const std::string_view &given_key, std::string &value);
+inline std::string get_env(const std::string_view &given_key);
 
 std::string seconds_to_formatted_time(int seconds);
 

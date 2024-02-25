@@ -26,6 +26,7 @@
 #include "utils/cringe.h"
 #include "utils/util.h"
 #include "fmt/format.h"
+#include <vector>
 
 dpp::embed status_embed(const std::string &title, const std::string &reason, int status) {
 	dpp::embed embed = dpp::embed();
@@ -128,6 +129,30 @@ dpp::embed reddit_embed(json data) {
 	if(!media.empty() && media.contains("oembed")) {
 		if (media["oembed"].contains("thumbnail_url")){
 			embed.set_image(media["oembed"]["thumbnail_url"]);
+		}
+	}
+	return embed;
+}
+
+dpp::embed cringe_embed(
+		const std::string &title,
+		const std::string &description = "",
+		const std::string &tooltip = "cringe supports slashcommands!",
+		const std::string &bot_avatar = "https://cdn.discordapp.com/avatars/1186860332845629511/2b20f3636a5bd288bca2eb197badf556.png",
+		const std::string &icon = Cringe::CringeIcon::TerminalIcon,
+		const int &color = Cringe::CringeColor::CringePrimary,
+		const std::vector<std::vector<std::string>>& fields = {}
+						) {
+	dpp::embed embed;
+	embed.set_color(color);
+	embed.set_title(title);
+	embed.set_thumbnail(icon);
+	embed.set_description(description);
+	embed.set_footer(tooltip, bot_avatar);
+	embed.set_timestamp(time(nullptr));
+	if(!fields.empty()) {
+		for (const auto &field: fields) {
+			embed.add_field(field[0], field[1], field[2] == "true");
 		}
 	}
 	return embed;

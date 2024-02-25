@@ -11,8 +11,6 @@ namespace Cringe {
 		const int ERROR = 1;
 		const int WARNING = 2;
 		const int SUCCESS = 3;
-		const int NEWSONG = 4;
-		const int CURRSONG = 5;
 	}
 
 	namespace CringeIcon {
@@ -29,6 +27,12 @@ namespace Cringe {
 		const std::string InfoIcon = "https://i.imgur.com/2lZ8HBa.png";
 	}
 
+	namespace CringeEndpoint {
+		const std::string Describe = "/api/v1/describe";
+		const std::string Imagine = "/api/v1/generate";
+		const std::string Chat = "/api/v1/chat";
+	}
+
 	namespace CringeColor {
 		// Cringe Brand Color
 		const int CringePrimary = 0xA69EE3;
@@ -40,16 +44,6 @@ namespace Cringe {
 		const int CringeSuccess = 0x7EC99C;
 		const int CringeWarning = 0xFCE0B1;
 	}
-
-	class CringeAudioSource {
-	public:
-		CringeAudioSource(std::string url, dpp::slashcommand_t &event);
-		std::string get_url();
-		dpp::slashcommand_t get_event();
-	private:
-		std::string url;
-		dpp::slashcommand_t event;
-	};
 
 	class CringeAudio {
 	public:

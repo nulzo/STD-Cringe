@@ -38,8 +38,7 @@ dpp::slashcommand image_declaration() {
 void image_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 	std::string prompt = std::get<std::string>(event.get_parameter("prompt"));
 	event.thinking(true);
-	std::string channel;
-	get_env("CRINGE_TESTING_CHANNEL", channel);
+	std::string channel = get_env("CRINGE_TESTING_CHANNEL");
 	std::string image = get_image(prompt);
 	std::string binaryData = base64_decode(image);
 	dpp::message message(channel, "");

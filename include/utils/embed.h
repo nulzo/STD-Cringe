@@ -17,5 +17,14 @@ dpp::embed chat_embed(std::string &prompt, std::string &response, const dpp::sla
 dpp::embed imagine_embed(const std::string &prompt, const std::string &image_file, const dpp::slashcommand_t &event);
 dpp::embed describe_embed(const std::string &response, const dpp::attachment& image, const dpp::slashcommand_t &event);
 dpp::embed reddit_embed(nlohmann::json data);
+dpp::embed cringe_embed(
+		const std::string &title,
+		const std::string &description,
+		const std::string &tooltip,
+		const std::string &bot_avatar,
+		const std::string &icon,
+		const int &color,
+		const std::vector<std::vector<std::string>>& fields
+);
 
 #endif //CRINGE_EMBEDS_H
