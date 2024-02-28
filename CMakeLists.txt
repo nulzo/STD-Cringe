@@ -61,40 +61,40 @@ else()
     message("COULDNT FIND CURL")
 endif()
 
-include(ExternalProject)
-ExternalProject_Add(
-        dpp_external_project
-        GIT_REPOSITORY https://github.com/brainboxdotcc/DPP.git
-        GIT_TAG master  # Replace with the desired branch or tag
-        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/dpp_install
-)
-
 # Use the installed DPP libraries
-find_package(DPP REQUIRED)
+find_package(DPP)
 
 if (DPP_FOUND)
     message("Found DPP! Yep")
 else ()
-    message(WARNING "Could not find DPP install. Building from source instead.")
-    option(DPP_BUILD_TEST "" OFF)
-    FetchContent_Declare(
-            libdpp
+    include(ExternalProject)
+    ExternalProject_Add(
+            dpp_external_project
             GIT_REPOSITORY https://github.com/brainboxdotcc/DPP.git
-            GIT_TAG master)
-    FetchContent_GetProperties(libdpp)
-    if (NOT libdpp_POPULATED)
-        FetchContent_Populate(libdpp)
-        target_include_directories(${BOT_NAME} PUBLIC
-                ${libdpp_SOURCE_DIR}/include
-        )
-        add_subdirectory(
-                ${libdpp_SOURCE_DIR}
-                ${libdpp_BINARY_DIR}
-                EXCLUDE_FROM_ALL)
-    endif ()
-
-    target_link_libraries(${BOT_NAME} dpp)
+            GIT_TAG master  # Replace with the desired branch or tag
+            CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/dpp_install
+    )
 endif ()
+#    message(WARNING "Could not find DPP install. Building from source instead.")
+#    option(DPP_BUILD_TEST "" OFF)
+#    FetchContent_Declare(
+#            libdpp
+#            GIT_REPOSITORY https://github.com/brainboxdotcc/DPP.git
+#            GIT_TAG master)
+#    FetchContent_GetProperties(libdpp)
+#    if (NOT libdpp_POPULATED)
+#        FetchContent_Populate(libdpp)
+#        target_include_directories(${BOT_NAME} PUBLIC
+#                ${libdpp_SOURCE_DIR}/include
+#        )
+#        add_subdirectory(
+#                ${libdpp_SOURCE_DIR}
+#                ${libdpp_BINARY_DIR}
+#                EXCLUDE_FROM_ALL)
+#    endif ()
+#
+#    target_link_libraries(${BOT_NAME} dpp)
+#endif ()
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
