@@ -12,6 +12,7 @@ COPY CMakeLists.txt .
 COPY Dockerfile .
 
 WORKDIR /usr/src/app/cmake-build
+COPY .env .
 
 #RUN apt-get update && apt-get install -y cmake libssl-dev libfmt-dev libssl-dev g++ cmake ffmpeg libspdlog-dev opus-tools libopus-dev libspdlog-dev libfmt-dev libssl-dev libavformat-dev libavcodec-dev libavutil-dev libavfilter-dev libcurl4-openssl-dev yt-dlp
 RUN apt-get update && apt-get install -y wget libssl-dev cmake zlib1g-dev libsodium-dev libopus-dev ffmpeg libspdlog-dev opus-tools libopus-dev libspdlog-dev libfmt-dev libssl-dev libavformat-dev libavcodec-dev libavutil-dev libavfilter-dev libcurl4-openssl-dev yt-dlp
