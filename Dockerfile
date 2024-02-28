@@ -5,7 +5,11 @@ FROM gcc:13-bookworm
 WORKDIR /usr/src/app
 
 # Copy the necessary files into the container
-COPY . .
+COPY ./src /usr/src/app/src
+COPY ./include /usr/src/app/include
+COPY ./cmake /usr/src/app/cmake
+COPY CMakeLists.txt .
+COPY Dockerfile .
 
 WORKDIR /usr/src/app/cmake-build
 
