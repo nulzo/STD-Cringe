@@ -26,7 +26,7 @@
 #include "utils/cringe.h"
 #include "utils/util.h"
 #include "fmt/format.h"
-#include <vector>
+#include <unordered_map>
 
 dpp::embed status_embed(const std::string &title, const std::string &reason, int status) {
 	dpp::embed embed = dpp::embed();
@@ -159,13 +159,25 @@ dpp::embed cringe_embed(
 }
 
 dpp::embed chat_embed(std::string &prompt, std::string &response, const dpp::slashcommand_t &event) {
+	std::unordered_map<std::string, std::string> fields;
 	dpp::embed embed;
-	embed.set_thumbnail(Cringe::CringeIcon::ChatIcon).set_title("Cringe Chat")
-	.add_field(fmt::format("{} asked", event.command.usr.username), prompt)
-	.add_field("cringe replied", response)
-	.set_color(Cringe::CringeColor::CringePrimary)
-	.set_timestamp(time(nullptr))
-	.set_footer("ask a question with /chat!", "https://cdn.discordapp.com/avatars/1186860332845629511/2b20f3636a5bd288bca2eb197badf556.png");
+	std::string part;
+	int chunk_max = 1024;
+	embed.set_thumbnail(Cringe::CringeIcon::ChatIcon)
+		.set_title("Cringe Chat")
+		.add_field(fmt::format("{} asked", event.command.usr.username), prompt)
+		.set_color(Cringe::CringeColor::CringePrimary)
+		.set_timestamp(time(nullptr))
+		.set_footer("ask a question with /chat!", "https://cdn.discordapp.com/avatars/1186860332845629511/2b20f3636a5bd288bca2eb197badf556.png");
+	if(response.length() >= chunk_max) {
+		for (size_t i = 0; i < response.length(); i += chunk_max) {
+			std::string chunk = response.substr(i, chunk_max);
+			part = (i == 0) ? "cringe replied" : "";
+			embed.add_field(part, chunk);
+		}
+	} else {
+		embed.add_field("cringe replied:", response);
+	}
 	return embed;
 }
 
