@@ -12,6 +12,7 @@
 #include "commands/api/ChatCommand.h"
 #include "commands/api/UserCommand.h"
 #include "commands/api/DescribeCommand.h"
+#include "commands/api/CodeCommand.h"
 
 void process_slashcommand(const dpp::slashcommand_t &event,  dpp::cluster &bot, Cringe::CringeQueue &queue) {
 	if (event.command.get_command_name() == "info") {
@@ -24,8 +25,13 @@ void process_slashcommand(const dpp::slashcommand_t &event,  dpp::cluster &bot, 
 		user_command(bot, event);
 	}
 	else if (event.command.get_command_name() == "chat") {
-		chat_command(bot, event);
+    std::thread chat(chat_command, std::ref(bot), event);
+		chat.detach();
 	}
+  else if (event.command.get_command_name() == "code") {
+    std::thread code(code_command, std::ref(bot), event);
+    code.detach();
+  }
 	else if (event.command.get_command_name() == "join") {
 		join_command(bot, event);
 	}
@@ -52,13 +58,15 @@ void process_slashcommand(const dpp::slashcommand_t &event,  dpp::cluster &bot, 
 		reddit_command(bot, event);
 	}
 	else if (event.command.get_command_name() == "imagine") {
-		image_command(bot, event);
+    std::thread imagine(image_command, std::ref(bot), event);
+    imagine.detach();
 	}
 	else if(event.command.get_command_name() == "talk") {
 		talk_command(bot, event);
 	}
 	else if(event.command.get_command_name() == "describe") {
-		describe_command(bot, event);
+    std::thread describe(describe_command, std::ref(bot), event);
+    describe.detach();
 	}
 }
 
@@ -79,8 +87,9 @@ void register_slashcommands(dpp::cluster &bot) {
 					reddit_declaration(),
 					image_declaration(),
 					talk_declaration(),
-					describe_declaration()
-			}
+					describe_declaration(),
+          code_declaration()
+    }
 	};
 	bot.global_bulk_command_create(commands);
 	bot.set_presence(dpp::presence(dpp::ps_online, dpp::at_custom, "made by @nulzo"));
