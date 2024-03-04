@@ -158,6 +158,41 @@ dpp::embed cringe_embed(
 	return embed;
 }
 
+
+CringeEmbed &CringeEmbed::setTitle(const std::string &embed_title) {
+	title = embed_title;
+	return *this;
+}
+
+CringeEmbed &CringeEmbed::setHelp(const std::string &help_text) {
+	help = help_text;
+	return *this;
+}
+
+CringeEmbed &CringeEmbed::setIcon(const std::string &embed_icon) {
+	icon = embed_icon;
+	return *this;
+}
+
+CringeEmbed &CringeEmbed::setDescription(const std::string &embed_description) {
+	description = embed_description;
+	return *this;
+}
+
+CringeEmbed	&CringeEmbed::initEmbed() {
+		embed.set_thumbnail(icon)
+		.set_color(color)
+		.set_timestamp(time(nullptr))
+		.set_footer(help, profile_pic)
+		.set_description(description)
+		.set_title(title);
+		if(!image.empty()) embed.set_image(image);
+		if(!fields.empty()) { for(auto field : fields) embed.add_field(field[0], field[1], field[2] == "inline"); }
+		return *this;
+	}
+
+dpp::embed CringeEmbed::getEmbed() { return embed; }
+
 dpp::embed chat_embed(std::string &prompt, std::string &response, const dpp::slashcommand_t &event) {
 	std::unordered_map<std::string, std::string> fields;
 	dpp::embed embed;
