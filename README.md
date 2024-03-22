@@ -7,7 +7,7 @@
   <h3 align="center">std::cringe</h3>
 
   <p align="center">
-    A multithreaded and based discord bot, written in pure C++20.
+    A multithreaded and EPIC discord bot, written in pure C++20.
     <br/>
     <br/>
   </p>
