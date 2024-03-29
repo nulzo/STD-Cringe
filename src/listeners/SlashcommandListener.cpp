@@ -13,6 +13,8 @@
 #include "commands/api/UserCommand.h"
 #include "commands/api/DescribeCommand.h"
 #include "commands/api/CodeCommand.h"
+#include "commands/api/KlimCommand.h"
+#include "commands/api/EthanCommand.h"
 
 void process_slashcommand(const dpp::slashcommand_t &event,  dpp::cluster &bot, Cringe::CringeQueue &queue) {
 	if (event.command.get_command_name() == "info") {
@@ -31,6 +33,14 @@ void process_slashcommand(const dpp::slashcommand_t &event,  dpp::cluster &bot, 
   else if (event.command.get_command_name() == "code") {
     std::thread code(code_command, std::ref(bot), event);
     code.detach();
+  }
+  else if (event.command.get_command_name() == "ethan") {
+    std::thread ethan(ethan_command, std::ref(bot), event);
+    ethan.detach();
+  }
+  else if (event.command.get_command_name() == "klim") {
+    std::thread klim(klim_command, std::ref(bot), event);
+    klim.detach();
   }
 	else if (event.command.get_command_name() == "join") {
 		join_command(bot, event);
@@ -88,7 +98,8 @@ void register_slashcommands(dpp::cluster &bot) {
 					image_declaration(),
 					talk_declaration(),
 					describe_declaration(),
-          code_declaration()
+          code_declaration(),
+          klim_declaration()
     }
 	};
 	bot.global_bulk_command_create(commands);

@@ -12,12 +12,12 @@ dpp::slashcommand info_declaration();
 
 dpp::slashcommand message_declaration();
 
-dpp::slashcommand ethan_declaration();
+dpp::slashcommand ethan_change_declaration();
 
 void info_command(dpp::cluster &bot, const dpp::slashcommand_t &event);
 
 void message_command(dpp::cluster &bot, const dpp::slashcommand_t &event);
 
-void ethan_command(dpp::cluster &bot, const dpp::slashcommand_t &event);
+void ethan_change_command(dpp::cluster &bot, const dpp::slashcommand_t &event);
 
 #endif //CRINGE_MISC_H

@@ -216,6 +216,52 @@ dpp::embed chat_embed(std::string &prompt, std::string &response, const dpp::sla
 	return embed;
 }
 
+dpp::embed ethan_embed(std::string &prompt, std::string &response, const dpp::slashcommand_t &event) {
+	std::unordered_map<std::string, std::string> fields;
+	dpp::embed embed;
+	std::string part;
+	int chunk_max = 1024;
+	embed.set_thumbnail("https://cdn.discordapp.com/attachments/994332421753425951/1223068569072566302/th.webp?ex=6618825e&is=66060d5e&hm=abd2dc2fc2a22859e4d3391a25f2761a6169b47971a0ec8706c2ea481b7fd480&")
+		.set_title("Ethan Chat")
+		.add_field(fmt::format("{} asked", event.command.usr.username), prompt)
+		.set_color(Cringe::CringeColor::CringePrimary)
+		.set_timestamp(time(nullptr))
+		.set_footer("ask Ethan a question with /ethan!", "https://cdn.discordapp.com/avatars/1186860332845629511/2b20f3636a5bd288bca2eb197badf556.png");
+	if(response.length() >= chunk_max) {
+		for (size_t i = 0; i < response.length(); i += chunk_max) {
+			std::string chunk = response.substr(i, chunk_max);
+			part = (i == 0) ? "Ethan replied" : "";
+			embed.add_field(part, chunk);
+		}
+	} else {
+		embed.add_field("Ethan replied:", response);
+	}
+	return embed;
+}
+
+dpp::embed klim_embed(std::string &prompt, std::string &response, const dpp::slashcommand_t &event) {
+	std::unordered_map<std::string, std::string> fields;
+	dpp::embed embed;
+	std::string part;
+	int chunk_max = 1024;
+	embed.set_thumbnail("https://cdn.discordapp.com/attachments/994332421753425951/1221534897563504732/thklimson.webp?ex=6612ee06&is=66007906&hm=7440b4dd11bbfff8577a897ac238f7d84f2223bdb5966e2f5a0b2604625efebc&")
+		.set_title("Klimmy Chat")
+		.add_field(fmt::format("{} asked", event.command.usr.username), prompt)
+		.set_color(Cringe::CringeColor::CringePrimary)
+		.set_timestamp(time(nullptr))
+		.set_footer("ask Klim a question with /klim!", "https://cdn.discordapp.com/avatars/1186860332845629511/2b20f3636a5bd288bca2eb197badf556.png");
+	if(response.length() >= chunk_max) {
+		for (size_t i = 0; i < response.length(); i += chunk_max) {
+			std::string chunk = response.substr(i, chunk_max);
+			part = (i == 0) ? "Klim replied" : "";
+			embed.add_field(part, chunk);
+		}
+	} else {
+		embed.add_field("Klim replied:", response);
+	}
+	return embed;
+}
+
 dpp::embed imagine_embed(const std::string &prompt, const std::string &image_file, const dpp::slashcommand_t &event) {
 	dpp::embed embed;
 	embed.set_thumbnail(Cringe::CringeIcon::AperatureIcon).set_title("Cringe Image Generation")

@@ -70,7 +70,7 @@ std::vector<std::string> Cringe::CringeAudio::get_yt_info(std::string song) {
 }
 
 std::string Cringe::CringeAudio::search_command(std::string search) {
-	return fmt::format(R"(yt-dlp -f bestaudio -o - "{}" | ffmpeg -i pipe:0 -loglevel warning -f s16le -ac 2 -ar 48000 pipe:1)", search);
+	return fmt::format(R"(yt-dlp -f bestaudio -o - -vn "{}" | ffmpeg -i pipe:0 -hide_banner -loglevel warning -f s16le -ac 2 -ar 48000 pipe:1)", search);
 }
 
 std::string Cringe::CringeAudio::query_to_url(std::string query) {

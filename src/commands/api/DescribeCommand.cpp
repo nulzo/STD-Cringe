@@ -44,9 +44,7 @@ void describe_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 	std::string data = fmt::format(R"({{ "url": "{}"}})", attachment.url);
 	json response = post(data, Cringe::CringeEndpoint::Describe);
 	std::string reply;
-	if(response.is_null() || response.empty() || !response["error"].is_boolean() || !response["response"].is_string()) {
-		reply = response["error"];
-	}
+	for(auto res : response) { std::cout << res << std::endl;}
 	reply = response["response"];
 	dpp::embed embed = describe_embed(reply, attachment, event);
 	/* Reply with the file as a URL. */
