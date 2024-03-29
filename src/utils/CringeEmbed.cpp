@@ -160,38 +160,53 @@ dpp::embed cringe_embed(
 
 
 CringeEmbed &CringeEmbed::setTitle(const std::string &embed_title) {
-	title = embed_title;
+	embed.set_title(embed_title);
 	return *this;
 }
 
+CringeEmbed::CringeEmbed() {
+	embed = dpp::embed();
+	embed.set_title(title)
+	.set_color(color)
+	.set_thumbnail(icon)
+	.set_footer(help, profile_pic);
+}
+
+CringeEmbed::~CringeEmbed() = default;
+
 CringeEmbed &CringeEmbed::setHelp(const std::string &help_text) {
-	help = help_text;
+	embed.set_footer(help_text, profile_pic);
 	return *this;
 }
 
 CringeEmbed &CringeEmbed::setIcon(const std::string &embed_icon) {
-	icon = embed_icon;
+	embed.set_thumbnail(embed_icon);
+	return *this;
+}
+
+CringeEmbed &CringeEmbed::setColor(const int &embed_color) {
+	embed.set_color(embed_color);
+	return *this;
+}
+
+CringeEmbed &CringeEmbed::setFields(const std::vector<std::vector<std::string>> &fields) {
+	if(!fields.empty()) {
+		for (const auto &field: fields) {
+			embed.add_field(field[0], field[1], field[2] == "true");
+		}
+	}
 	return *this;
 }
 
 CringeEmbed &CringeEmbed::setDescription(const std::string &embed_description) {
-	description = embed_description;
+	embed.set_description(embed_description);
 	return *this;
 }
 
-CringeEmbed	&CringeEmbed::initEmbed() {
-		embed.set_thumbnail(icon)
-		.set_color(color)
-		.set_timestamp(time(nullptr))
-		.set_footer(help, profile_pic)
-		.set_description(description)
-		.set_title(title);
-		if(!image.empty()) embed.set_image(image);
-		if(!fields.empty()) { for(auto field : fields) embed.add_field(field[0], field[1], field[2] == "inline"); }
-		return *this;
-	}
-
-dpp::embed CringeEmbed::getEmbed() { return embed; }
+CringeEmbed &CringeEmbed::setAttatchment(const dpp::attachment &embed_attatchment) {
+	embed.set_image(embed_attatchment.url);
+	return *this;
+}
 
 dpp::embed chat_embed(std::string &prompt, std::string &response, const dpp::slashcommand_t &event) {
 	std::unordered_map<std::string, std::string> fields;

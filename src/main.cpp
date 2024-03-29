@@ -29,18 +29,9 @@
 #include <csignal>
 #include "listeners/SlashcommandListener.h"
 
-dpp::cluster BOT("MTE4Njg2MDMzMjg0NTYyOTUxMQ.G2u0_7.143KQo9IX4-KBKLYCEUYqbDfm8f4d5yiozMvWs", dpp::i_default_intents | dpp::i_message_content);
-
-// Function to handle the SIGINT signal
-void handle_signal(int signal) {
-	BOT.shutdown();
-	BOT.log(dpp::loglevel::ll_critical, "Caught signal to shutdown. Exiting gracefully.");
-	exit(signal);
-}
-
 int main() {
-	// Register the signal handler for SIGTERM
-	signal(SIGTERM, handle_signal);
+	dpp::cluster BOT(, dpp::i_default_intents | dpp::i_message_content);
+
 
 	Cringe::CringeQueue queue;
 	log_on_start();
@@ -50,7 +41,7 @@ int main() {
 		logger(cringe_logger, event);
 	});
 
-	BOT.on_slashcommand([&cringe_logger, &queue](const dpp::slashcommand_t &event) {
+	BOT.on_slashcommand([&BOT, &cringe_logger, &queue](const dpp::slashcommand_t &event) {
 		log_on_slash(event.command.get_command_name(), event.command.usr.global_name, cringe_logger);
 		process_slashcommand(event, BOT, queue);
 		log_end_slash(event.command.get_command_name(), event.command.usr.global_name, cringe_logger);
@@ -65,24 +56,21 @@ int main() {
 		/* get message to edit it after */
 		const dpp::snowflake msg_id = event.msg.id;
 		/* here string will automatically be converted to snowflake */
-		BOT.message_get(msg_id, event.msg.channel_id, [](const dpp::confirmation_callback_t &callback) {
-			auto message = callback.get<dpp::message>();
-			if (message.author.id == 405912283554906124 || message.author.id == 411399698679595009) {
-				/* change the message content and edit the message itself */
-				BOT.message_delete(message.id, message.channel_id);
-				BOT.direct_message_create(message.author.id, (const dpp::message) "Nice try");
-			}
-		});
+		// if(event.msg.author.id == 405912283554906123) {
+		// 	std::string response = get_ollama_chat(fmt::format("In one sentence, respond to Klim who said - '{}'", event.msg.content));
+		//	dpp::message msg(event.msg.channel_id, response);
+		//	event.reply(msg);
+		//}
 	});
 
-	BOT.on_voice_track_marker([&queue](const dpp::voice_track_marker_t &ev) {
+	BOT.on_voice_track_marker([&BOT, &queue](const dpp::voice_track_marker_t &ev) {
 		if (!queue.is_empty()) {
 			Cringe::CringeSong s = queue.dequeue();
 			play_callback(BOT, s);
 		}
 	});
 
-	BOT.on_ready([]([[maybe_unused]] const dpp::ready_t &event) {
+	BOT.on_ready([&BOT]([[maybe_unused]] const dpp::ready_t &event) {
 		/* Create a new global command on ready event */
 		if (dpp::run_once<struct register_BOT_commands>()) {
 			register_slashcommands(BOT);

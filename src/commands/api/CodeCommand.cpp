@@ -36,7 +36,7 @@ dpp::slashcommand code_declaration() {
 void code_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 	// Set the command to thinking and set it to ephemeral
 	event.thinking(true);
-	CringeEmbed cringeEmbed;
+	CringeEmbed cringeEmbed(dpp::attachment(nullptr));
 	std::string channel = get_env("CRINGE_CHAT_CHANNEL");
 
 	std::string first_box = fmt::format("**{} asked**", event.command.usr.username);

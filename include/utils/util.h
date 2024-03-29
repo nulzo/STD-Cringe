@@ -23,6 +23,8 @@ std::string get_tts_response(const std::string &prompt);
 
 std::string get_ollama_chat(const std::string &prompt);
 
+json get_chat(const std::string &prompt, const std::string &model);
+
 std::string get_ollama_code(const std::string &prompt);
 
 std::string get_ollama_ethan(const std::string &prompt);

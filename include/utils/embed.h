@@ -30,23 +30,22 @@ dpp::embed cringe_embed(
 );
 
 class CringeEmbed {
-private:
-	std::string title = "Cringe Embed";
-	std::string description;
-	std::string profile_pic = "https://cdn.discordapp.com/avatars/1186860332845629511/2b20f3636a5bd288bca2eb197badf556.png";
-	int color = Cringe::CringeColor::CringePrimary;
-	std::string icon = Cringe::CringeIcon::SuccessIcon;
-	std::vector<std::vector<std::string>> fields;
-	dpp::embed embed;
-	std::string image;
-	std::string help = "use a command with slashcommands!";
 public:
+	dpp::embed embed;
+	int color = Cringe::CringeColor::CringePrimary;
+	std::string icon = Cringe::CringeIcon::TerminalIcon;
+	std::string title = "Cringe Embed";
+	std::string profile_pic = "https://cdn.discordapp.com/avatars/1186860332845629511/2b20f3636a5bd288bca2eb197badf556.png";
+	std::string help = "use a command with slashcommands!";
+	CringeEmbed();
+	~CringeEmbed();
 	CringeEmbed& setTitle(const std::string &embed_title);
 	CringeEmbed& setIcon(const std::string &icon);
+	CringeEmbed& setColor(const int &color);
+	CringeEmbed& setFields(const std::vector<std::vector<std::string>> &fields);
 	CringeEmbed& setHelp(const std::string &help_text);
 	CringeEmbed& setDescription(const std::string &embed_description);
-	CringeEmbed& initEmbed();
-	dpp::embed getEmbed();
+	CringeEmbed& setAttatchment(const dpp::attachment &embed_attatchment);
 };
 
 #endif //CRINGE_EMBEDS_H

@@ -9,7 +9,7 @@
 #include "commands/api/RedditCommand.h"
 #include "commands/api/ImageCommand.h"
 #include "commands/api/TalkCommand.h"
-#include "commands/api/ChatCommand.h"
+#include "commands/api/chat_command.h"
 #include "commands/api/UserCommand.h"
 #include "commands/api/DescribeCommand.h"
 #include "commands/api/CodeCommand.h"
