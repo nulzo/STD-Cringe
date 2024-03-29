@@ -1,0 +1,13 @@
+# Target labels
+ dpp_external_project
+# Source files and their labels
+/Users/nulzo/Github/Cringe-Bot/cmake/CMakeFiles/dpp_external_project
+/Users/nulzo/Github/Cringe-Bot/cmake/CMakeFiles/dpp_external_project.rule
+/Users/nulzo/Github/Cringe-Bot/cmake/CMakeFiles/dpp_external_project-complete.rule
+/Users/nulzo/Github/Cringe-Bot/cmake/dpp_external_project-prefix/src/dpp_external_project-stamp/dpp_external_project-build.rule
+/Users/nulzo/Github/Cringe-Bot/cmake/dpp_external_project-prefix/src/dpp_external_project-stamp/dpp_external_project-configure.rule
+/Users/nulzo/Github/Cringe-Bot/cmake/dpp_external_project-prefix/src/dpp_external_project-stamp/dpp_external_project-download.rule
+/Users/nulzo/Github/Cringe-Bot/cmake/dpp_external_project-prefix/src/dpp_external_project-stamp/dpp_external_project-install.rule
+/Users/nulzo/Github/Cringe-Bot/cmake/dpp_external_project-prefix/src/dpp_external_project-stamp/dpp_external_project-mkdir.rule
+/Users/nulzo/Github/Cringe-Bot/cmake/dpp_external_project-prefix/src/dpp_external_project-stamp/dpp_external_project-patch.rule
+/Users/nulzo/Github/Cringe-Bot/cmake/dpp_external_project-prefix/src/dpp_external_project-stamp/dpp_external_project-update.rule

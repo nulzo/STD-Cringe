@@ -1,0 +1,3 @@
+/Users/nulzo/Github/Cringe-Bot/cmake/CMakeFiles/cringe.dir
+/Users/nulzo/Github/Cringe-Bot/cmake/CMakeFiles/edit_cache.dir
+/Users/nulzo/Github/Cringe-Bot/cmake/CMakeFiles/rebuild_cache.dir
