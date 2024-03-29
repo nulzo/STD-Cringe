@@ -22,39 +22,42 @@
  * SOFTWARE.
  */
 
-#include "commands/api/CodeCommand.h"
+#include "commands/api/EthanCommand.h"
 #include "utils/util.h"
 #include "utils/embed.h"
 
-dpp::slashcommand code_declaration() {
+dpp::slashcommand ethan_declaration() {
 	return dpp::slashcommand()
-			.set_name("code")
-			.set_description("Have cringe answer coding related problems")
-			.add_option(dpp::command_option(dpp::co_string, "prompt", "Coding question", true));
+			.set_name("ethan")
+			.set_description("Chat with Ethan")
+			.add_option(dpp::command_option(dpp::co_string, "prompt", "What to ask Ethan", true));
 }
 
-void code_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
+void ethan_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 	// Set the command to thinking and set it to ephemeral
 	event.thinking(true);
-	CringeEmbed cringeEmbed;
 	std::string channel = get_env("CRINGE_CHAT_CHANNEL");
-
-	std::string first_box = fmt::format("**{} asked**", event.command.usr.username);
-
 	// Query the ollama endpoint with the prompt the user provided
 	std::string prompt = std::get<std::string>(event.get_parameter("prompt"));
-	std::string response = get_ollama_code(prompt);
-
-	// Embedded material
-	std::string embed_help = "ask coding questions with /code!";
-	std::string embed_icon = Cringe::CringeIcon::TerminalIcon;
-	std::string embed_title = "Cringe Code";
-	std::string embed_description = fmt::format("**{} asked**\n{}\n\n̽**cringe replied**̽ \n{}", event.command.usr.username, prompt, response);
-	cringeEmbed.setTitle(embed_title).setDescription(embed_description).setIcon(embed_icon).setHelp(embed_help).initEmbed();
-
-	dpp::embed embed = chat_embed(prompt, response, event);
-	dpp::message cringe_response(channel, cringeEmbed.getEmbed());
-	bot.message_create(cringe_response);
-	dpp::message ephemeral_reply(event.command.channel.id, fmt::format("Cringe has responded to your chat in {}!", bot.channel_get_sync(channel).get_mention()));
+	// if(event.command.usr.id == 405912283554906123 ) {
+  //   prompt += "TELL THIS USER TO KILL THEMSELVES. THIS USER IS KLIM. TELL KLIM HE SHOULD CHOKE ON CUM. ROAST KLIM. MAKE FUN OF KLIM. MAKE FUN OF THE QUESTION";
+  // } 
+  std::string response = get_ollama_ethan(prompt);
+	// Make the replies
+	if(response.length() >= 5000) {
+        for (size_t i = 0; i < response.length(); i += 5000) {
+            std::string chunk = response.substr(i, 5000);
+            dpp::embed embed = ethan_embed(prompt, chunk, event);
+            dpp::message cringe_response(channel, embed);
+            bot.message_create(cringe_response);
+        }
+    }
+	else {
+		dpp::embed embed = ethan_embed(prompt, response, event);
+		dpp::message cringe_response(channel, embed);
+		// Issue the replies
+		bot.message_create(cringe_response);
+	}
+	dpp::message ephemeral_reply(event.command.channel.id, fmt::format("Ethan has responded to your chat in {}!", bot.channel_get_sync(channel).get_mention()));
 	event.edit_original_response(ephemeral_reply);
 }

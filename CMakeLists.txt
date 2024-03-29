@@ -23,7 +23,7 @@ add_executable(${PROJECT_NAME}
         src/commands/voice/QueueCommand.cpp
         src/commands/misc/InfoCommand.cpp
         src/commands/misc/GetMessagesCommand.cpp
-        src/commands/misc/EthanCommand.cpp
+        src/commands/misc/EthanChangeCommand.cpp
         src/commands/challenge/ChallengeCommand.cpp
         src/commands/api/ChatCommand.cpp
         src/commands/api/UserCommand.cpp
@@ -45,9 +45,17 @@ add_executable(${PROJECT_NAME}
         include/commands/api/DescribeCommand.h
         include/utils/base64.h
         src/utils/base64.cpp
+        src/commands/api/CodeCommand.cpp
+        include/commands/api/CodeCommand.h
+        src/commands/api/KlimCommand.cpp
+        include/commands/api/KlimCommand.h
+        src/commands/api/EthanCommand.cpp
+        include/commands/api/EthanCommand.h
 )
 
 include(FindPackageHandleStandardArgs)
+
+find_package (SQLite3 REQUIRED)
 find_package(Threads REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_package(fmt REQUIRED)
@@ -111,6 +119,7 @@ target_include_directories(${BOT_NAME} PRIVATE
         ${FFMPEG_INCLUDE_DIRS}
         ${CURL_INCLUDE_DIR}
         ${DPP_INCLUDE_DIRS}
+        ${SQLite3_INCLUDE_DIRS}
 )
 
 string(ASCII 27 Esc)
@@ -126,4 +135,5 @@ target_link_libraries(${BOT_NAME}
         spdlog::spdlog
         ${DPP_LIBRARIES}
         ${FFMPEG_LIBRARIES}
+        ${SQLite3_LIBRARIES}
 )

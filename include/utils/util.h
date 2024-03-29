@@ -23,6 +23,12 @@ std::string get_tts_response(const std::string &prompt);
 
 std::string get_ollama_chat(const std::string &prompt);
 
+std::string get_ollama_code(const std::string &prompt);
+
+std::string get_ollama_ethan(const std::string &prompt);
+
+std::string get_ollama_klim(const std::string &prompt);
+
 std::string discord_time_to_date(double timestamp);
 
 size_t WriteCallback(void *contents, size_t size, size_t nmemb, std::string *output);

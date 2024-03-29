@@ -36,7 +36,7 @@ json curl_post(const std::string &data, const std::string &url, const std::vecto
 	CURL *curl;
 	CURLcode response_code;
 	json response;
-	std::string response_data;
+	std::string response_data; 
 	curl_global_init(CURL_GLOBAL_DEFAULT);
 	curl = curl_easy_init();
 	if (curl) {
@@ -61,6 +61,7 @@ json curl_post(const std::string &data, const std::string &url, const std::vecto
 			curl_easy_cleanup(curl);
 			curl_slist_free_all(headers);
 			curl_global_cleanup();
+      std::cout << response_data << std::endl;
 			return json::parse(response_data);
 		} else {
 			std::cerr << "cURL request failed: " << curl_easy_strerror(response_code) << std::endl;
@@ -113,10 +114,46 @@ std::string curl_request(const std::string &post_data, const std::string &url, c
 	return R"({"error": "Request Failed!"})";
 }
 
+void replace_raw_char(std::string &str, const char refchar) {
+    size_t found = str.find(refchar);
+    while (found != std::string::npos) {
+        std::string replace = fmt::format(R"(\{})", refchar);
+        str.replace(found, 1, replace);
+        found = str.find('\"', found + 2);
+    }
+}
+
 std::string get_ollama_chat(const std::string &prompt) {
 	std::string endpoint = get_env("LOCAL_ENDPOINT") + "/api/v1/chat";
-	auto res = curl_post(fmt::format(R"({{ "chat": "{}" }})", prompt), endpoint);
+  std::string formatted_prompt = prompt;
+  replace_raw_char(formatted_prompt, '"');
+	auto res = curl_post(fmt::format(R"({{ "chat": "{}" }})", formatted_prompt), endpoint);
 	return res.contains("response") ? res["response"] : res["error"];
+}
+
+std::string get_ollama_code(const std::string &prompt) {
+  std::string endpoint = get_env("LOCAL_ENDPOINT") + "/api/v1/code";
+  std::string formatted_prompt = prompt;
+  replace_raw_char(formatted_prompt, '"');
+  auto response = curl_post(fmt::format(R"({{ "chat": "{}" }})", formatted_prompt), endpoint);
+  
+  return response.contains("response") ? response["response"] : response["error"];
+}
+
+std::string get_ollama_klim(const std::string &prompt) {
+  std::string endpoint = get_env("LOCAL_ENDPOINT") + "/api/v1/klim";
+  std::string formatted_prompt = prompt;
+  replace_raw_char(formatted_prompt, '"');
+  auto response = curl_post(fmt::format(R"({{ "chat": "{}" }})", formatted_prompt), endpoint);
+  return response.contains("response") ? response["response"] : response["error"];
+}
+
+std::string get_ollama_ethan(const std::string &prompt) {
+  std::string endpoint = get_env("LOCAL_ENDPOINT") + "/api/v1/ethan";
+  std::string formatted_prompt = prompt;
+  replace_raw_char(formatted_prompt, '"');
+  auto response = curl_post(fmt::format(R"({{ "chat": "{}" }})", formatted_prompt), endpoint);
+  return response.contains("response") ? response["response"] : response["error"];
 }
 
 json post(const std::string &request, const std::string &endpoint) {
@@ -127,7 +164,10 @@ json post(const std::string &request, const std::string &endpoint) {
 std::string get_ollama_describe(const std::string &url) {
 	std::string endpoint = get_env("LOCAL_ENDPOINT");
 	endpoint = endpoint + "/api/v1/describe";
-	auto res = curl_post(fmt::format(R"({{ "url": "{}"}})", url), endpoint);
+
+  std::cout << url << std::endl;
+	
+  auto res = curl_post(fmt::format(R"({{ "url": "{}"}})", url), endpoint);
 	return res.contains("response") ? res["response"] : res["error"];
 }
 

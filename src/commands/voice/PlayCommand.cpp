@@ -111,8 +111,10 @@ void play_command(dpp::cluster &bot, const dpp::slashcommand_t &event, Cringe::C
 	const std::string channel = get_env("CRINGE_MUSIC_CHANNEL");
 	// Get the voice channel the bot is in, in this current guild.
 	dpp::voiceconn *voice = event.from->get_voice(event.command.guild_id);
-	// If the voice channel was invalid, or there is an issue with it, then tell the user.
-	if (!voice || !voice->voiceclient || !voice->voiceclient->is_ready()) {
+	dpp::guild *guild = dpp::find_guild(event.command.guild_id);
+  std::cout << "\n\nHERE\n\n";
+  // If the voice channel was invalid, or there is an issue with it, then tell the user.	
+  if (!voice || !voice->voiceclient || !voice->voiceclient->is_ready()) {
 		dpp::message message(event.command.channel_id, status_embed("CringeError::VoiceError", "Bot was unable to join the voice channel due to some unknown reason.", Cringe::CringeStatus::ERROR));
 		event.edit_original_response(message);
 		return;
@@ -165,7 +167,7 @@ void play_command(dpp::cluster &bot, const dpp::slashcommand_t &event, Cringe::C
 	// Set the url and codec, piping the audio with ffmpeg
 	std::string process = Cringe::CringeAudio::search_command(request);
 	// Add filter (if applicable)
-	if (!filter.empty()) process += fmt::format(" -vn -filter_complex {}", filter);
+	if (!filter.empty()) process += fmt::format(" -filter_complex {}", filter);
 	// Get the song information from the command
 	std::vector<std::string> yt_info = Cringe::CringeAudio::get_yt_info(request);
 	// Create a new song object and populate it with our new information

@@ -13,6 +13,8 @@ dpp::embed info_embed(const std::string& title, const std::string& response, con
 dpp::embed generic_embed(const std::string &icon, const std::string &title, const std::string &description, int status);
 dpp::embed added_to_queue_embed(Cringe::CringeSong song);
 dpp::embed confession_embed(const std::string& confession);
+dpp::embed ethan_embed(std::string &prompt, std::string &response, const dpp::slashcommand_t &event);
+dpp::embed klim_embed(std::string &prompt, std::string &response, const dpp::slashcommand_t &event);
 dpp::embed chat_embed(std::string &prompt, std::string &response, const dpp::slashcommand_t &event);
 dpp::embed imagine_embed(const std::string &prompt, const std::string &image_file, const dpp::slashcommand_t &event);
 dpp::embed describe_embed(const std::string &response, const dpp::attachment& image, const dpp::slashcommand_t &event);
