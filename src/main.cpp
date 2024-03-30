@@ -22,18 +22,16 @@
  * SOFTWARE.
  */
 
-#include "utils/util.h"
-#include "commands/voice/PlayCommand.h"
-#include "utils/logger.h"
-#include "utils/cringe.h"
-#include <csignal>
+#include "commands/voice/play_command.h"
+#include "utils/cringe_logger.h"
+#include "utils/misc/cringe.h"
+#include "utils/misc/cringe_helpers.h"
 #include "listeners/SlashcommandListener.h"
 
 int main() {
-	dpp::cluster BOT(, dpp::i_default_intents | dpp::i_message_content);
+	dpp::cluster BOT(get_env("BOT_TOKEN"), dpp::i_default_intents | dpp::i_message_content);
 
-
-	Cringe::CringeQueue queue;
+	CringeQueue queue;
 	log_on_start();
 	std::shared_ptr<spdlog::logger> cringe_logger = cringe_logging();
 
@@ -65,7 +63,7 @@ int main() {
 
 	BOT.on_voice_track_marker([&BOT, &queue](const dpp::voice_track_marker_t &ev) {
 		if (!queue.is_empty()) {
-			Cringe::CringeSong s = queue.dequeue();
+			CringeSong s = queue.dequeue();
 			play_callback(BOT, s);
 		}
 	});

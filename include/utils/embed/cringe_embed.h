@@ -1,7 +1,4 @@
-#pragma once
-
-#ifndef CRINGE_EMBEDS_H
-#define CRINGE_EMBEDS_H
+#ifndef CRINGE_CRINGE_EMBED_H
 
 #include <dpp/dpp.h>
 #include "utils/misc/cringe.h"
@@ -12,6 +9,8 @@ dpp::embed now_streaming(CringeSong song);
 dpp::embed info_embed(const std::string& title, const std::string& response, const std::string& avatar_url, const std::string& mention, const std::string& created, const std::string& joined_at, const std::string& premium, const std::string& nitro, const std::string& bot);
 dpp::embed added_to_queue_embed(CringeSong song);
 dpp::embed confession_embed(const std::string& confession);
+dpp::embed ethan_embed(std::string &prompt, std::string &response, const dpp::slashcommand_t &event);
+dpp::embed klim_embed(std::string &prompt, std::string &response, const dpp::slashcommand_t &event);
 dpp::embed imagine_embed(const std::string &prompt, const std::string &image_file, const dpp::slashcommand_t &event);
 dpp::embed describe_embed(const std::string &response, const dpp::attachment& image, const dpp::slashcommand_t &event);
 dpp::embed reddit_embed(nlohmann::json data);
@@ -35,4 +34,6 @@ public:
 	CringeEmbed& setAttatchment(const dpp::attachment &embed_attatchment);
 };
 
-#endif //CRINGE_EMBEDS_H
+#define CRINGE_CRINGE_EMBED_H
+
+#endif //CRINGE_CRINGE_EMBED_H

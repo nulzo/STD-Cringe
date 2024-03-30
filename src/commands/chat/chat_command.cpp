@@ -22,11 +22,11 @@
  * SOFTWARE.
  */
 
-#include "commands/api/chat_command.h"
-#include "utils/util.h"
+#include "commands/chat/chat_command.h"
+#include "utils/misc/cringe_helpers.h"
 #include "utils/embed.h"
-#include <sqlite3.h>
-#include "connectors/database.h"
+#include "connectors/cringe_database.h"
+#include "utils/http/cringe_api.h"
 
 dpp::slashcommand chat_declaration() {
 	return dpp::slashcommand()
@@ -46,11 +46,17 @@ void chat_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 	// Query the ollama endpoint with the prompt the user provided
 	std::string prompt = std::get<std::string>(event.get_parameter("prompt"));
 	std::string model = std::get<std::string>(event.get_parameter("model"));
-	std::string response = get_ollama_chat(prompt);
+	json r = cringe_chat(prompt, model);
+	if(!r["error"].empty()) {
+		std::cout << "\nERROR!\n" << std::endl;
+		// An error has occurred!
+	}
+	std::string response = r["response"];
 	// Access the database and insert the values
 	CringeDB cringe_db(get_env("CRINGE_DATABASE"));
-	cringe_db.execute("CREATE TABLE IF NOT EXISTS chats (id INTEGER PRIMARY KEY AUTOINCREMENT, model TEXT, issuer TEXT, prompt TEXT, response TEXT);");
-	cringe_db.execute(fmt::format("INSERT INTO chats (model,issuer,prompt,response) VALUES ({}, {}, {}, {});", model, event.command.usr.discriminator, prompt, response));
+	cringe_db.execute("CREATE TABLE IF NOT EXISTS CHAT (id INTEGER PRIMARY KEY AUTOINCREMENT, model TEXT, issuer TEXT, prompt TEXT, response TEXT);");
+	std::vector<std::string> params = {model, event.command.usr.username, prompt, response};
+	cringe_db.execute("INSERT INTO CHAT (model,issuer,prompt,response) VALUES (?, ?, ?, ?);", params);
 	CringeEmbed cringe_embed;
 	cringe_embed.setTitle("Cringe Chat").setHelp(fmt::format("ask {} a question with /chat!", model));
 	cringe_embed.setFields({{fmt::format("{} asked", event.command.usr.username), prompt},
