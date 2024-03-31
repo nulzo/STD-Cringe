@@ -6,6 +6,7 @@
 #include "commands/api/reddit_command.h"
 #include "commands/chat/imagine_command.h"
 #include "commands/chat/chat_command.h"
+#include "commands/chat/code_command.h"
 #include "commands/chat/user_command.h"
 #include "commands/chat/describe_command.h"
 #include "commands/chat/info_command.h"
@@ -21,6 +22,10 @@ void process_slashcommand(const dpp::slashcommand_t &event,  dpp::cluster &bot, 
 	else if (event.command.get_command_name() == "chat") {
     std::thread chat(chat_command, std::ref(bot), event);
 		chat.detach();
+	}
+	else if (event.command.get_command_name() == "code") {
+		std::thread code(code_command, std::ref(bot), event);
+		code.detach();
 	}
 	else if (event.command.get_command_name() == "join") {
 		join_command(bot, event);
@@ -58,6 +63,7 @@ void register_slashcommands(dpp::cluster &bot) {
 					user_declaration(),
 					chat_declaration(),
 					join_declaration(),
+					code_declaration(),
 					play_declaration(),
 					queue_declaration(),
 					skip_declaration(),

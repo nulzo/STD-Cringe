@@ -34,9 +34,9 @@ dpp::slashcommand chat_declaration() {
 			.set_description("Chat with a model")
 			.add_option(dpp::command_option(dpp::co_string, "model", "The model to interact with", true)
 								.add_choice(dpp::command_option_choice("Cringe", std::string("cringe")))
-								.add_choice(dpp::command_option_choice("Code", std::string("code")))
 								.add_choice(dpp::command_option_choice("Klim", std::string("klim")))
-								.add_choice(dpp::command_option_choice("Ethan", std::string("ethan"))))
+								.add_choice(dpp::command_option_choice("Ethan", std::string("ethan")))
+								.add_choice(dpp::command_option_choice("Joeman", std::string("joeman"))))
 			.add_option(dpp::command_option(dpp::co_string, "prompt", "What to ask the model", true));
 }
 
@@ -59,8 +59,8 @@ void chat_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 	cringe_db.execute("INSERT INTO CHAT (model,issuer,prompt,response) VALUES (?, ?, ?, ?);", params);
 	CringeEmbed cringe_embed;
 	cringe_embed.setTitle("Cringe Chat").setHelp(fmt::format("ask {} a question with /chat!", model));
-	cringe_embed.setFields({{fmt::format("{} asked", event.command.usr.username), prompt},
-													{fmt::format("{} responded", model), response}});
+	cringe_embed.setFields({{fmt::format("{} asked", event.command.usr.username), prompt, "false"},
+													{fmt::format("{} responded", model), response, "false"}});
 	// Issue the replies
 	dpp::message cringe_response(channel, cringe_embed.embed);
 	bot.message_create(cringe_response);

@@ -18,7 +18,7 @@ public:
 	~CringeDB();
 	std::string sanitize_statement(const std::string &statement);
 	void execute(const std::string& sql, const std::vector<std::string>& params = {}) const;
-//	std::vector<std::vector<std::string>> query(const std::string& sql);
+	std::vector<std::vector<std::string>> query(const std::string& sql);
 };
 
 

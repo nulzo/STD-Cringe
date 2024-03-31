@@ -33,6 +33,8 @@ public:
 	CringeEmbed& setHelp(const std::string &help_text);
 	CringeEmbed& setDescription(const std::string &embed_description);
 	CringeEmbed& setAttatchment(const dpp::attachment &embed_attatchment);
+
+	CringeEmbed &setImage(const std::string &embed_image);
 };
 
 #endif //CRINGE_EMBEDS_H

@@ -42,20 +42,20 @@ std::string CringeDB::sanitize_statement(const std::string &statement) {
 	return std::string();
 }
 
-//std::vector<std::vector<std::string>> CringeDB::query(const std::string &sql) {
-//	std::vector<std::vector<std::string>> result;
-//	sqlite3_stmt *statement;
-//	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &statement, nullptr) != SQLITE_OK) {
-//		throw std::runtime_error("Failed to prepare SQL statement: " + std::string(sqlite3_errmsg(db)));
-//	}
-//	while (sqlite3_step(statement) == SQLITE_ROW) {
-//		std::vector<std::string> row;
-//		row.reserve(sqlite3_column_count(statement));
-//		for (int i = 0; i < sqlite3_column_count(statement); ++i) {
-//			row.emplace_back((const char *)(sqlite3_column_text(statement, i)));
-//		}
-//		result.push_back(row);
-//	}
-//	sqlite3_finalize(statement);
-//	return result;
-//}
+std::vector<std::vector<std::string>> CringeDB::query(const std::string &sql) {
+	std::vector<std::vector<std::string>> result;
+	sqlite3_stmt *statement;
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &statement, nullptr) != SQLITE_OK) {
+		throw std::runtime_error("Failed to prepare SQL statement: " + std::string(sqlite3_errmsg(db)));
+	}
+	while (sqlite3_step(statement) == SQLITE_ROW) {
+		std::vector<std::string> row;
+		row.reserve(sqlite3_column_count(statement));
+		for (int i = 0; i < sqlite3_column_count(statement); ++i) {
+			row.emplace_back((const char *)(sqlite3_column_text(statement, i)));
+		}
+		result.push_back(row);
+	}
+	sqlite3_finalize(statement);
+	return result;
+}

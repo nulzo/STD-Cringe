@@ -10,20 +10,23 @@ json cringe_chat(const std::string &prompt, const std::string &model) {
 								 sanitized_prompt, model), endpoint);
 }
 
-std::string cringe_describe(const std::string &url) {
-	std::string endpoint = get_env("LOCAL_ENDPOINT");
-	endpoint = endpoint + "/api/v1/describe";
-	auto res = cringe_post(fmt::format(R"({{ "url": "{}"}})", url), endpoint);
-	return res.contains("response") ? res["response"] : res["error"];
+json cringe_history(const std::string &prompt, const std::string &model) {
+	std::string endpoint = get_env("LOCAL_ENDPOINT") + "/api/v1/code";
+	std::string sanitized_prompt = prompt;
+	replace_raw_char(sanitized_prompt, '"');
+	return cringe_post(fmt::format(R"({{ "chat": "{}", "model": "{}" }})",
+								   sanitized_prompt, model), endpoint);
 }
 
-std::string get_image(const std::string &prompt) {
-	std::string endpoint = get_env("LOCAL_ENDPOINT");
-	endpoint = endpoint + "/api/v1/generate";
-	auto res = cringe_post(fmt::format(R"({{ "prompt": "{}"}})", prompt), endpoint);
-	return res["response"];
+json cringe_describe(const std::string &url) {
+	std::string endpoint = get_env("LOCAL_ENDPOINT") + "/api/v1/describe";
+	return cringe_post(fmt::format(R"({{ "url": "{}"}})", url), endpoint);
 }
 
+json cringe_imagine(const std::string &prompt, const std::string &style) {
+	std::string endpoint = get_env("LOCAL_ENDPOINT") + "/api/v1/generate";;
+	return cringe_post(fmt::format(R"({{ "prompt": "{}", "style": "{}" }})", prompt, style), endpoint);
+}
 
 std::string get_reddit_response(const std::string &subreddit, const std::string &filter) {
 	std::string URL = fmt::format("https://old.reddit.com/r/{}/top/.json?sort=top&limit=1&t={}", subreddit, filter);

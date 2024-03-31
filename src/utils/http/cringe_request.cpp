@@ -38,7 +38,6 @@ json cringe_post(const std::string &data, const std::string &url, const std::vec
 			curl_easy_cleanup(curl);
 			curl_slist_free_all(headers);
 			curl_global_cleanup();
-			std::cout << response_data << std::endl;
 			return json::parse(response_data);
 		} else {
 			std::cerr << "cURL request failed: " << curl_easy_strerror(response_code) << std::endl;

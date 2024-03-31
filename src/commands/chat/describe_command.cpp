@@ -42,15 +42,20 @@ void describe_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 	dpp::snowflake image = std::get<dpp::snowflake>(event.get_parameter("image"));
 	/* Get the attachment that the user inputted from the file id. */
 	dpp::attachment attachment = event.command.get_resolved_attachment(image);
-	std::string data = fmt::format(R"({{ "url": "{}"}})", attachment.url);
-	json response = cringe_chat(data, "llava");
-	std::string reply;
-	for(auto res : response) { std::cout << res << std::endl;}
-	reply = response["response"];
-	dpp::embed embed = describe_embed(reply, attachment, event);
+	json r = cringe_describe(attachment.url);
+	if(!r["error"].empty()) {
+		std::cout << "\nERROR!\n" << std::endl;
+		// An error has occurred!
+	}
+	std::string response = r["response"];
+	CringeEmbed cringe_embed;
+	cringe_embed.setTitle("Cringe Describe")
+	.setHelp("describe an image with /describe!")
+	.setDescription(response)
+	.setImage(attachment.url);
 	/* Reply with the file as a URL. */
-	dpp::message msg(channel, embed);
-	bot.message_create(msg);
-	dpp::message ephemeral_reply(event.command.channel.id, fmt::format("cringe has responded to your chat in {}!", bot.channel_get_sync(channel).get_mention()));
+	dpp::message message(channel, cringe_embed.embed);
+	bot.message_create(message);
+	dpp::message ephemeral_reply(event.command.channel.id, fmt::format("cringe has described your image in {}!", bot.channel_get_sync(channel).get_mention()));
 	event.edit_original_response(ephemeral_reply);
 }

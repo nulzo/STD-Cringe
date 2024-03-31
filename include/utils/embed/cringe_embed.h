@@ -31,7 +31,7 @@ public:
 	CringeEmbed& setFields(const std::vector<std::vector<std::string>> &fields);
 	CringeEmbed& setHelp(const std::string &help_text);
 	CringeEmbed& setDescription(const std::string &embed_description);
-	CringeEmbed& setAttatchment(const dpp::attachment &embed_attatchment);
+	CringeEmbed& setImage(const std::string &embed_image);
 };
 
 #define CRINGE_CRINGE_EMBED_H
