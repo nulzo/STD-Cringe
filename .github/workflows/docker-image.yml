@@ -29,4 +29,3 @@ jobs:
           push: true
           tags: nolanserviceaccount/cringe:latest
           platforms: linux/arm64
-
