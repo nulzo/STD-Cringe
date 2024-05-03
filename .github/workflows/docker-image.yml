@@ -28,4 +28,4 @@ jobs:
           context: .
           push: true
           tags: nolanserviceaccount/cringe:latest
-          platform: linux/arm64  # Specify ARM64 architecture
+          platform: linux/arm64
