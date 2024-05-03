@@ -1,22 +1,39 @@
-name: Docker Image CI
-
+name: Docker Build/Publish Image
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
+    branches: [ main ]
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: ubuntu-18.04
+    env:
+      DOCKER_REGISTRY: docker.io
+      DOCKER_IMAGE: nolanserviceaccount/cringe
+      DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      DOCKER_TARGET_PLATFORM: linux/arm64
     steps:
-    - uses: actions/checkout@v4
-
-    - name: Log in to Docker Hub
-      run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | sudo docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
-
-    - name: Build the Docker image
-      run: sudo docker build --file Dockerfile --tag cringe:latest .
-
-    - name: Push Docker image to Docker Hub
-      run: sudo docker push nolanserviceaccount/cringe:latest
+      - name: Checkout the code
+        uses: actions/checkout@v1
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Prepare
+        if: success()
+        id: prepare
+        run: |
+          echo ::set-output name=docker_platform::${DOCKER_TARGET_PLATFORM}        
+          echo ::set-output name=docker_image::${DOCKER_REGISTRY}/${DOCKER_IMAGE}        
+          echo ::set-output name=version::${GITHUB_RUN_NUMBER}
+      - name: Docker Login
+        if: success()
+        run: |
+          echo "${DOCKER_PASSWORD}" | docker login ${DOCKER_REGISTRY} --username "${DOCKER_USERNAME}" --password-stdin
+      - name: Run Buildx (push image)
+        if: success()
+        run: |
+          docker buildx build \        
+          --platform ${{ steps.prepare.outputs.docker_platform }} \        
+          --tag ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }} \        
+          --file ./Dockerfile \        
+          --output type=image,push=true .
