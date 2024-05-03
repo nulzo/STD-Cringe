@@ -18,7 +18,7 @@ jobs:
       run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
     
     - name: Build the Docker image
-      run: docker buildx build --platform linux/arm64,linux/amd64 --file Dockerfile --tag cringe:latest .
+      run: docker build --platform linux/arm64,linux/amd64 --file Dockerfile --tag cringe:latest .
 
     - name: Push Docker image to Docker Hub
       run: docker push nolanserviceaccount/cringe:latest

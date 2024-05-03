@@ -13,16 +13,8 @@ RUN apt-get update
 RUN apt-get install -y wget libssl-dev gcc g++ cmake zlib1g-dev libsodium-dev libopus-dev ffmpeg libspdlog-dev opus-tools libopus-dev libspdlog-dev libfmt-dev libssl-dev libavformat-dev libavcodec-dev libavutil-dev libavfilter-dev libcurl4-openssl-dev yt-dlp sqlite3 libsqlite3-dev
 RUN apt-get install yt-dlp
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    qemu-user-static \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN if [ -z "${TARGETARCH}" ]; then arch="linux-rpi-arm64"; else arch="latest"; fi \
-    && wget -O dpp.deb "https://dl.dpp.dev/${arch}" \
-    && dpkg -i dpp.deb
-
-# Configure binfmt-support for qemu-arm-static
-RUN update-binfmts --enable qemu-arm
+RUN wget -O dpp.deb "https://dl.dpp.dev/latest"
+RUN dpkg -i dpp.deb
 
 RUN cmake ..
 RUN make
