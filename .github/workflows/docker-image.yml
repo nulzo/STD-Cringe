@@ -4,7 +4,7 @@ on:
     branches: [ main ]
 jobs:
   build:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     env:
       DOCKER_REGISTRY: docker.io
       DOCKER_IMAGE: nolanserviceaccount/cringe
