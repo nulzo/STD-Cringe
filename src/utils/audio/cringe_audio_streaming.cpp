@@ -1,7 +1,3 @@
-//
-// Created by Nolan Gregory on 3/29/24.
-//
-
 #include "utils/audio/cringe_audio_streaming.h"
 #include <fmt/format.h>
 

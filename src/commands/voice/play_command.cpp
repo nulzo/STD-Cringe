@@ -25,7 +25,7 @@
 #include "commands/voice/play_command.h"
 #include "utils/audio/cringe_audio_helpers.h"
 #include "utils/audio/cringe_audio_streaming.h"
-#include "utils/embed.h"
+#include "utils/embed/cringe_embed.h"
 #include "utils/misc/cringe.h"
 #include <algorithm>
 #include <fmt/format.h>
@@ -55,42 +55,7 @@ void play_callback(dpp::cluster &bot, CringeSong song) {
 	cringe_streamer(process, voice);
 }
 
-void playlist_streamer(std::string song, CringeQueue &queue, const dpp::slashcommand_t &event, dpp::voiceconn *voice, dpp::cluster &bot) {
-	// If it is a playlist, we can add all the songs to the queue
-	std::string subprocess = fmt::format("youtube-dl -j --flat-playlist '{}' | jq -r '.id' | sed 's_^_https://youtube.com/v/_'", song);
-	const char *subp = subprocess.c_str();
-	std::string result;
-	// Read the output of the command into a string
-	char buffer[4096];
-	// Open a pipe to run the command
-	FILE *pipe = popen(subp, "r");
-	if (!pipe) {
-		std::cerr << "Error opening pipe to youtube-dl" << std::endl;
-	}
-	while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
-		result += buffer;
-	}
-	// Close the pipe
-	pclose(pipe);
-	// Vector to store the split substrings
-	std::vector<std::string> songs;
-	// Use std::istringstream and std::getline to split the string
-	std::istringstream playlist(result);
-	std::string playlist_entry;
-	// Loop through songs and add to queue
-	while (std::getline(playlist, playlist_entry)) {
-		std::cout << "\n\nLOOPING\n\n";
-		// Get the YouTube upload info from the url given
-		std::vector<std::string> yt_info = get_yt_info(playlist_entry);
-		// Make a new song to store to the queue
-//		CringeSong s(yt_info[0], yt_info[1], yt_info[2], yt_info[3], playlist_entry, (dpp::slashcommand_t &) event);
-		// Add song to the queue
-//		queue.enqueue(s);
-	}
-}
-
 //  =================  END AUXILIARY FUNCTIONS ===================
-
 
 dpp::slashcommand play_declaration() {
 	return dpp::slashcommand()
@@ -114,10 +79,11 @@ void play_command(dpp::cluster &bot, const dpp::slashcommand_t &event, CringeQue
 	// Get the voice channel the bot is in, in this current guild.
 	dpp::voiceconn *voice = event.from->get_voice(event.command.guild_id);
 	dpp::guild *guild = dpp::find_guild(event.command.guild_id);
-  std::cout << "\n\nHERE\n\n";
-  // If the voice channel was invalid, or there is an issue with it, then tell the user.	
-  if (!voice || !voice->voiceclient || !voice->voiceclient->is_ready()) {
-		dpp::message message(event.command.channel_id, status_embed("CringeError::VoiceError", "Bot was unable to join the voice channel due to some unknown reason.", Cringe::CringeStatus::ERROR));
+  	std::cout << "\n\nHERE\n\n";
+  	// If the voice channel was invalid, or there is an issue with it, then tell the user.
+  	if (!voice || !voice->voiceclient || !voice->voiceclient->is_ready()) {
+		std::string error_reason = "Bot was unable to join the voice channel due to some unknown reason.";
+		dpp::message message(event.command.channel_id, cringe_error_embed(error_reason).embed);
 		event.edit_original_response(message);
 		return;
 	}

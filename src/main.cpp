@@ -22,59 +22,39 @@
  * SOFTWARE.
  */
 
-#include "commands/voice/play_command.h"
-#include "utils/cringe_logger.h"
-#include "utils/misc/cringe.h"
-#include "utils/misc/cringe_helpers.h"
-#include "listeners/SlashcommandListener.h"
+#include "utils/bot/cringe_bot.h"
 
-int main() {
-	dpp::cluster BOT(get_env("BOT_TOKEN"), dpp::i_default_intents | dpp::i_message_content);
+struct Config {
+	std::string token;
+	std::string guild;
+};
 
-	CringeQueue queue;
-	log_on_start();
-	std::shared_ptr<spdlog::logger> cringe_logger = cringe_logging();
+int main(int argc, char* argv[]) {
+	/* Main entrance for the Cringe bot. Several command line arguments can be
+	 * given with the following descriptions:
+	 * - token (required): The discord token to run the bot.
+	 * - guild (optional): The guild you want the bot to be accessed in.
+	 * */
 
-	BOT.on_log([&cringe_logger](const dpp::log_t &event) {
-		logger(cringe_logger, event);
-	});
-
-	BOT.on_slashcommand([&BOT, &cringe_logger, &queue](const dpp::slashcommand_t &event) {
-		log_on_slash(event.command.get_command_name(), event.command.usr.global_name, cringe_logger);
-		process_slashcommand(event, BOT, queue);
-		log_end_slash(event.command.get_command_name(), event.command.usr.global_name, cringe_logger);
-	});
-
-	BOT.on_message_delete([&cringe_logger](const dpp::message_delete_t &event) {
-		log_on_message_delete(event.raw_event, event.raw_event, cringe_logger);
-	});
-
-	BOT.on_message_create([&cringe_logger](const dpp::message_create_t &event) {
-		log_on_message(event.msg.content, event.msg.author.global_name, cringe_logger);
-		/* get message to edit it after */
-		const dpp::snowflake msg_id = event.msg.id;
-		/* here string will automatically be converted to snowflake */
-		// if(event.msg.author.id == 405912283554906123) {
-		// 	std::string response = get_ollama_chat(fmt::format("In one sentence, respond to Klim who said - '{}'", event.msg.content));
-		//	dpp::message msg(event.msg.channel_id, response);
-		//	event.reply(msg);
-		//}
-	});
-
-	BOT.on_voice_track_marker([&BOT, &queue](const dpp::voice_track_marker_t &ev) {
-		if (!queue.is_empty()) {
-			CringeSong s = queue.dequeue();
-			play_callback(BOT, s);
+	std::unordered_map<std::string, std::string> args;
+	for (int i = 1; i < argc; i++) {
+		std::string arg = argv[i];
+		if (arg.substr(0, 2) == "--") {
+			size_t equalsPos = arg.find('=');
+			if (equalsPos != std::string::npos) {
+				std::string name = arg.substr(2, equalsPos - 2);
+				std::string value = arg.substr(equalsPos + 1);
+				args[name] = value;
+			}
 		}
-	});
+	}
+	
+	auto token = args.find("token");
+	if (token == args.end()) {
+		std::cerr << "Must provide bot token!" << std::endl;
+		return -1;
+	}
 
-	BOT.on_ready([&BOT]([[maybe_unused]] const dpp::ready_t &event) {
-		/* Create a new global command on ready event */
-		if (dpp::run_once<struct register_BOT_commands>()) {
-			register_slashcommands(BOT);
-		}
-	});
-
-	BOT.start(dpp::st_wait);
+	CringeBot cringe(token->second);
 	return 0;
 }

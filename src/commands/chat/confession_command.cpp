@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-#include "utils/embed.h"
+#include "utils/embed/cringe_embed.h"
 #include "commands/chat/confession_command.h"
 
 dpp::slashcommand confession_declaration() {

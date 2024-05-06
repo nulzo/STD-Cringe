@@ -24,7 +24,7 @@
 
 #include "commands/chat/chat_command.h"
 #include "utils/misc/cringe_helpers.h"
-#include "utils/embed.h"
+#include "utils/embed/cringe_embed.h"
 #include "connectors/cringe_database.h"
 #include "utils/http/cringe_api.h"
 

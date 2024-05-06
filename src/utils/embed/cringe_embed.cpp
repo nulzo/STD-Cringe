@@ -22,28 +22,12 @@
  * SOFTWARE.
  */
 
-#include "utils/embed.h"
+#include "utils/embed/cringe_embed.h"
 #include "utils/misc/cringe.h"
 #include "utils/misc/cringe_helpers.h"
 #include "fmt/format.h"
 #include <unordered_map>
 #include "utils/audio/cringe_song.h"
-
-dpp::embed status_embed(const std::string &title, const std::string &reason, int status) {
-	dpp::embed embed = dpp::embed();
-	switch (status) {
-		case Cringe::CringeStatus::ERROR:
-			embed.set_color(Cringe::CringeColor::CringeError).set_thumbnail(Cringe::CringeIcon::ErrorIcon).set_description("An error has occurred due to the following exceptions");
-			break;
-		case Cringe::CringeStatus::WARNING:
-			embed.set_color(Cringe::CringeColor::CringeWarning).set_thumbnail(Cringe::CringeIcon::WarningIcon).set_description("A warning has occurred due to the following exceptions");
-			break;
-		case Cringe::CringeStatus::SUCCESS:
-			embed.set_color(Cringe::CringeColor::CringeSuccess).set_thumbnail(Cringe::CringeIcon::SuccessIcon).set_description("A success has been issued due to the following");
-			break;
-	}
-	return embed.set_title(title).add_field("Reason", reason).set_timestamp(time(nullptr));
-}
 
 dpp::embed info_embed(const std::string& title, const std::string& response, const std::string& avatar_url, const std::string& mention, const std::string& created, const std::string& joined_at, const std::string& premium, const std::string& nitro, const std::string& bot) {
 	return dpp::embed()
@@ -178,29 +162,6 @@ CringeEmbed &CringeEmbed::setImage(const std::string &embed_image) {
 	return *this;
 }
 
-dpp::embed chat_embed(std::string &prompt, std::string &response, const dpp::slashcommand_t &event) {
-	std::unordered_map<std::string, std::string> fields;
-	dpp::embed embed;
-	std::string part;
-	int chunk_max = 1024;
-	embed.set_thumbnail(Cringe::CringeIcon::ChatIcon)
-		.set_title("Cringe Chat")
-		.add_field(fmt::format("{} asked", event.command.usr.username), prompt)
-		.set_color(Cringe::CringeColor::CringePrimary)
-		.set_timestamp(time(nullptr))
-		.set_footer("ask a question with /chat!", "https://cdn.discordapp.com/avatars/1186860332845629511/2b20f3636a5bd288bca2eb197badf556.png");
-	if(response.length() >= chunk_max) {
-		for (size_t i = 0; i < response.length(); i += chunk_max) {
-			std::string chunk = response.substr(i, chunk_max);
-			part = (i == 0) ? "cringe replied" : "";
-			embed.add_field(part, chunk);
-		}
-	} else {
-		embed.add_field("cringe replied:", response);
-	}
-	return embed;
-}
-
 dpp::embed now_streaming(CringeSong song){
 	// Define variables
 	dpp::embed embed;
@@ -237,5 +198,32 @@ dpp::embed now_streaming(CringeSong song){
 	// Add a timestamp to the embed
 	embed.set_timestamp(time(nullptr));
 
+	return embed;
+}
+
+CringeEmbed cringe_success_embed(std::string &reason) {
+	CringeEmbed embed;
+	embed.setTitle("Success");
+	embed.setColor(Cringe::CringeColor::CringeSuccess);
+	embed.setIcon(Cringe::CringeIcon::SuccessIcon);
+	embed.setDescription(reason);
+	return embed;
+}
+
+CringeEmbed cringe_warning_embed(std::string &reason) {
+	CringeEmbed embed;
+	embed.setTitle("Warning");
+	embed.setColor(Cringe::CringeColor::CringeWarning);
+	embed.setIcon(Cringe::CringeIcon::WarningIcon);
+	embed.setDescription(reason);
+	return embed;
+}
+
+CringeEmbed cringe_error_embed(std::string &reason) {
+	CringeEmbed embed;
+	embed.setTitle("Error");
+	embed.setColor(Cringe::CringeColor::CringeError);
+	embed.setIcon(Cringe::CringeIcon::ErrorIcon);
+	embed.setDescription(reason);
 	return embed;
 }

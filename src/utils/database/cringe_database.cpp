@@ -1,6 +1,3 @@
-//
-// Created by Nolan Gregory on 3/29/24.
-//
 #include "connectors/cringe_database.h"
 #include <stdexcept>
 
@@ -17,24 +14,18 @@ CringeDB::~CringeDB() {
 }
 
 void CringeDB::execute(const std::string &sql, const std::vector<std::string>& params) const {
-	char *error = nullptr;
 	sqlite3_stmt *statement;
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &statement, nullptr) != SQLITE_OK) {
 		throw std::runtime_error("Failed to prepare SQL statement: " + std::string(sqlite3_errmsg(db)));
 	}
-
-	// Bind parameters
 	int paramIndex = 1;
 	for (const auto& param : params) {
 		sqlite3_bind_text(statement, paramIndex++, param.c_str(), -1, SQLITE_STATIC);
 	}
-
-	// Execute the statement
 	if (sqlite3_step(statement) != SQLITE_DONE) {
 		sqlite3_finalize(statement);
 		throw std::runtime_error("Failed to execute SQL statement: " + std::string(sqlite3_errmsg(db)));
 	}
-
 	sqlite3_finalize(statement);
 }
 

@@ -25,7 +25,7 @@
 #include "commands/chat/describe_command.h"
 #include "utils/misc/cringe_helpers.h"
 #include "utils/http/cringe_api.h"
-#include "utils/embed.h"
+#include "utils/embed/cringe_embed.h"
 
 dpp::slashcommand describe_declaration() {
 	return dpp::slashcommand()

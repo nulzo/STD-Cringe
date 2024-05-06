@@ -1,14 +1,10 @@
-//
-// Created by Nolan Gregory on 1/9/24.
-//
-
 #ifndef CRINGE_SLASHCOMMANDLISTENER_H
 #define CRINGE_SLASHCOMMANDLISTENER_H
 
+#include "utils/bot/cringe_bot.h"
 #include <dpp/dpp.h>
-#include "utils/misc/cringe.h"
 
-void process_slashcommand(const dpp::slashcommand_t &event,  dpp::cluster &bot, CringeQueue &queue);
+void process_slashcommand(const dpp::slashcommand_t &event, CringeBot &cringe);
 void register_slashcommands(dpp::cluster &bot);
 
-#endif //CRINGE_SLASHCOMMANDLISTENER_H
+#endif

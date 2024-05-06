@@ -1,10 +1,10 @@
 #ifndef CRINGE_CRINGE_EMBED_H
+#define CRINGE_CRINGE_EMBED_H
 
 #include <dpp/dpp.h>
 #include "utils/misc/cringe.h"
 #include "utils/audio/cringe_song.h"
 
-dpp::embed status_embed(const std::string &title, const std::string &reason, int status);
 dpp::embed now_streaming(CringeSong song);
 dpp::embed info_embed(const std::string& title, const std::string& response, const std::string& avatar_url, const std::string& mention, const std::string& created, const std::string& joined_at, const std::string& premium, const std::string& nitro, const std::string& bot);
 dpp::embed added_to_queue_embed(CringeSong song);
@@ -34,6 +34,8 @@ public:
 	CringeEmbed& setImage(const std::string &embed_image);
 };
 
-#define CRINGE_CRINGE_EMBED_H
+CringeEmbed cringe_success_embed(std::string &reason);
+CringeEmbed cringe_warning_embed(std::string &reason);
+CringeEmbed cringe_error_embed(std::string &reason);
 
-#endif //CRINGE_CRINGE_EMBED_H
+#endif

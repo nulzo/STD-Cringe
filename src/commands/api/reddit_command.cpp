@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-#include "utils/embed.h"
+#include "utils/embed/cringe_embed.h"
 #include "utils/misc/cringe_helpers.h"
 #include "utils/http/cringe_api.h"
 

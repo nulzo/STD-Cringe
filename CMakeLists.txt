@@ -61,6 +61,11 @@ add_executable(${PROJECT_NAME}
         include/utils/misc/cringe_helpers.h
         src/commands/chat/code_command.cpp
         include/commands/chat/code_command.h
+        src/utils/audio/cringe_yt.cpp
+        include/utils/audio/cringe_yt.h
+        include/utils/audio/cringe_song_new.h
+        src/utils/bot/cringe_bot.cpp
+        include/utils/bot/cringe_bot.h
 )
 
 include(ExternalProject)

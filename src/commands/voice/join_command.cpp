@@ -23,8 +23,7 @@
  */
 
 #include "commands/voice/join_command.h"
-#include "utils/embed.h"
-#include "utils/misc/cringe.h"
+#include "utils/embed/cringe_embed.h"
 #include <algorithm>
 #include <fmt/format.h>
 
@@ -36,15 +35,12 @@ dpp::slashcommand join_declaration() {
 }
 
 void join_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
-	std::string embed_reason;
-	dpp::embed embed;
 	dpp::guild *guild;
 	dpp::snowflake parameter;
 	dpp::channel requested_channel;
 	event.thinking(true);
 	// Get the guild of issued command
 	guild = dpp::find_guild(event.command.guild_id);
-
 	// Set flag if the channel has been found
 	auto p = event.get_parameter("channel");
 	if (p.index() != 0) {
@@ -52,9 +48,8 @@ void join_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 		// Get the param (if any) and find voice channel id
 		requested_channel = bot.channel_get_sync(parameter);
 		if (!requested_channel.is_voice_channel()) {
-			embed_reason = event.command.usr.get_mention() + " tried to invite cringe to VC, but provided a non-voice channel.";
-			embed = status_embed("CringeError::VoiceError", embed_reason, Cringe::CringeStatus::ERROR);
-			dpp::message message(event.command.channel_id, embed);
+			std::string error_reason = event.command.usr.get_mention() + " tried to invite cringe to VC, but provided a non-voice channel.";
+			dpp::message message(event.command.channel_id, cringe_error_embed(error_reason).embed);
 			event.edit_original_response(message);
 			return;
 		}
@@ -66,18 +61,16 @@ void join_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 			if (users_vc != guild->voice_members.end())
 				if (channel->channel_id == users_vc->second.channel_id) {
 					// Issue warning that cringe must be called to a channel that it is not already in
-					embed_reason = event.command.usr.get_mention() + " tried to invite cringe to VC, but it is already there.";
-					embed = status_embed("CringeError::VoiceWarning", embed_reason, Cringe::CringeStatus::WARNING);
-					dpp::message message(event.command.channel_id, embed);
+					std::string warning_reason = event.command.usr.get_mention() + " tried to invite cringe to VC, but it is already there.";
+					dpp::message message(event.command.channel_id, cringe_warning_embed(warning_reason).embed);
 					event.edit_original_response(message);
 					return;
 				}
 			event.from->disconnect_voice(event.command.guild_id);
 		}
 		event.from->connect_voice(guild->id, requested_channel.id);
-		embed_reason = event.command.usr.get_mention() + " asked cringe to join " + requested_channel.get_mention();
-		embed = status_embed("Successfully Joined", embed_reason, Cringe::CringeStatus::SUCCESS);
-		dpp::message message(event.command.channel_id, embed);
+		std::string success_reason = event.command.usr.get_mention() + " asked cringe to join " + requested_channel.get_mention();
+		dpp::message message(event.command.channel_id, cringe_success_embed(success_reason).embed);
 		event.edit_original_response(message);
 		return;
 	}
@@ -92,9 +85,8 @@ void join_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 		// Check if issuing user is trying to add cringe to channel it is already in
 		if (users_vc != guild->voice_members.end() && channel->channel_id == users_vc->second.channel_id) {
 			// Issue warning that cringe must be called to a channel that it is not already in
-			embed_reason = event.command.usr.get_mention() + " tried to invite cringe to VC, but it is already there.";
-			embed = status_embed("CringeError::VoiceWarning", embed_reason, Cringe::CringeStatus::WARNING);
-			dpp::message message(event.command.channel_id, embed);
+			std::string warning_reason = event.command.usr.get_mention() + " tried to invite cringe to VC, but it is already there.";
+			dpp::message message(event.command.channel_id, cringe_warning_embed(warning_reason).embed);
 			event.edit_original_response(message);
 			return;
 		}
@@ -105,16 +97,14 @@ void join_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
 
 	// Check to see if the issuing user is not in a voice channel and issue error if they did not provide an option of where to go
 	if (!guild->connect_member_voice(event.command.get_issuing_user().id)) {
-		embed_reason = "You must be in a VC, or specify a channel if you wish to invite cringe to VC.";
-		embed = status_embed("CringeError::VoiceError", embed_reason, Cringe::CringeStatus::ERROR);
-		dpp::message message(event.command.channel_id, embed);
+		std::string error_reason = "You must be in a VC, or specify a channel if you wish to invite cringe to VC.";
+		dpp::message message(event.command.channel_id, cringe_error_embed(error_reason).embed);
 		event.edit_original_response(message);
 		return;
 	}
 
 	// At this point, cringe has successfully joined the VC, and a success message can be issued
-	embed_reason = event.command.usr.get_mention() + " asked cringe to join.";
-	embed = status_embed("Successfully Joined", embed_reason, Cringe::CringeStatus::SUCCESS);
-	dpp::message message(event.command.channel_id, embed);
+	std::string success_reason = event.command.usr.get_mention() + " asked cringe to join.";
+	dpp::message message(event.command.channel_id, cringe_success_embed(success_reason).embed);
 	event.edit_original_response(message);
 }

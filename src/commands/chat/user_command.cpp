@@ -23,7 +23,7 @@
  */
 
 #include "commands/chat/user_command.h"
-#include "utils/embed.h"
+#include "utils/embed/cringe_embed.h"
 #include "utils/http/cringe_api.h"
 
 dpp::slashcommand user_declaration() {
