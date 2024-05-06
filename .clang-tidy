@@ -1,3 +1,2 @@
 Checks: '-*,bugprone-*,performance-*,readability-*,concurrency-*,modernize-*'
 FormatStyle: 'file'
-

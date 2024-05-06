@@ -5,7 +5,7 @@
 void replace_raw_char(std::string &str, char refchar) {
     size_t found = str.find(refchar);
     while (found != std::string::npos) {
-        std::string replace = fmt::format(R "(\{})", refchar);
+        std::string replace = fmt::format(R"(\{})", refchar);
         str.replace(found, 1, replace);
         found = str.find('\"', found + 2);
     }

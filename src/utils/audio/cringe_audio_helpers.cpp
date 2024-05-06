@@ -46,10 +46,7 @@ std::vector<std::string> get_yt_info(std::string song) {
     std::string data;
     // string that gets all the information about the song
     std::string cmd =
-        fmt::format("yt-dlp -s --print title --print channel --print thumbnail "
-                    "--print duration --print view_count --print comment_count "
-                    "--print epoch --print channel_follower_count \"{}\"",
-                    song);
+        fmt::format("yt-dlp -s --print title --print channel --print thumbnail --print duration --print view_count --print comment_count --print epoch --print channel_follower_count \"{}\"", song);
     // Get the YouTube video thumbnail, author info, and song info
     FILE *pipe = popen(cmd.c_str(), "r");
     // Check that the pipe was opened successfully
@@ -71,8 +68,7 @@ std::vector<std::string> get_yt_info(std::string song) {
 }
 
 std::string search_command(std::string search) {
-    return fmt::format(
-        R"(yt-dlp -f bestaudio -o - -vn "{}" | ffmpeg -i pipe:0 -hide_banner -loglevel warning -f s16le -ac 2 ""-ar 48000 pipe:1)", search);
+    return fmt::format(R"(yt-dlp -f bestaudio -o - -vn "{}" | ffmpeg -i pipe:0 -hide_banner -loglevel warning -f s16le -ac 2 -ar 48000 pipe:1)", search);
 }
 
 std::string query_to_url(std::string query) {

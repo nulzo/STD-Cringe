@@ -17,45 +17,48 @@
 
 using CommandHandler = std::function<void()>;
 
-void process_slashcommand(const dpp::slashcommand_t &event, CringeBot &cringe) {
-    static std::map<std::string, CommandHandler> handlers = {
-        {"info", [&]() { info_command(cringe.cluster, event); }},
-        {"user", [&]() { user_command(cringe.cluster, event); }},
-        {"chat",
-         [&]() {
-             std::thread chat(chat_command, std::ref(cringe.cluster), event);
-             chat.detach();
-         }},
-        {"code",
-         [&]() {
-             std::thread code(code_command, std::ref(cringe.cluster), event);
-             code.detach();
-         }},
-        {"join", [&]() { join_command(cringe.cluster, event); }},
-        {"play",
-         [&]() {
-             std::thread voice(play_command, std::ref(cringe.cluster), event,
-                               std::ref(cringe.queue));
-             voice.detach();
-         }},
-        {"queue", [&]() { queue_command(event, cringe.queue); }},
-        {"skip", [&]() { skip_command(cringe.cluster, event, cringe.queue); }},
-        {"confess", [&]() { confession_command(cringe.cluster, event); }},
-        {"reddit", [&]() { reddit_command(cringe.cluster, event); }},
-        {"imagine",
-         [&]() {
-             std::thread imagine(image_command, std::ref(cringe.cluster),
-                                 event);
-             imagine.detach();
-         }},
-        {"describe", [&]() {
-             std::thread describe(describe_command, std::ref(cringe.cluster),
-                                  event);
-             describe.detach();
-         }}};
-    auto command = handlers.find(event.command.get_command_name());
-    if (command != handlers.end())
-        command->second();
+void process_slashcommand(const dpp::slashcommand_t &event,  CringeBot &cringe) {
+	if (event.command.get_command_name() == "info") {
+		info_command(cringe.cluster, event);
+	}
+	else if (event.command.get_command_name() == "user") {
+		user_command(cringe.cluster, event);
+	}
+	else if (event.command.get_command_name() == "chat") {
+		std::thread chat(chat_command, std::ref(cringe.cluster), event);
+		chat.detach();
+	}
+	else if (event.command.get_command_name() == "code") {
+		std::thread code(code_command, std::ref(cringe.cluster), event);
+		code.detach();
+	}
+	else if (event.command.get_command_name() == "join") {
+		join_command(cringe.cluster, event);
+	}
+	else if (event.command.get_command_name() == "play") {
+		std::thread voice(play_command, std::ref(cringe.cluster), event, std::ref(cringe.queue));
+		voice.detach();
+	}
+	else if (event.command.get_command_name() == "queue") {
+		queue_command(event, cringe.queue);
+	}
+	else if (event.command.get_command_name() == "skip") {
+		skip_command(cringe.cluster, event, cringe.queue);
+	}
+	else if (event.command.get_command_name() == "confess") {
+		confession_command(cringe.cluster, event);
+	}
+	else if (event.command.get_command_name() == "reddit") {
+		reddit_command(cringe.cluster, event);
+	}
+	else if (event.command.get_command_name() == "imagine") {
+		std::thread imagine(image_command, std::ref(cringe.cluster), event);
+		imagine.detach();
+	}
+	else if(event.command.get_command_name() == "describe") {
+		std::thread describe(describe_command, std::ref(cringe.cluster), event);
+		describe.detach();
+	}
 }
 
 void register_slashcommands(dpp::cluster &bot) {

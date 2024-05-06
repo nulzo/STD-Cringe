@@ -66,6 +66,10 @@ add_executable(${PROJECT_NAME}
         include/utils/audio/cringe_song_new.h
         src/utils/bot/cringe_bot.cpp
         include/utils/bot/cringe_bot.h
+        src/utils/http/cringe_ollama.cpp
+        include/utils/http/cringe_ollama.h
+        src/utils/http/cringe_curl.cpp
+        include/utils/http/cringe_curl.h
 )
 
 include(ExternalProject)
@@ -74,9 +78,9 @@ find_package(SQLite3 REQUIRED)
 find_package(DPP)
 find_package(Threads REQUIRED)
 #find_package(OpenSSL REQUIRED)
-#find_package(fmt REQUIRED)
-#find_package(spdlog REQUIRED)
-find_package(CURL)
+find_package(fmt REQUIRED)
+find_package(spdlog REQUIRED)
+find_package(CURL REQUIRED)
 find_library(FFMPEG_LIB avcodec avformat avutil avfilter)
 if(CURL_FOUND)
     message("FOUND CURL!")

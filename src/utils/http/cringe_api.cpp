@@ -6,38 +6,20 @@ auto cringe_chat(const std::string &prompt, const std::string &model) -> json {
     std::string endpoint = get_env("LOCAL_ENDPOINT") + "/api/v1/chat";
     std::string sanitized_prompt = prompt;
     replace_raw_char(sanitized_prompt, '"');
-    return cringe_post(fmt::format(
-                           R "({{ " chat ": " {} ", " model ": " {} " }})",
-                           sanitized_prompt, model),
-                       endpoint);
+    return cringe_post(fmt::format(R"({{ "chat": "{}", "model": "{}" }})", sanitized_prompt, model), endpoint);
 }
 
-json cringe_history(const std::string &prompt, const std::string &model) {
-    std::string endpoint = get_env("LOCAL_ENDPOINT") + "/api/v1/code";
-    std::string sanitized_prompt = prompt;
-    replace_raw_char(sanitized_prompt, '"');
-    return cringe_post(fmt::format(
-                           R "({{ " chat ": " {} ", " model ": " {} " }})",
-                           sanitized_prompt, model),
-                       endpoint);
-}
-
-json cringe_describe(const std::string &url) {
+auto cringe_describe(const std::string &url) -> json {
     std::string endpoint = get_env("LOCAL_ENDPOINT") + "/api/v1/describe";
-    return cringe_post(fmt::format(R "({{ " url ": " {} "}})", url), endpoint);
+    return cringe_post(fmt::format(R"({{ "url": "{}"}})", url), endpoint);
 }
 
-json cringe_imagine(const std::string &prompt, const std::string &style) {
+auto cringe_imagine(const std::string &prompt, const std::string &style) -> json {
     std::string endpoint = get_env("LOCAL_ENDPOINT") + "/api/v1/generate";
-    ;
-    return cringe_post(
-        fmt::format(
-            R "({{ " prompt ": " {} ", " style ": " {} " }})", prompt, style),
-        endpoint);
+    return cringe_post(fmt::format(R"({{ "prompt": "{}", "style": "{}" }})", prompt, style), endpoint);
 }
 
-auto get_reddit_response(const std::string &subreddit,
-                                const std::string &filter) -> std::string {
+auto get_reddit_response(const std::string &subreddit, const std::string &filter) -> std::string {
     std::string URL = fmt::format(
         "https://old.reddit.com/r/{}/top/.json?sort=top&limit=1&t={}",
         subreddit, filter);
@@ -57,6 +39,5 @@ auto get_reddit_response(const std::string &subreddit,
     while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
         response += buffer;
     }
-
     return response;
 }

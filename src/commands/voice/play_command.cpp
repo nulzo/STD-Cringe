@@ -47,13 +47,14 @@ extern "C" {
 //  ====================  AUXILIARY FUNCTIONS ====================
 
 void play_callback(dpp::cluster &bot, CringeSong song) {
-    auto voice =
+    auto *voice =
         song.get_event().from->get_voice(song.get_event().command.guild_id);
     // Set the url and codec, piping the audio with ffmpeg
     std::string process = search_command(song.get_url());
     // Add filter (if applicable)
-    if (!song.get_filter().empty())
+    if (!song.get_filter().empty()) {
         process += fmt::format(" -vn -filter_complex {}", song.get_filter());
+	}
     // Send in proper channel
     dpp::message message(song.get_event().command.channel_id,
                          now_streaming(song));
@@ -97,10 +98,9 @@ void play_command(dpp::cluster &bot, const dpp::slashcommand_t &event,
     const std::string channel = get_env("CRINGE_MUSIC_CHANNEL");
     // Get the voice channel the bot is in, in this current guild.
     dpp::voiceconn *voice = event.from->get_voice(event.command.guild_id);
-    std::cout << "\n\nHERE\n\n";
     // If the voice channel was invalid, or there is an issue with it, then tell
     // the user.
-    if (!voice || !voice->voiceclient || !voice->voiceclient->is_ready()) {
+    if ((voice == nullptr) || (voice->voiceclient == nullptr) || !voice->voiceclient->is_ready()) {
         std::string error_reason = "Bot was unable to join the voice channel "
                                    "due to some unknown reason.";
         dpp::message message(event.command.channel_id,

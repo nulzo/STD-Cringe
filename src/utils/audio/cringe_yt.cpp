@@ -38,7 +38,7 @@ std::string CringeYoutube::to_url(const std::string &query) {
 }
 
 bool CringeYoutube::is_url(const std::string &query) {
-    std::regex url_regex(R "(^(https?|ftp):\/\/[^\s/$.?#].[^\s]*)");
+    std::regex url_regex(R"(^(https?|ftp):\/\/[^\s/$.?#].[^\s]*)");
     return std::regex_match(query, url_regex);
 }
 
@@ -49,10 +49,7 @@ bool CringeYoutube::is_playlist(const std::string &query) {
 
 std::string CringeYoutube::search_command(std::string search) {
     return fmt::format(
-        R "(yt-dlp -f bestaudio -o - -vn " {
-        } " | ffmpeg -i pipe:0 -hide_banner -loglevel warning -f s16le -ac 2 "
-          "-ar 48000 pipe:1)",
-        search);
+        R"(yt-dlp -f bestaudio -o - -vn "{}" | ffmpeg -i pipe:0 -hide_banner -loglevel warning -f s16le -ac 2 -ar 48000 pipe:1)", search);
 }
 
 std::string CringeYoutube::sanitize(std::string query) {

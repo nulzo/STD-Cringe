@@ -51,7 +51,7 @@ auto main(int argc, char *argv[]) -> int {
 
     auto token = args.find("token");
     if (token == args.end()) {
-        std::cerr << "Must provide bot token!" << std::endl;
+        std::cerr << "Must provide bot token!\n";
         return -1;
     }
 

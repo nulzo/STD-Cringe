@@ -28,7 +28,7 @@
 #include "utils/http/cringe_api.h"
 #include "utils/misc/cringe_helpers.h"
 
-dpp::slashcommand code_declaration() {
+auto code_declaration() -> dpp::slashcommand {
     return dpp::slashcommand()
         .set_name("code")
         .set_description("Ask a coding question")
@@ -40,7 +40,6 @@ void code_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
     event.thinking(true);
     std::string channel = get_env("CRINGE_CODE_CHANNEL");
     std::string prompt = std::get<std::string>(event.get_parameter("prompt"));
-
     CringeDB cringe_db(get_env("CRINGE_DATABASE"));
 
     std::vector<std::vector<std::string>> rows = cringe_db.query(fmt::format(
@@ -50,14 +49,10 @@ void code_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
     // db goes [model,issuer,prompt,response]
     std::string init_string = "[";
     for (const auto &row : rows) {
-        std::string newstring = fmt::format(
-            R "({{ " role ": " user ", " content ": " {
-            } " }}, {{ " role ": " assistant ", " content ": " {} " }},)",
-            row[3], row[4]);
+        std::string newstring = fmt::format(R"({{ " role ": " user ", " content ": "{}" }}, {{ " role ": " assistant ", " content ": " {} " }},)",row[3], row[4]);
         init_string += newstring;
     }
-    init_string += fmt::format(
-        R "({{ " role ": " user ", " content ": " {} " }}])", prompt);
+    init_string += fmt::format(R"({{ " role ": " user ", " content ": " {} " }}])", prompt);
     json res = cringe_chat(prompt, "code");
     if (!res["error"].empty()) {
         std::cout << "\nERROR!\n" << std::endl;
