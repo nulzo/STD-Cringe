@@ -36,10 +36,6 @@ void CringeDB::execute(const std::string &sql,
     sqlite3_finalize(statement);
 }
 
-std::string CringeDB::sanitize_statement(const std::string &statement) {
-    return std::string();
-}
-
 std::vector<std::vector<std::string>> CringeDB::query(const std::string &sql) {
     std::vector<std::vector<std::string>> result;
     sqlite3_stmt *statement;

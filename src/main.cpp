@@ -29,7 +29,7 @@ struct Config {
     std::string guild;
 };
 
-int main(int argc, char *argv[]) {
+auto main(int argc, char *argv[]) -> int {
     /* Main entrance for the Cringe bot. Several command line arguments can be
      * given with the following descriptions:
      * - token (required): The discord token to run the bot.

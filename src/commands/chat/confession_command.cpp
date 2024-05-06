@@ -26,7 +26,7 @@
 
 #include "utils/embed/cringe_embed.h"
 
-dpp::slashcommand confession_declaration() {
+auto confession_declaration() -> dpp::slashcommand {
     return dpp::slashcommand()
         .set_name("confess")
         .set_description("Confess to your sins (anonymously)")

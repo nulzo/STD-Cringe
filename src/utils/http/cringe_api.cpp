@@ -2,7 +2,7 @@
 #include "utils/misc/cringe.h"
 #include "utils/misc/cringe_helpers.h"
 
-json cringe_chat(const std::string &prompt, const std::string &model) {
+auto cringe_chat(const std::string &prompt, const std::string &model) -> json {
     std::string endpoint = get_env("LOCAL_ENDPOINT") + "/api/v1/chat";
     std::string sanitized_prompt = prompt;
     replace_raw_char(sanitized_prompt, '"');
@@ -36,8 +36,8 @@ json cringe_imagine(const std::string &prompt, const std::string &style) {
         endpoint);
 }
 
-std::string get_reddit_response(const std::string &subreddit,
-                                const std::string &filter) {
+auto get_reddit_response(const std::string &subreddit,
+                                const std::string &filter) -> std::string {
     std::string URL = fmt::format(
         "https://old.reddit.com/r/{}/top/.json?sort=top&limit=1&t={}",
         subreddit, filter);
@@ -50,8 +50,8 @@ std::string get_reddit_response(const std::string &subreddit,
     // Open the pipe to process to command
     FILE *pipe = popen(cmd, "r");
     // Check that the pipe was opened successfully
-    if (!pipe) {
-        std::cerr << "Error opening pipe" << std::endl;
+    if (pipe == nullptr) {
+        std::cerr << "Error opening pipe" << '\n';
     }
     // Write contents of stdout buf to c++ style string
     while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {

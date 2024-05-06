@@ -97,7 +97,6 @@ void play_command(dpp::cluster &bot, const dpp::slashcommand_t &event,
     const std::string channel = get_env("CRINGE_MUSIC_CHANNEL");
     // Get the voice channel the bot is in, in this current guild.
     dpp::voiceconn *voice = event.from->get_voice(event.command.guild_id);
-    dpp::guild *guild = dpp::find_guild(event.command.guild_id);
     std::cout << "\n\nHERE\n\n";
     // If the voice channel was invalid, or there is an issue with it, then tell
     // the user.
