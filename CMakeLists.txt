@@ -71,7 +71,7 @@ add_executable(${PROJECT_NAME}
 include(ExternalProject)
 include(FindPackageHandleStandardArgs)
 find_package(SQLite3 REQUIRED)
-find_package(DPP REQUIRED)
+find_package(DPP)
 find_package(Threads REQUIRED)
 #find_package(OpenSSL REQUIRED)
 find_package(fmt REQUIRED)
