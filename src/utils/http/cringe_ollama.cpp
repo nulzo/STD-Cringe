@@ -4,13 +4,14 @@ CringeOllama::CringeOllama(const std::string &endpoint) : endpoint(endpoint) {}
 
 CringeOllama::~CringeOllama() = default;
 
-std::string CringeOllama::chat(const std::string &model, const std::string &prompt) {
+json CringeOllama::chat(const std::string &model, const std::string &prompt) {
 	std::string url = fmt::format("{}/api/v1/chat", endpoint);
 	std::string sanitized = this->sanitize(prompt);
 	json response = this->curl.post(fmt::format(R"({{ "chat": "{}", "model": "{}" }})", sanitized, model), url);
+	return response;
 }
 
-static std::string sanitize(const std::string &prompt) {
+std::string CringeOllama::sanitize(const std::string &prompt) {
 	size_t found = prompt.find('"');
 	std::string sanitized = prompt;
 	while (found != std::string::npos) {

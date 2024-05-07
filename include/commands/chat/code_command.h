@@ -5,7 +5,6 @@
 #include <dpp/unicode_emoji.h>
 
 dpp::slashcommand code_declaration();
-void code_command(dpp::cluster &bot, const dpp::slashcommand_t &event);
+void code_command(CringeBot &cringe, const dpp::slashcommand_t &event);
 
-
-#endif //CRINGE_CODE_COMMAND_H
+#endif

@@ -3,8 +3,9 @@
 
 #include <dpp/dpp.h>
 #include <fmt/core.h>
+#include "utils/bot/cringe_bot.h"
 
 auto confession_declaration() -> dpp::slashcommand;
-void confession_command(dpp::cluster &bot, const dpp::slashcommand_t &event);
+void confession_command(CringeBot &cringe, const dpp::slashcommand_t &event);
 
 #endif //CRINGE_CONFESSION_COMMAND_H

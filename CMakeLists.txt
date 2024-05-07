@@ -41,12 +41,7 @@ add_executable(${PROJECT_NAME}
         src/utils/database/cringe_database.cpp
         include/connectors/cringe_database.h
         include/validators/validate_chat.h
-        src/utils/http/cringe_request.cpp
         src/utils/audio/cringe_audio_streaming.cpp
-        src/utils/http/cringe_api.cpp
-        src/utils/http/cringe_api.cpp
-        src/utils/misc/cringe_helpers.cpp
-        src/utils/misc/cringe_helpers.cpp
         include/commands/chat/info_command.h
         include/utils/audio/cringe_audio_helpers.h
         include/utils/audio/cringe_audio_streaming.h
@@ -54,11 +49,8 @@ add_executable(${PROJECT_NAME}
         include/utils/audio/cringe_song.h
         include/utils/database/cringe_database.h
         include/utils/embed/cringe_embed.h
-        include/utils/http/cringe_api.h
-        include/utils/http/cringe_request.h
         include/utils/listeners/cringe_logger.h
         include/utils/validators/validate_chat.h
-        include/utils/misc/cringe_helpers.h
         src/commands/chat/code_command.cpp
         include/commands/chat/code_command.h
         src/utils/audio/cringe_yt.cpp
@@ -70,6 +62,8 @@ add_executable(${PROJECT_NAME}
         include/utils/http/cringe_ollama.h
         src/utils/http/cringe_curl.cpp
         include/utils/http/cringe_curl.h
+        src/utils/audio/cringe_ffmpeg.cpp
+        include/utils/audio/cringe_ffmpeg.h
 )
 
 include(ExternalProject)

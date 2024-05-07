@@ -2,8 +2,8 @@
 
 #include "listeners/SlashcommandListener.h"
 
-CringeBot::CringeBot(const std::string &token)
-    : cluster(token, dpp::i_default_intents | dpp::i_message_content) {
+CringeBot::CringeBot(const std::string &token, CringeOllama ollama)
+    : cluster(token, dpp::i_default_intents | dpp::i_message_content), ollama(ollama) {
     cringe_logger = cringe_logging();
     cluster.on_log([this](const dpp::log_t &event) {
         logger(this->cringe_logger, event);

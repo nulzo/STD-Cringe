@@ -24,9 +24,12 @@
 
 #include "utils/bot/cringe_bot.h"
 
+const std::string OLLAMA_URL = "127.0.0.1:11434";
+
 struct Config {
     std::string token;
     std::string guild;
+	std::string ollama;
 };
 
 auto main(int argc, char *argv[]) -> int {
@@ -55,6 +58,6 @@ auto main(int argc, char *argv[]) -> int {
         return -1;
     }
 
-    CringeBot cringe(token->second);
+    CringeBot cringe(token->second, OLLAMA_URL);
     return 0;
 }

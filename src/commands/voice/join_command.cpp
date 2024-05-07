@@ -40,7 +40,7 @@ dpp::slashcommand join_declaration() {
             false));
 }
 
-void join_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
+void join_command(CringeBot &cringe, const dpp::slashcommand_t &event) {
     dpp::guild *guild;
     dpp::snowflake parameter;
     dpp::channel requested_channel;
@@ -52,7 +52,7 @@ void join_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
     if (p.index() != 0) {
         parameter = std::get<dpp::snowflake>(event.get_parameter("channel"));
         // Get the param (if any) and find voice channel id
-        requested_channel = bot.channel_get_sync(parameter);
+        requested_channel = cringe.cluster.channel_get_sync(parameter);
         if (!requested_channel.is_voice_channel()) {
             std::string error_reason = event.command.usr.get_mention() +
                                        " tried to invite cringe to VC, but "
@@ -66,7 +66,7 @@ void join_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
         auto channel = event.from->get_voice(event.command.guild_id);
 
         if (channel) {
-            auto users_vc = guild->voice_members.find(bot.me.id);
+            auto users_vc = guild->voice_members.find(cringe.cluster.me.id);
             if (users_vc != guild->voice_members.end())
                 if (channel->channel_id == users_vc->second.channel_id) {
                     // Issue warning that cringe must be called to a channel

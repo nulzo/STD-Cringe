@@ -23,9 +23,7 @@
  */
 
 #include "commands/chat/user_command.h"
-
 #include "utils/embed/cringe_embed.h"
-#include "utils/http/cringe_api.h"
 
 dpp::slashcommand user_declaration() {
     return dpp::slashcommand()
@@ -35,14 +33,14 @@ dpp::slashcommand user_declaration() {
                                         "The user to view", true));
 }
 
-void user_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
+void user_command(CringeBot &cringe, const dpp::slashcommand_t &event) {
     event.thinking();
     std::string prompt;
     dpp::command_interaction cmd_data = event.command.get_command_interaction();
     dpp::snowflake user = cmd_data.get_value<dpp::snowflake>(0);
-    dpp::user_identified user_t = bot.user_get_sync(user);
+    dpp::user_identified user_t = cringe.cluster.user_get_sync(user);
     dpp::guild_member guild_user_t =
-        bot.guild_get_member_sync(event.command.get_guild().id, user);
+			cringe.cluster.guild_get_member_sync(event.command.get_guild().id, user);
     std::string user_username = user_t.format_username();
     std::string user_avatar = user_t.get_avatar_url();
     std::string user_created = fmt::format(
@@ -83,9 +81,8 @@ void user_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
     if (has_boost == 0) {
         prompt += " Include that this user is a stupid idiot.";
     }
-    // std::string response = get_openai_response(prompt, "300",
-    // "gpt-3.5-turbo-1106");
-    std::string response = cringe_chat(prompt, "cringe");
+    json ollama_response = cringe.ollama.chat(prompt, "cringe");
+	std::string response = ollama_response["response"];
     dpp::embed embed = info_embed(title, response, user_avatar, user_mention,
                                   user_created, user_joined_server,
                                   user_premium, user_has_nitro, user_is_bot);

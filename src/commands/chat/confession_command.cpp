@@ -34,14 +34,10 @@ auto confession_declaration() -> dpp::slashcommand {
                                         "Your confession", true));
 }
 
-void confession_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
-    std::string confession =
-        std::get<std::string>(event.get_parameter("confession"));
-    dpp::message response_message(
-        dpp::message("Your confession has been sent...")
-            .set_flags(dpp::m_ephemeral));
+void confession_command(CringeBot &cringe, const dpp::slashcommand_t &event) {
+    std::string confession = std::get<std::string>(event.get_parameter("confession"));
+    dpp::message response_message(dpp::message("Your confession has been sent...").set_flags(dpp::m_ephemeral));
     event.reply(response_message);
-    dpp::message message(event.command.channel_id,
-                         confession_embed(confession));
-    bot.message_create(message);
+    dpp::message message(event.command.channel_id, confession_embed(confession));
+    cringe.cluster.message_create(message);
 }

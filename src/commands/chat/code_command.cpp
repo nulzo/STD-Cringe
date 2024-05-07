@@ -25,8 +25,6 @@
 #include "commands/chat/chat_command.h"
 #include "connectors/cringe_database.h"
 #include "utils/embed/cringe_embed.h"
-#include "utils/http/cringe_api.h"
-#include "utils/misc/cringe_helpers.h"
 
 auto code_declaration() -> dpp::slashcommand {
     return dpp::slashcommand()
@@ -36,42 +34,12 @@ auto code_declaration() -> dpp::slashcommand {
                                         "Coding question to ask", true));
 }
 
-void code_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
+void code_command(CringeBot &cringe, const dpp::slashcommand_t &event) {
     event.thinking(true);
-    std::string channel = get_env("CRINGE_CODE_CHANNEL");
+    dpp::channel channel = event.command.channel;
     std::string prompt = std::get<std::string>(event.get_parameter("prompt"));
-    CringeDB cringe_db(get_env("CRINGE_DATABASE"));
-
-    std::vector<std::vector<std::string>> rows = cringe_db.query(fmt::format(
-        "SELECT * FROM chat WHERE issuer = '{}' AND model = '{}' AND "
-        "created >= datetime('now', '-5 minutes');",
-        event.command.usr.username, "code"));
-    // db goes [model,issuer,prompt,response]
-    std::string init_string = "[";
-    for (const auto &row : rows) {
-        std::string newstring = fmt::format(R"({{ " role ": " user ", " content ": "{}" }}, {{ " role ": " assistant ", " content ": " {} " }},)",row[3], row[4]);
-        init_string += newstring;
-    }
-    init_string += fmt::format(R"({{ " role ": " user ", " content ": " {} " }}])", prompt);
-    json res = cringe_chat(prompt, "code");
-    if (!res["error"].empty()) {
-        std::cout << "\nERROR!\n" << std::endl;
-        // An error has occurred!
-    }
-    std::string response = res["response"];
-    // Access the database and insert the values
-
-    cringe_db.execute("CREATE TABLE IF NOT EXISTS CHAT (id INTEGER PRIMARY KEY "
-                      "AUTOINCREMENT, "
-                      "model TEXT, issuer TEXT, prompt TEXT, response TEXT, "
-                      "created TIMESTAMP "
-                      "DEFAULT CURRENT_TIMESTAMP);");
-    std::vector<std::string> params = {"code", event.command.usr.username,
-                                       prompt, response};
-    cringe_db.execute(
-        "INSERT INTO CHAT (model,issuer,prompt,response) VALUES (?, ?, ?, ?);",
-        params);
-
+    json ollama_response = cringe.ollama.chat(prompt, "code");
+    std::string response = ollama_response["response"];
     std::string part;
     int chunk_max = 1024;
     if (response.length() >= chunk_max) {
@@ -81,21 +49,14 @@ void code_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
                        ? fmt::format("**{} asked**\n{}\n**cringe replied**\n{}",
                                      event.command.usr.username, prompt, chunk)
                        : chunk;
-            dpp::message cringe_reply(channel, part);
-            bot.message_create(cringe_reply);
+            dpp::message cringe_reply(channel.id, part);
+            cringe.cluster.message_create(cringe_reply);
         }
     } else {
-        std::string content =
-            fmt::format("**{} asked**\n{}\n**cringe replied**\n{}",
-                        event.command.usr.username, prompt, response);
-        // Issue the replies
-        dpp::message cringe_reply(channel, content);
-        bot.message_create(cringe_reply);
+        std::string content = fmt::format("**{} asked**\n{}\n**cringe replied**\n{}", event.command.usr.username, prompt, response);
+        dpp::message cringe_reply(channel.id, content);
+        cringe.cluster.message_create(cringe_reply);
     }
-
-    dpp::message ephemeral_reply(
-        event.command.channel.id,
-        fmt::format("Your chat has been responded to in {}!",
-                    bot.channel_get_sync(channel).get_mention()));
+    dpp::message ephemeral_reply(channel.id, fmt::format("Your chat has been responded to in {}!", channel.get_mention()));
     event.edit_original_response(ephemeral_reply);
 }

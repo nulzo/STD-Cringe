@@ -10,14 +10,14 @@
 #include "cringe_curl.h"
 
 class CringeOllama {
+public:
 	CringeOllama(const std::string &endpoint);
 	~CringeOllama();
-	std::string chat(const std::string &model, const std::string &prompt);
+	json chat(const std::string &model, const std::string &prompt);
 private:
 	CringeCurl curl;
 	std::string endpoint;
 	static std::string sanitize(const std::string &prompt);
-	static size_t writeCallback(void *contents, size_t size, size_t nmemb, std::string *output)
 };
 
 #endif

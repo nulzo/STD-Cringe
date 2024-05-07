@@ -22,14 +22,14 @@
  * IN THE SOFTWARE.
  */
 #include "fmt/format.h"
-#include "utils/misc/cringe.h"
+#include "commands/chat/info_command.h"
 
 dpp::slashcommand info_declaration() {
     return dpp::slashcommand().set_name("info").set_description(
         "General information about the bot");
 }
 
-void info_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
+void info_command(CringeBot &cringe, const dpp::slashcommand_t &event) {
     dpp::embed embed =
         dpp::embed()
             .set_color(Cringe::CringeColor::CringePrimary)
@@ -48,13 +48,13 @@ void info_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
                 "https://cdn.discordapp.com/avatars/1186860332845629511/"
                 "2b20f3636a5bd288bca2eb197badf556.png")
             .add_field("Creator",
-                       bot.user_get_sync(933796468731568191).get_mention(),
+                       cringe.cluster.user_get_sync(933796468731568191).get_mention(),
                        true)
             .add_field(
                 "Created",
                 fmt::format(
                     "<t:{}:D>",
-                    std::to_string((int)bot.user_get_sync(1186860332845629511)
+                    std::to_string((int)cringe.cluster.user_get_sync(1186860332845629511)
                                        .get_creation_time())),
                 true)
             .add_field("Active In",

@@ -4,11 +4,7 @@ Song CringeYoutube::get_content(const std::string &query) {
     Song song;
     char buffer[128];
     std::string result;
-    std::string cmd =
-        fmt::format("yt-dlp -s --print title --print channel --print thumbnail "
-                    "--print duration --print view_count --print comment_count "
-                    "--print epoch --print channel_follower_count \"{}\"",
-                    query);
+    std::string cmd = fmt::format("yt-dlp -s --print title --print channel --print thumbnail --print duration --print view_count --print comment_count --print epoch --print channel_follower_count \"{}\"", query);
     FILE *pipe = popen(cmd.c_str(), "r");
     while (fgets(buffer, sizeof(buffer), pipe) != nullptr)
         result += buffer;
@@ -52,6 +48,17 @@ std::string CringeYoutube::search_command(std::string search) {
         R"(yt-dlp -f bestaudio -o - -vn "{}" | ffmpeg -i pipe:0 -hide_banner -loglevel warning -f s16le -ac 2 -ar 48000 pipe:1)", search);
 }
 
+std::string CringeYoutube::search(const std::string &query) {
+	std::string sanitized = this->sanitize(query);
+	if(!this->is_url(sanitized)) {
+		sanitized = to_url(sanitized);
+	}
+	if(this->is_playlist(sanitized)) {
+		return "";
+	}
+	return this->search_command(sanitized);
+}
+
 std::string CringeYoutube::sanitize(std::string query) {
     query.erase(std::remove(query.begin(), query.end(), '\n'), query.end());
     query.erase(std::remove(query.begin(), query.end(), '"'), query.end());
@@ -59,3 +66,7 @@ std::string CringeYoutube::sanitize(std::string query) {
     query.erase(std::remove(query.begin(), query.end(), '}'), query.end());
     return query;
 }
+
+CringeYoutube::CringeYoutube() {}
+
+CringeYoutube::~CringeYoutube() = default;

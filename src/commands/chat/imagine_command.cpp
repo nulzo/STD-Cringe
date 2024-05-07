@@ -23,11 +23,8 @@
  */
 
 #include "commands/chat/imagine_command.h"
-
 #include "utils/embed/cringe_embed.h"
-#include "utils/http/cringe_api.h"
 #include "utils/misc/base64.h"
-#include "utils/misc/cringe_helpers.h"
 
 auto image_declaration() -> dpp::slashcommand {
     return dpp::slashcommand()
@@ -45,17 +42,13 @@ auto image_declaration() -> dpp::slashcommand {
                                         "Prompt for image", true));
 }
 
-void image_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
+void image_command(CringeBot &cringe, const dpp::slashcommand_t &event) {
     event.thinking(true);
     std::string prompt = std::get<std::string>(event.get_parameter("prompt"));
     std::string style = std::get<std::string>(event.get_parameter("style"));
     dpp::channel channel = event.command.channel;
-    json response = cringe_imagine(prompt, style);
-    if (!response["error"].empty()) {
-        std::cout << "\nERROR!\n";
-        // An error has occurred!
-    }
-    std::string image = response["response"];
+    json ollama_response = cringe.ollama.chat(prompt, style);
+    std::string image = ollama_response["response"];
     std::string binaryData = base64_decode(image);
     dpp::message message(channel.id, "");
     message.add_file("imagine.jpg", binaryData);
@@ -65,10 +58,9 @@ void image_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
         .setImage(fmt::format("attachment://{}", "imagine.jpg"))
         .setDescription(prompt);
     message.add_embed(cringe_embed.embed);
-    bot.message_create(message);
+    cringe.cluster.message_create(message);
     dpp::message ephemeral_reply(
         event.command.channel.id,
-        fmt::format("cringe has responded to your chat in {}!",
-                    bot.channel_get_sync(channel.id).get_mention()));
+        fmt::format("cringe has responded to your chat in {}!", cringe.cluster.channel_get_sync(channel.id).get_mention()));
     event.edit_original_response(ephemeral_reply);
 }

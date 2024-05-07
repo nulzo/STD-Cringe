@@ -35,14 +35,12 @@ dpp::slashcommand skip_declaration() {
         "Skip the song that is currently playing");
 }
 
-void skip_command(dpp::cluster &bot, const dpp::slashcommand_t &event,
-                  CringeQueue &queue) {
+void skip_command(CringeBot &cringe, const dpp::slashcommand_t &event) {
     std::string embed_reason;
     dpp::embed embed;
     event.thinking(true);
     /* Get the voice channel the bot is in, in this current guild. */
     dpp::voiceconn *v = event.from->get_voice(event.command.guild_id);
-
     if (!v || !v->voiceclient || !v->voiceclient->is_ready()) {
         std::string error_reason = "Bot was unable to join the voice channel "
                                    "due to some unknown reason.";
@@ -52,7 +50,7 @@ void skip_command(dpp::cluster &bot, const dpp::slashcommand_t &event,
         return;
     }
 
-    if (queue.is_empty() && !v->voiceclient->is_playing()) {
+    if (cringe.queue.is_empty() && !v->voiceclient->is_playing()) {
         std::string error_reason = "There is no song to skip.";
         dpp::message message(event.command.channel_id,
                              cringe_error_embed(error_reason).embed);
@@ -70,9 +68,9 @@ void skip_command(dpp::cluster &bot, const dpp::slashcommand_t &event,
         return;
     }
 
-    CringeSong s = queue.dequeue();
+    CringeSong s = cringe.queue.dequeue();
     v->voiceclient->skip_to_next_marker();
-    play_callback(bot, s);
+    play_callback(cringe, s);
     std::string success_reason =
         "Successfully skipped song. Playing next in queue.";
     dpp::message message(event.command.channel_id,

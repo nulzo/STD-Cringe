@@ -27,7 +27,6 @@
 #include <fmt/format.h>
 
 #include "utils/misc/cringe.h"
-#include "utils/misc/cringe_helpers.h"
 
 dpp::slashcommand queue_declaration() {
     return dpp::slashcommand().set_name("queue").set_description(
@@ -45,8 +44,7 @@ void queue_command(const dpp::slashcommand_t &event, CringeQueue queue) {
         // Access the front element
         CringeSong song = current_queue.front();
         total_minutes += atoi(song.get_formatted_duration().c_str());
-        std::string song_duration = seconds_to_formatted_time(
-            atoi(song.get_formatted_duration().c_str()));
+        std::string song_duration = song.get_formatted_duration().c_str();
         embed_reason += fmt::format("\n**Title**: {}\n**Length**: {}\n",
                                     song.get_title(), song_duration);
         total_songs++;
@@ -56,7 +54,7 @@ void queue_command(const dpp::slashcommand_t &event, CringeQueue queue) {
     embed.add_field(
         "Queue Info",
         fmt::format("\n**Total Songs**: {}\n**Queue Duration**: {}\n",
-                    total_songs, seconds_to_formatted_time(total_minutes)));
+                    total_songs, total_minutes));
     embed.set_title("Current Queue")
         .set_color(Cringe::CringeColor::CringePrimary)
         .add_field("Tracks", embed_reason)

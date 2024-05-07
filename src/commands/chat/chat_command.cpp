@@ -23,11 +23,9 @@
  */
 
 #include "commands/chat/chat_command.h"
-
 #include "connectors/cringe_database.h"
 #include "utils/embed/cringe_embed.h"
-#include "utils/http/cringe_api.h"
-#include "utils/misc/cringe_helpers.h"
+#include "utils/http/cringe_ollama.h"
 
 dpp::slashcommand chat_declaration() {
     return dpp::slashcommand()
@@ -48,40 +46,20 @@ dpp::slashcommand chat_declaration() {
                                         "What to ask the model", true));
 }
 
-void chat_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
+void chat_command(CringeBot &cringe, const dpp::slashcommand_t &event) {
     event.thinking(true);
-    std::string channel = get_env("CRINGE_CHAT_CHANNEL");
-    // Query the ollama endpoint with the prompt the user provided
+    dpp::channel channel = event.command.channel;
     std::string prompt = std::get<std::string>(event.get_parameter("prompt"));
     std::string model = std::get<std::string>(event.get_parameter("model"));
-    json r = cringe_chat(prompt, model);
-    if (!r["error"].empty()) {
-        std::cout << "\nERROR!\n" << std::endl;
-        // An error has occurred!
-    }
-    std::string response = r["response"];
-    // Access the database and insert the values
-    CringeDB cringe_db(get_env("CRINGE_DATABASE"));
-    cringe_db.execute("CREATE TABLE IF NOT EXISTS CHAT (id INTEGER PRIMARY KEY "
-                      "AUTOINCREMENT, "
-                      "model TEXT, issuer TEXT, prompt TEXT, response TEXT);");
-    std::vector<std::string> params = {model, event.command.usr.username,
-                                       prompt, response};
-    cringe_db.execute(
-        "INSERT INTO CHAT (model,issuer,prompt,response) VALUES (?, ?, ?, ?);",
-        params);
+    json ollama_response = cringe.ollama.chat(prompt, model);
+    std::string response = ollama_response["response"];
     CringeEmbed cringe_embed;
-    cringe_embed.setTitle("Cringe Chat")
-        .setHelp(fmt::format("ask {} a question with /chat!", model));
+    cringe_embed.setTitle("Cringe Chat").setHelp(fmt::format("ask {} a question with /chat!", model));
     cringe_embed.setFields(
         {{fmt::format("{} asked", event.command.usr.username), prompt, "false"},
          {fmt::format("{} responded", model), response, "false"}});
-    // Issue the replies
-    dpp::message cringe_response(channel, cringe_embed.embed);
-    bot.message_create(cringe_response);
-    dpp::message ephemeral_reply(
-        event.command.channel.id,
-        fmt::format("Your chat has been responded to in {}!",
-                    bot.channel_get_sync(channel).get_mention()));
+    dpp::message cringe_response(channel.id, cringe_embed.embed);
+    cringe.cluster.message_create(cringe_response);
+    dpp::message ephemeral_reply(event.command.channel.id, fmt::format("Your chat has been responded to in {}!", event.command.channel.get_mention()));
     event.edit_original_response(ephemeral_reply);
 }

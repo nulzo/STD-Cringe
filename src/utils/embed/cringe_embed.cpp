@@ -23,13 +23,10 @@
  */
 
 #include "utils/embed/cringe_embed.h"
-
 #include <unordered_map>
-
 #include "fmt/format.h"
 #include "utils/audio/cringe_song.h"
 #include "utils/misc/cringe.h"
-#include "utils/misc/cringe_helpers.h"
 
 dpp::embed info_embed(const std::string &title, const std::string &response,
                       const std::string &avatar_url, const std::string &mention,
@@ -188,8 +185,7 @@ dpp::embed now_streaming(CringeSong song) {
 
     // Get data from the song object
     title = song.get_title();
-    duration =
-        seconds_to_formatted_time(atoi(song.get_formatted_duration().c_str()));
+    duration = atoi(song.get_formatted_duration().c_str());
     author = song.get_artist();
     event = song.get_event();
     channel =

@@ -23,10 +23,7 @@
  */
 
 #include "commands/chat/describe_command.h"
-
 #include "utils/embed/cringe_embed.h"
-#include "utils/http/cringe_api.h"
-#include "utils/misc/cringe_helpers.h"
 
 dpp::slashcommand describe_declaration() {
     return dpp::slashcommand()
@@ -36,32 +33,27 @@ dpp::slashcommand describe_declaration() {
                                         "Select an image", true));
 }
 
-void describe_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
+void describe_command(CringeBot &cringe, const dpp::slashcommand_t &event) {
     // Set the command to thinking and set it to ephemeral
     event.thinking(true);
-    std::string channel = get_env("CRINGE_TESTING_CHANNEL");
+    dpp::channel channel = event.command.channel;
     /* Get the file id from the parameter attachment. */
     dpp::snowflake image =
         std::get<dpp::snowflake>(event.get_parameter("image"));
     /* Get the attachment that the user inputted from the file id. */
     dpp::attachment attachment = event.command.get_resolved_attachment(image);
-    json r = cringe_describe(attachment.url);
-    if (!r["error"].empty()) {
-        std::cout << "\nERROR!\n" << std::endl;
-        // An error has occurred!
-    }
-    std::string response = r["response"];
+    json ollama_response = cringe.ollama.chat(attachment.url, "describe");
+    std::string response = ollama_response["response"];
     CringeEmbed cringe_embed;
     cringe_embed.setTitle("Cringe Describe")
         .setHelp("describe an image with /describe!")
         .setDescription(response)
         .setImage(attachment.url);
     /* Reply with the file as a URL. */
-    dpp::message message(channel, cringe_embed.embed);
-    bot.message_create(message);
+    dpp::message message(channel.id, cringe_embed.embed);
+    cringe.cluster.message_create(message);
     dpp::message ephemeral_reply(
         event.command.channel.id,
-        fmt::format("cringe has described your image in {}!",
-                    bot.channel_get_sync(channel).get_mention()));
+        fmt::format("cringe has described your image in {}!", channel.get_mention()));
     event.edit_original_response(ephemeral_reply);
 }

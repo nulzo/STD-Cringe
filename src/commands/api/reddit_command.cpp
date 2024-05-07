@@ -22,9 +22,9 @@
  * IN THE SOFTWARE.
  */
 
+#include <fmt/format.h>
 #include "utils/embed/cringe_embed.h"
-#include "utils/http/cringe_api.h"
-#include "utils/misc/cringe_helpers.h"
+#include "commands/api/reddit_command.h"
 
 dpp::slashcommand reddit_declaration() {
     return dpp::slashcommand()
@@ -65,17 +65,13 @@ json parse_reddit_response(const std::string &res) {
     return response;
 }
 
-void reddit_command(dpp::cluster &bot, const dpp::slashcommand_t &event) {
+void reddit_command(CringeBot &cringe, const dpp::slashcommand_t &event) {
     event.thinking();
-    std::string subreddit =
-        std::get<std::string>(event.get_parameter("subreddit"));
+    std::string subreddit = std::get<std::string>(event.get_parameter("subreddit"));
     std::string top = std::get<std::string>(event.get_parameter("top"));
-    std::string response = get_reddit_response(subreddit, top);
-    json response_data = parse_reddit_response(response);
-    dpp::message msg(event.command.channel_id,
-                     reddit_embed(response_data)
-                         .set_footer(fmt::format("Queried by: {}",
-                                                 event.command.usr.username),
-                                     event.command.usr.get_avatar_url()));
+    std::string response = "test";
+	CringeEmbed embed;
+	embed.setTitle(response).setDescription(response);
+    dpp::message msg(event.command.channel_id, embed.embed);
     event.edit_original_response(msg);
 }

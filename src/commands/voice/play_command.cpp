@@ -23,19 +23,16 @@
  */
 
 #include "commands/voice/play_command.h"
-
 #include <fmt/format.h>
 
 #include <algorithm>
-#include <regex>
-#include <sstream>
 
 #include "dpp/dpp.h"
 #include "utils/audio/cringe_audio_helpers.h"
 #include "utils/audio/cringe_audio_streaming.h"
 #include "utils/embed/cringe_embed.h"
 #include "utils/misc/cringe.h"
-#include "utils/misc/cringe_helpers.h"
+#include "utils/audio/cringe_yt.h"
 
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -46,7 +43,7 @@ extern "C" {
 
 //  ====================  AUXILIARY FUNCTIONS ====================
 
-void play_callback(dpp::cluster &bot, CringeSong song) {
+void play_callback(CringeBot &cringe, CringeSong song) {
     auto *voice =
         song.get_event().from->get_voice(song.get_event().command.guild_id);
     // Set the url and codec, piping the audio with ffmpeg
@@ -56,9 +53,8 @@ void play_callback(dpp::cluster &bot, CringeSong song) {
         process += fmt::format(" -vn -filter_complex {}", song.get_filter());
 	}
     // Send in proper channel
-    dpp::message message(song.get_event().command.channel_id,
-                         now_streaming(song));
-    bot.message_create(message);
+    dpp::message message(song.get_event().command.channel_id, now_streaming(song));
+    cringe.cluster.message_create(message);
     cringe_streamer(process, voice);
 }
 
@@ -90,12 +86,11 @@ dpp::slashcommand play_declaration() {
                                                        std::string("expand"))));
 }
 
-void play_command(dpp::cluster &bot, const dpp::slashcommand_t &event,
-                  CringeQueue &queue) {
+void play_command(CringeBot &cringe, const dpp::slashcommand_t &event) {
     // Set the bot to thinking. This gives us a bit more time to reply to the
     // interaction
     event.thinking(true);
-    const std::string channel = get_env("CRINGE_MUSIC_CHANNEL");
+    const dpp::channel channel = event.command.channel;
     // Get the voice channel the bot is in, in this current guild.
     dpp::voiceconn *voice = event.from->get_voice(event.command.guild_id);
     // If the voice channel was invalid, or there is an issue with it, then tell
@@ -131,27 +126,11 @@ void play_command(dpp::cluster &bot, const dpp::slashcommand_t &event,
         if (parameter == "expand")
             filter = cringe_filter.EXPANDER;
     }
-    // Remove newline characters from the request
-    request = sanitize_query(request);
-    // Determine if the song is not a URL. Currently, we can only get URLs, but
-    // we will add the option for queries in the future.
-    if (!is_url(request)) {
-        // Convert the query into the corresponding URL
-        request = query_to_url(request);
-    }
-    // Define the regular expression pattern to see if this is a YouTube
-    // playlist
-    std::regex pattern("&(start_radio=|list=)");
-    // Check if it is a YouTube playlist
-    if (std::regex_search(request, pattern)) {
-        // Reply to the event letting the issuer know the song was queued
-        dpp::message message(event.command.channel_id,
-                             "You cannot queue a playlist at this time!");
-        event.edit_original_response(message);
-        return;
-    }
+	CringeYoutube cringe_youtube;
+	std::string source = cringe_youtube.search(request);
+
     // Check if queue is not empty (or if song is currently playing)
-    if (!queue.is_empty() || voice->voiceclient->is_playing()) {
+    if (!cringe.queue.is_empty() || voice->voiceclient->is_playing()) {
         // Get the YouTube upload info from the url given
         std::vector<std::string> yt_info = get_yt_info(request);
         // Make a new song to store to the queue
@@ -159,7 +138,7 @@ void play_command(dpp::cluster &bot, const dpp::slashcommand_t &event,
                         yt_info[4], yt_info[5], yt_info[6], yt_info[7], filter,
                         request, (dpp::slashcommand_t &)event);
         // Add song to the queue
-        queue.enqueue(song);
+        cringe.queue.enqueue(song);
         // Reply to the event letting the issuer know the song was queued
         dpp::message message(event.command.channel_id,
                              added_to_queue_embed(song));
@@ -178,9 +157,9 @@ void play_command(dpp::cluster &bot, const dpp::slashcommand_t &event,
                     yt_info[5], yt_info[6], yt_info[7], filter, request,
                     (dpp::slashcommand_t &)event);
     // Send in proper channel
-    dpp::message message(channel, now_streaming(song));
+    dpp::message message(channel.id, now_streaming(song));
     // Send the embed
-    bot.message_create(message);
+    cringe.cluster.message_create(message);
     // Ephemeral embed saying that the command is playing. All events must be
     // responded to
     dpp::message msg(event.command.channel_id, added_to_queue_embed(song));
