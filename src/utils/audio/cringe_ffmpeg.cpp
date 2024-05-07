@@ -15,11 +15,14 @@ const std::map<std::string, std::string> filters = {
 CringeFFMPEG::CringeFFMPEG() {}
 CringeFFMPEG::~CringeFFMPEG() = default;
 
-std::string CringeFFMPEG::set_filter(const std::string &filter) {
-	auto cringe = filters.find(filter);
-	return fmt::format("-filter_complex {}", filter);
+auto CringeFFMPEG::set_filter(const std::string &filter) -> std::string {
+	auto cringe_filter = filters.find(filter);
+	return (cringe_filter == filters.end()) ? fmt::format("-filter_complex {}", cringe_filter->second) : "";
 }
 
-std::string CringeFFMPEG::get_stream() {
-
+auto CringeFFMPEG::get_stream(const std::string &filter) -> std::string {
+	if(!filter.empty()){
+		return fmt::format("ffmpeg -i pipe:0 -hide_banner -loglevel warning {} -f s16le -ac 2 -ar 48000 pipe:1", this->set_filter(filter));
+	}
+	return "ffmpeg -i pipe:0 -hide_banner -loglevel warning -f s16le -ac 2 -ar 48000 pipe:1";
 }

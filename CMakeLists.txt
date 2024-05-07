@@ -14,7 +14,6 @@ add_executable(${PROJECT_NAME}
         src/utils/embed/cringe_embed.cpp
         src/utils/audio/cringe_song.cpp
         src/utils/audio/cringe_queue.cpp
-        src/utils/audio/cringe_audio_helpers.cpp
         src/commands/voice/join_command.cpp
         src/commands/voice/play_command.cpp
         src/commands/voice/queue_command.cpp
@@ -35,16 +34,13 @@ add_executable(${PROJECT_NAME}
         include/utils/listeners/cringe_slashcommand.h
         src/commands/chat/describe_command.cpp
         include/commands/chat/describe_command.h
-        include/utils/misc/base64.h
-        src/utils/misc/base64.cpp
+        include/utils/misc/cringe_64.h
+        src/utils/misc/cringe_64.cpp
         src/utils/validators/validate_chat.cpp
         src/utils/database/cringe_database.cpp
         include/connectors/cringe_database.h
         include/validators/validate_chat.h
-        src/utils/audio/cringe_audio_streaming.cpp
         include/commands/chat/info_command.h
-        include/utils/audio/cringe_audio_helpers.h
-        include/utils/audio/cringe_audio_streaming.h
         include/utils/audio/cringe_queue.h
         include/utils/audio/cringe_song.h
         include/utils/database/cringe_database.h
@@ -54,7 +50,7 @@ add_executable(${PROJECT_NAME}
         src/commands/chat/code_command.cpp
         include/commands/chat/code_command.h
         src/utils/audio/cringe_yt.cpp
-        include/utils/audio/cringe_yt.h
+        include/utils/audio/cringe_youtube.h
         include/utils/audio/cringe_song_new.h
         src/utils/bot/cringe_bot.cpp
         include/utils/bot/cringe_bot.h
@@ -64,6 +60,11 @@ add_executable(${PROJECT_NAME}
         include/utils/http/cringe_curl.h
         src/utils/audio/cringe_ffmpeg.cpp
         include/utils/audio/cringe_ffmpeg.h
+        src/utils/audio/cringe_audio.cpp
+        include/utils/audio/cringe_audio.h
+        include/utils/misc/cringe_color.h
+        include/utils/misc/cringe_color.h
+        include/utils/misc/cringe_icon.h
 )
 
 include(ExternalProject)

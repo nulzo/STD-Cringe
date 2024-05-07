@@ -1,24 +1,14 @@
-#ifndef CRINGE_BASE64_H
-#define CRINGE_BASE64_H
+#ifndef CRINGE_CRINGE_64_H
+#define CRINGE_CRINGE_64_H
 
 #include <string>
-
-#if __cplusplus >= 201703L
 #include <string_view>
+
+auto cringe64_encode (std::string const& string, bool url = false) -> std::string;
+auto cringe64_decode(std::string const& string, bool remove_linebreaks = false) -> std::string;
+auto cringe64_encode(unsigned char const*, size_t len, bool url = false) -> std::string;
+#if __cplusplus >= 201703L
+auto cringe64_encode (std::string_view string, bool url = false) -> std::string;
 #endif
 
-std::string base64_encode     (std::string const& s, bool url = false);
-std::string base64_encode_pem (std::string const& s);
-std::string base64_encode_mime(std::string const& s);
-
-std::string base64_decode(std::string const& s, bool remove_linebreaks = false);
-std::string base64_encode(unsigned char const*, size_t len, bool url = false);
-
-#if __cplusplus >= 201703L
-std::string base64_encode     (std::string_view s, bool url = false);
-std::string base64_encode_pem (std::string_view s);
-std::string base64_encode_mime(std::string_view s);
-std::string base64_decode(std::string_view s, bool remove_linebreaks = false);
-#endif  // __cplusplus >= 201703L
-
-#endif //CRINGE_BASE64_H
+#endif

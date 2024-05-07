@@ -23,6 +23,7 @@
  */
 #include "fmt/format.h"
 #include "commands/chat/info_command.h"
+#include "utils/misc/cringe_color.h"
 
 dpp::slashcommand info_declaration() {
     return dpp::slashcommand().set_name("info").set_description(
@@ -32,7 +33,7 @@ dpp::slashcommand info_declaration() {
 void info_command(CringeBot &cringe, const dpp::slashcommand_t &event) {
     dpp::embed embed =
         dpp::embed()
-            .set_color(Cringe::CringeColor::CringePrimary)
+            .set_color(CringeColor::CringePrimary)
             .set_title("std::cringe bot")
             .set_description(
                 "Probably the **most based** discord bot you've *ever* seen "

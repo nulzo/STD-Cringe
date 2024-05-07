@@ -24,7 +24,7 @@
 
 #include "commands/chat/imagine_command.h"
 #include "utils/embed/cringe_embed.h"
-#include "utils/misc/base64.h"
+#include "utils/misc/cringe_64.h"
 
 auto image_declaration() -> dpp::slashcommand {
     return dpp::slashcommand()

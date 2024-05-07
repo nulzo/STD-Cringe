@@ -1,5 +1,5 @@
-#ifndef CRINGE_CRINGE_YT_H
-#define CRINGE_CRINGE_YT_H
+#ifndef CRINGE_CRINGE_YOUTUBE_H
+#define CRINGE_CRINGE_YOUTUBE_H
 
 #include <string>
 #include <dpp/dpp.h>

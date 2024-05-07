@@ -26,7 +26,6 @@
 #include <unordered_map>
 #include "fmt/format.h"
 #include "utils/audio/cringe_song.h"
-#include "utils/misc/cringe.h"
 
 dpp::embed info_embed(const std::string &title, const std::string &response,
                       const std::string &avatar_url, const std::string &mention,
@@ -34,7 +33,7 @@ dpp::embed info_embed(const std::string &title, const std::string &response,
                       const std::string &premium, const std::string &nitro,
                       const std::string &bot) {
     return dpp::embed()
-        .set_color(Cringe::CringeColor::CringeDark)
+        .set_color(CringeColor::CringeDark)
         .set_title(title)
         .set_description(response)
         .set_thumbnail(avatar_url)
@@ -49,20 +48,11 @@ dpp::embed info_embed(const std::string &title, const std::string &response,
 
 dpp::embed confession_embed(const std::string &confession) {
     dpp::embed embed;
-    embed.set_color(Cringe::CringeColor::CringePrimary);
+    embed.set_color(CringeColor::CringePrimary);
     embed.set_title("Anonymous Confession");
-    embed.set_thumbnail(Cringe::CringeIcon::ConfessionIcon);
+    embed.set_thumbnail(CringeIcon::ConfessionIcon);
     embed.set_description(confession);
     embed.set_timestamp(time(nullptr));
-    return embed;
-}
-
-dpp::embed added_to_queue_embed(CringeSong song) {
-    dpp::embed embed;
-    embed.set_title("Successfully added")
-        .set_color(Cringe::CringeColor::CringeSuccess)
-        .set_thumbnail(Cringe::CringeIcon::SuccessIcon);
-    embed.add_field("Title", song.get_title()).add_field("URL", song.get_url());
     return embed;
 }
 
@@ -78,9 +68,9 @@ dpp::embed reddit_embed(json data) {
     auto e = data["media_embed"];
     float ratio = data["upvote_ratio"];
     dpp::embed embed;
-    embed.set_color(Cringe::CringeColor::CringePrimary)
+    embed.set_color(CringeColor::CringePrimary)
         .set_title("Cringe Crawler")
-        .set_thumbnail(Cringe::CringeIcon::LightningIcon)
+        .set_thumbnail(CringeIcon::LightningIcon)
         .add_field("", "+------------------------------------------------------"
                        "-----------+")
         .add_field("Subreddit", subreddit, true)
@@ -194,7 +184,7 @@ dpp::embed now_streaming(CringeSong song) {
     footer = fmt::format("Requested by: {}", event.command.usr.global_name);
     // Set the title and assign it an icon
     embed.set_title("Now Streaming")
-        .set_thumbnail(Cringe::CringeIcon::MusicIcon);
+        .set_thumbnail(CringeIcon::MusicIcon);
     // Set the title field
     embed.add_field("Title", title);
     embed.add_field("Author", author);
@@ -212,7 +202,7 @@ dpp::embed now_streaming(CringeSong song) {
         .add_field("Views", song.get_view_count(), true)
         .add_field("Subscribers", song.get_subscribers(), true);
     // Set the color of the embed
-    embed.set_color(Cringe::CringeColor::CringePrimary);
+    embed.set_color(CringeColor::CringePrimary);
     // Set the footer to tell the server who requested the song
     embed.set_footer(footer, event.command.usr.get_avatar_url());
     // Add a timestamp to the embed
@@ -224,8 +214,8 @@ dpp::embed now_streaming(CringeSong song) {
 CringeEmbed cringe_success_embed(std::string &reason) {
     CringeEmbed embed;
     embed.setTitle("Success");
-    embed.setColor(Cringe::CringeColor::CringeSuccess);
-    embed.setIcon(Cringe::CringeIcon::SuccessIcon);
+    embed.setColor(CringeColor::CringeSuccess);
+    embed.setIcon(CringeIcon::SuccessIcon);
     embed.setDescription(reason);
     return embed;
 }
@@ -233,8 +223,8 @@ CringeEmbed cringe_success_embed(std::string &reason) {
 CringeEmbed cringe_warning_embed(std::string &reason) {
     CringeEmbed embed;
     embed.setTitle("Warning");
-    embed.setColor(Cringe::CringeColor::CringeWarning);
-    embed.setIcon(Cringe::CringeIcon::WarningIcon);
+    embed.setColor(CringeColor::CringeWarning);
+    embed.setIcon(CringeIcon::WarningIcon);
     embed.setDescription(reason);
     return embed;
 }
@@ -242,8 +232,8 @@ CringeEmbed cringe_warning_embed(std::string &reason) {
 CringeEmbed cringe_error_embed(std::string &reason) {
     CringeEmbed embed;
     embed.setTitle("Error");
-    embed.setColor(Cringe::CringeColor::CringeError);
-    embed.setIcon(Cringe::CringeIcon::ErrorIcon);
+    embed.setColor(CringeColor::CringeError);
+    embed.setIcon(CringeIcon::ErrorIcon);
     embed.setDescription(reason);
     return embed;
 }

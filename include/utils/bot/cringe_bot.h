@@ -4,7 +4,6 @@
 #include "utils/cringe_logger.h"
 #include "utils/audio/cringe_queue.h"
 #include "utils/cringe_logger.h"
-#include "utils/misc/cringe.h"
 #include "utils/http/cringe_ollama.h"
 
 class CringeBot {

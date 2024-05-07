@@ -9,9 +9,8 @@ class CringeFFMPEG {
 public:
 	CringeFFMPEG();
 	~CringeFFMPEG();
-	std::string set_filter(const std::string &filter);
-	std::string get_stream();
+	auto set_filter(const std::string &filter) -> std::string;
+	auto get_stream(const std::string &filter = "") -> std::string;
 };
-
 
 #endif

@@ -24,10 +24,6 @@
 
 #include "commands/voice/queue_command.h"
 
-#include <fmt/format.h>
-
-#include "utils/misc/cringe.h"
-
 dpp::slashcommand queue_declaration() {
     return dpp::slashcommand().set_name("queue").set_description(
         "See the current music queue");
@@ -56,10 +52,10 @@ void queue_command(const dpp::slashcommand_t &event, CringeQueue queue) {
         fmt::format("\n**Total Songs**: {}\n**Queue Duration**: {}\n",
                     total_songs, total_minutes));
     embed.set_title("Current Queue")
-        .set_color(Cringe::CringeColor::CringePrimary)
+        .set_color(CringeColor::CringePrimary)
         .add_field("Tracks", embed_reason)
         .set_timestamp(time(nullptr))
-        .set_thumbnail(Cringe::CringeIcon::MusicIcon);
+        .set_thumbnail(CringeIcon::MusicIcon);
     dpp::message message(1081850403920035931, embed);
     event.reply(message);
 }

@@ -1,4 +1,4 @@
-#include "utils/audio/cringe_yt.h"
+#include "utils/audio/cringe_youtube.h"
 
 Song CringeYoutube::get_content(const std::string &query) {
     Song song;
@@ -6,8 +6,9 @@ Song CringeYoutube::get_content(const std::string &query) {
     std::string result;
     std::string cmd = fmt::format("yt-dlp -s --print title --print channel --print thumbnail --print duration --print view_count --print comment_count --print epoch --print channel_follower_count \"{}\"", query);
     FILE *pipe = popen(cmd.c_str(), "r");
-    while (fgets(buffer, sizeof(buffer), pipe) != nullptr)
-        result += buffer;
+    while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+		result += buffer;
+	}
     std::istringstream stream(result);
     std::getline(stream, song.title);
     std::getline(stream, song.artist);
@@ -23,8 +24,7 @@ Song CringeYoutube::get_content(const std::string &query) {
 std::string CringeYoutube::to_url(const std::string &query) {
     char buffer[128];
     std::string URL;
-    std::string command =
-        fmt::format("yt-dlp --print webpage_url \"ytsearch:{}\"", query);
+    std::string command = fmt::format(R"(yt-dlp --print webpage_url "ytsearch:{}")", query);
     const char *cmd = command.c_str();
     FILE *pipe = popen(cmd, "r");
     while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
@@ -45,7 +45,7 @@ bool CringeYoutube::is_playlist(const std::string &query) {
 
 std::string CringeYoutube::search_command(std::string search) {
     return fmt::format(
-        R"(yt-dlp -f bestaudio -o - -vn "{}" | ffmpeg -i pipe:0 -hide_banner -loglevel warning -f s16le -ac 2 -ar 48000 pipe:1)", search);
+        R"(yt-dlp -f bestaudio -o - -vn "{}")", search);
 }
 
 std::string CringeYoutube::search(const std::string &query) {

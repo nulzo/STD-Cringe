@@ -2,8 +2,9 @@
 #define CRINGE_CRINGE_EMBED_H
 
 #include <dpp/dpp.h>
-#include "utils/misc/cringe.h"
 #include "utils/audio/cringe_song.h"
+#include "utils/misc/cringe_color.h"
+#include "utils/misc/cringe_icon.h"
 
 using json = nlohmann::json;
 
@@ -18,8 +19,8 @@ public:
 	CringeEmbed();
 	~CringeEmbed();
 	dpp::embed embed;
-	int color = Cringe::CringeColor::CringePrimary;
-	std::string icon = Cringe::CringeIcon::TerminalIcon;
+	int color = CringeColor::CringePrimary;
+	std::string icon = CringeIcon::TerminalIcon;
 	std::string title = "Cringe Embed";
 	std::string profile_pic = "https://cdn.discordapp.com/avatars/1186860332845629511/2b20f3636a5bd288bca2eb197badf556.png";
 	std::string help = "use a command with slashcommands!";
