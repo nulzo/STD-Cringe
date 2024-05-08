@@ -27,23 +27,19 @@
 #include "utils/embed/cringe_embed.h"
 #include "utils/http/cringe_ollama.h"
 
-dpp::slashcommand chat_declaration() {
-    return dpp::slashcommand()
-        .set_name("chat")
-        .set_description("Chat with a model")
-        .add_option(
-            dpp::command_option(dpp::co_string, "model",
-                                "The model to interact with", true)
-                .add_choice(
-                    dpp::command_option_choice("Cringe", std::string("cringe")))
-                .add_choice(
-                    dpp::command_option_choice("Klim", std::string("klim")))
-                .add_choice(
-                    dpp::command_option_choice("Ethan", std::string("ethan")))
-                .add_choice(dpp::command_option_choice("Joeman",
-                                                       std::string("joeman"))))
-        .add_option(dpp::command_option(dpp::co_string, "prompt",
-                                        "What to ask the model", true));
+dpp::slashcommand chat_declaration(CringeBot &cringe) {
+	json ollama_response = cringe.ollama.list();
+	std::vector<dpp::command_option_choice> models = {};
+	const auto response = ollama_response["response"];
+	for (auto model : response["models"]) {
+		models.push_back(dpp::command_option_choice(model["model"], std::string(model["model"])));
+	}
+	dpp::slashcommand slashcommand = dpp::slashcommand().set_name("chat").set_description("Chat with a model");
+	dpp::command_option option = dpp::command_option(dpp::co_string, "model", "The model to interact with", true);
+	for (auto model : models) {
+		option.add_choice(model);
+	}
+	return slashcommand.add_option(option).add_option(dpp::command_option(dpp::co_string, "prompt", "What to ask the model", true));
 }
 
 void chat_command(CringeBot &cringe, const dpp::slashcommand_t &event) {

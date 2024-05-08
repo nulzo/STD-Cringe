@@ -14,6 +14,7 @@ public:
 	CringeOllama(const std::string &endpoint);
 	~CringeOllama();
 	json chat(const std::string &model, const std::string &prompt);
+	json list();
 private:
 	CringeCurl curl;
 	std::string endpoint;

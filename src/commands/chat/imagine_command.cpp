@@ -49,7 +49,7 @@ void image_command(CringeBot &cringe, const dpp::slashcommand_t &event) {
     dpp::channel channel = event.command.channel;
     json ollama_response = cringe.ollama.chat(prompt, style);
     std::string image = ollama_response["response"];
-    std::string binaryData = base64_decode(image);
+    std::string binaryData = cringe64_decode(image);
     dpp::message message(channel.id, "");
     message.add_file("imagine.jpg", binaryData);
     CringeEmbed cringe_embed;

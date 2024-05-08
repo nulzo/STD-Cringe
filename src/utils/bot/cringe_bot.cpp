@@ -13,7 +13,7 @@ CringeBot::CringeBot(const std::string &token, CringeOllama ollama)
     });
     cluster.on_ready([this](const dpp::ready_t &event) {
         if (dpp::run_once<struct register_BOT_commands>()) {
-            register_slashcommands(this->cluster);
+            register_slashcommands(*this);
         }
         cluster.set_presence(dpp::presence(dpp::ps_online, dpp::at_custom,
                                            "currently in development"));

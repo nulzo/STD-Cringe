@@ -12,7 +12,7 @@ const std::map<std::string, std::string> filters = {
 	{"expand", "\"compand=attacks=0:points=-80/-169|-54/-80|-49.5/-64.6|-41.1/-41.1|-25.8/-15|-10.8/-4.5|0/0|20/8.3\""}
 };
 
-CringeFFMPEG::CringeFFMPEG() {}
+CringeFFMPEG::CringeFFMPEG() = default;
 CringeFFMPEG::~CringeFFMPEG() = default;
 
 auto CringeFFMPEG::set_filter(const std::string &filter) -> std::string {

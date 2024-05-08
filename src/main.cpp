@@ -24,7 +24,7 @@
 
 #include "utils/bot/cringe_bot.h"
 
-const std::string OLLAMA_URL = "127.0.0.1:11434";
+const std::string OLLAMA_URL = "http://127.0.0.1:8008";
 
 struct Config {
     std::string token;

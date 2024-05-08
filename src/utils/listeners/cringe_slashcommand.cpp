@@ -59,11 +59,11 @@ void process_slashcommand(const dpp::slashcommand_t &event,  CringeBot &cringe) 
 	}
 }
 
-void register_slashcommands(dpp::cluster &bot) {
+void register_slashcommands(CringeBot &cringe) {
     std::vector<dpp::slashcommand> commands{{
         info_declaration(),
         user_declaration(),
-        chat_declaration(),
+        chat_declaration(cringe),
         join_declaration(),
         code_declaration(),
         play_declaration(),
@@ -74,5 +74,5 @@ void register_slashcommands(dpp::cluster &bot) {
         image_declaration(),
         describe_declaration(),
     }};
-    bot.global_bulk_command_create(commands);
+    cringe.cluster.global_bulk_command_create(commands);
 }
