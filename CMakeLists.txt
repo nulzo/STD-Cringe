@@ -12,7 +12,6 @@ add_executable(${PROJECT_NAME}
         src/main.cpp
         src/utils/listeners/cringe_logger.cpp
         src/utils/embed/cringe_embed.cpp
-        src/utils/audio/cringe_song.cpp
         src/utils/audio/cringe_queue.cpp
         src/commands/voice/join_command.cpp
         src/commands/voice/play_command.cpp
@@ -51,7 +50,6 @@ add_executable(${PROJECT_NAME}
         include/commands/chat/code_command.h
         src/utils/audio/cringe_yt.cpp
         include/utils/audio/cringe_youtube.h
-        include/utils/audio/cringe_song_new.h
         src/utils/bot/cringe_bot.cpp
         include/utils/bot/cringe_bot.h
         src/utils/http/cringe_ollama.cpp

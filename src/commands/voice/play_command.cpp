@@ -28,21 +28,13 @@
 #include "dpp/dpp.h"
 #include "utils/embed/cringe_embed.h"
 #include "utils/audio/cringe_audio.h"
+#include "utils/audio/cringe_youtube.h"
 
 extern "C" {
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 #include <libswresample/swresample.h>
 #include <opus/opus.h>
-}
-
-void play_callback(CringeBot &cringe, CringeSong song) {
-	CringeAudioStreamer cringe_audio;
-    auto *voice = song.get_event().from->get_voice(song.get_event().command.guild_id);
-	std::string filter = !song.get_filter().empty() ? fmt::format(" -vn -filter_complex {}", song.get_filter()) : "";
-    dpp::message message(song.get_event().command.channel_id, now_streaming(song));
-    cringe.cluster.message_create(message);
-    cringe_audio.stream(voice, song.get_url(), filter);
 }
 
 dpp::slashcommand play_declaration() {
@@ -75,14 +67,24 @@ void play_command(CringeBot &cringe, const dpp::slashcommand_t &event) {
     event.thinking(true);
 	CringeEmbed embed;
 	CringeAudioStreamer cringe_audio;
-
     dpp::voiceconn *voice = event.from->get_voice(event.command.guild_id);
+	dpp::guild *guild = dpp::find_guild(event.command.guild_id);
+
 	// If the voice channel was invalid, or there is an issue with it
     if ((voice == nullptr) || (voice->voiceclient == nullptr) || !voice->voiceclient->is_ready()) {
-        std::string error_reason = "Bot was unable to join the voice channel due to some unknown reason.";
-        dpp::message message(event.command.channel_id, cringe_error_embed(error_reason).embed);
-        event.edit_original_response(message);
-        return;
+		bool response = guild->connect_member_voice(event.command.get_issuing_user().id);
+		if(!response) {
+			std::string error_reason = "You must be in a voice channel to stream audio";
+			dpp::message message(event.command.channel_id, cringe_error_embed(error_reason).embed);
+			event.edit_original_response(message);
+			return;
+		}
+		bool is_ready = false;
+		cringe.cluster.on_voice_ready([&is_ready](const dpp::voice_ready_t &ready) {
+			is_ready = true;
+		});
+		while(!is_ready);
+		voice = event.from->get_voice(event.command.guild_id);
     }
 
 	const dpp::channel channel = event.command.channel;
@@ -91,7 +93,7 @@ void play_command(CringeBot &cringe, const dpp::slashcommand_t &event) {
 
     // Check if queue is not empty (or if song is currently playing)
     if (!cringe.queue.is_empty() || voice->voiceclient->is_playing()) {
-		// cringe.queue.enqueue(song);
+		cringe.queue.enqueue(request, filter);
         dpp::message message(event.command.channel_id, embed.embed);
         event.edit_original_response(message);
         return;
@@ -99,7 +101,7 @@ void play_command(CringeBot &cringe, const dpp::slashcommand_t &event) {
 
 	cringe_audio.stream(voice, request, filter);
 
-	embed.setTitle("title").setDescription("url");
+	embed.setTitle("Now Streaming").setDescription("some song ;p");
     dpp::message message(channel.id, embed.embed);
     cringe.cluster.message_create(message);
     dpp::message msg(event.command.channel_id, "added song");

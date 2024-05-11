@@ -28,6 +28,7 @@
 
 #include "commands/voice/play_command.h"
 #include "utils/embed/cringe_embed.h"
+#include "utils/audio/cringe_audio.h"
 
 dpp::slashcommand skip_declaration() {
     return dpp::slashcommand().set_name("skip").set_description(
@@ -36,43 +37,38 @@ dpp::slashcommand skip_declaration() {
 
 void skip_command(CringeBot &cringe, const dpp::slashcommand_t &event) {
     std::string embed_reason;
+	CringeAudioStreamer stream;
     dpp::embed embed;
     event.thinking(true);
+
     /* Get the voice channel the bot is in, in this current guild. */
     dpp::voiceconn *v = event.from->get_voice(event.command.guild_id);
     if (!v || !v->voiceclient || !v->voiceclient->is_ready()) {
-        std::string error_reason = "Bot was unable to join the voice channel "
-                                   "due to some unknown reason.";
-        dpp::message message(event.command.channel_id,
-                             cringe_error_embed(error_reason).embed);
+        std::string error_reason = "Bot was unable to join the voice channel due to some unknown reason.";
+        dpp::message message(event.command.channel_id, cringe_error_embed(error_reason).embed);
         event.edit_original_response(message);
         return;
     }
 
     if (cringe.queue.is_empty() && !v->voiceclient->is_playing()) {
         std::string error_reason = "There is no song to skip.";
-        dpp::message message(event.command.channel_id,
-                             cringe_error_embed(error_reason).embed);
+        dpp::message message(event.command.channel_id, cringe_error_embed(error_reason).embed);
         event.edit_original_response(message);
         return;
     }
 
-    if (v->voiceclient->is_playing()) {
-        v->voiceclient->skip_to_next_marker();
-        std::string success_reason =
-            "Successfully skipped song. Playing next in queue.";
-        dpp::message message(event.command.channel_id,
-                             cringe_success_embed(success_reason).embed);
-        event.edit_original_response(message);
-        return;
-    }
+	v->voiceclient->skip_to_next_marker();
 
-    CringeSong s = cringe.queue.dequeue();
-    v->voiceclient->skip_to_next_marker();
-    play_callback(cringe, s);
-    std::string success_reason =
-        "Successfully skipped song. Playing next in queue.";
-    dpp::message message(event.command.channel_id,
-                         cringe_success_embed(success_reason).embed);
+	if (cringe.queue.is_empty()) {
+		std::string success_reason = "Successfully skipped song. There are no other songs in the queue.";
+		dpp::message message(event.command.channel_id, cringe_success_embed(success_reason).embed);
+		event.edit_original_response(message);
+		return;
+	}
+
+    CringeQueueContents content = cringe.queue.dequeue();
+	stream.stream(v, content.request, content.filter);
+    std::string success_reason = "Successfully skipped song. Playing next in queue.";
+    dpp::message message(event.command.channel_id, cringe_success_embed(success_reason).embed);
     event.edit_original_response(message);
 }

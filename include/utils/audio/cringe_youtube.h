@@ -6,14 +6,14 @@
 #include <algorithm>
 #include <regex>
 #include <fmt/format.h>
-#include "utils/audio/cringe_song_new.h"
+#include "utils/audio/cringe_song.h"
 #include "sstream"
 
 class CringeYoutube {
 public:
 	CringeYoutube();
 	~CringeYoutube();
-	Song get_content(const std::string &query);
+	CringeSong get_content(const std::string &query);
 	std::string search(const std::string &query);
 private:
 	std::string to_url(const std::string &query);

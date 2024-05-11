@@ -1,10 +1,14 @@
 #include "utils/audio/cringe_youtube.h"
 
-Song CringeYoutube::get_content(const std::string &query) {
-    Song song;
+CringeSong CringeYoutube::get_content(const std::string &query) {
+	std::string sanitized = this->sanitize(query);
+	if(!this->is_url(sanitized)) {
+		sanitized = to_url(sanitized);
+	}
+    CringeSong song;
     char buffer[128];
     std::string result;
-    std::string cmd = fmt::format("yt-dlp -s --print title --print channel --print thumbnail --print duration --print view_count --print comment_count --print epoch --print channel_follower_count \"{}\"", query);
+    std::string cmd = fmt::format("yt-dlp -s --print title --print channel --print thumbnail --print duration --print view_count --print comment_count --print epoch --print channel_follower_count \"{}\"", sanitized);
     FILE *pipe = popen(cmd.c_str(), "r");
     while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
 		result += buffer;
@@ -18,6 +22,7 @@ Song CringeYoutube::get_content(const std::string &query) {
     std::getline(stream, song.comment_count);
     std::getline(stream, song.upload_date);
     std::getline(stream, song.subscriber_count);
+	std::cout << song.title << "\n" << song.artist << "\n";
     return song;
 }
 
@@ -67,6 +72,6 @@ std::string CringeYoutube::sanitize(std::string query) {
     return query;
 }
 
-CringeYoutube::CringeYoutube() {}
+CringeYoutube::CringeYoutube() = default;
 
 CringeYoutube::~CringeYoutube() = default;

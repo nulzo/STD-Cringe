@@ -2,16 +2,15 @@
 #include "utils/audio/cringe_ffmpeg.h"
 #include "utils/audio/cringe_youtube.h"
 
-CringeAudioStreamer::CringeAudioStreamer() {}
+CringeAudioStreamer::CringeAudioStreamer() = default;
 
-void CringeAudioStreamer::stream(dpp::voiceconn *voice, const std::string &request, const std::string &filter) {
+auto CringeAudioStreamer::stream(dpp::voiceconn *voice, const std::string &request, const std::string &filter) -> void {
 	CringeYoutube cringe_youtube;
 	CringeFFMPEG cringe_ffmpeg;
-
 	std::string source = cringe_youtube.search(request);
 	std::string ffmpeg = cringe_ffmpeg.get_stream(filter);
+	cringe_youtube.get_content(request);
 	std::string process = fmt::format("{} | {}", source, ffmpeg);
-
 	voice->voiceclient->set_send_audio_type(dpp::discord_voice_client::satype_overlap_audio);
 	std::byte buf[11520];
 	auto pipe = popen(process.c_str(), "r");

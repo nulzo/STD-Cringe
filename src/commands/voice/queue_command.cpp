@@ -32,25 +32,25 @@ dpp::slashcommand queue_declaration() {
 void queue_command(const dpp::slashcommand_t &event, CringeQueue queue) {
     std::string embed_reason;
     dpp::embed embed;
-    std::queue<CringeSong> current_queue = queue.get_queue();
+    std::queue<CringeQueueContents> current_queue = queue.get_queue();
     int total_minutes = 0;
     int total_songs = 0;
-    // Loop through the temporary queue
-    while (!current_queue.empty()) {
-        // Access the front element
-        CringeSong song = current_queue.front();
-        total_minutes += atoi(song.get_formatted_duration().c_str());
-        std::string song_duration = song.get_formatted_duration().c_str();
-        embed_reason += fmt::format("\n**Title**: {}\n**Length**: {}\n",
-                                    song.get_title(), song_duration);
-        total_songs++;
-        // Remove the front element from the temporary queue
-        current_queue.pop();
-    }
-    embed.add_field(
-        "Queue Info",
-        fmt::format("\n**Total Songs**: {}\n**Queue Duration**: {}\n",
-                    total_songs, total_minutes));
+//    // Loop through the temporary queue
+//    while (!current_queue.empty()) {
+//        // Access the front element
+//        CringeSong song = current_queue.front();
+//        total_minutes += atoi(song.duration.c_str());
+//        std::string song_duration = song.duration.c_str();
+//        embed_reason += fmt::format("\n**Title**: {}\n**Length**: {}\n",
+//                                    song.title, song_duration);
+//        total_songs++;
+//        // Remove the front element from the temporary queue
+//        current_queue.pop();
+//    }
+//    embed.add_field(
+//        "Queue Info",
+//        fmt::format("\n**Total Songs**: {}\n**Queue Duration**: {}\n",
+//                    total_songs, total_minutes));
     embed.set_title("Current Queue")
         .set_color(CringeColor::CringePrimary)
         .add_field("Tracks", embed_reason)

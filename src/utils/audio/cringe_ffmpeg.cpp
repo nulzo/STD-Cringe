@@ -17,7 +17,7 @@ CringeFFMPEG::~CringeFFMPEG() = default;
 
 auto CringeFFMPEG::set_filter(const std::string &filter) -> std::string {
 	auto cringe_filter = filters.find(filter);
-	return (cringe_filter == filters.end()) ? fmt::format("-filter_complex {}", cringe_filter->second) : "";
+	return (cringe_filter != filters.end()) ? fmt::format("-filter_complex {}", cringe_filter->second) : "";
 }
 
 auto CringeFFMPEG::get_stream(const std::string &filter) -> std::string {

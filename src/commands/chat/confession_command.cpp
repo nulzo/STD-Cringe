@@ -23,7 +23,6 @@
  */
 
 #include "commands/chat/confession_command.h"
-
 #include "utils/embed/cringe_embed.h"
 
 auto confession_declaration() -> dpp::slashcommand {
@@ -38,6 +37,8 @@ void confession_command(CringeBot &cringe, const dpp::slashcommand_t &event) {
     std::string confession = std::get<std::string>(event.get_parameter("confession"));
     dpp::message response_message(dpp::message("Your confession has been sent...").set_flags(dpp::m_ephemeral));
     event.reply(response_message);
-    dpp::message message(event.command.channel_id, confession_embed(confession));
+	CringeEmbed embed;
+	embed.setTitle("Confession").setDescription(confession).setIcon(CringeIcon::ConfessionIcon);
+    dpp::message message(event.command.channel_id, embed.embed);
     cringe.cluster.message_create(message);
 }

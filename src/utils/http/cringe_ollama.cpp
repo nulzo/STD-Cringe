@@ -2,7 +2,7 @@
 
 CringeOllama::CringeOllama(const std::string &endpoint) : endpoint(endpoint) {}
 
-CringeOllama::~CringeOllama() = default;
+CringeOllama::~CringeOllama() {};
 
 json CringeOllama::chat(const std::string &model, const std::string &prompt) {
 	std::string url = fmt::format("{}/api/v1/chat", endpoint);
