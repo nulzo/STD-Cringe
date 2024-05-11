@@ -66,8 +66,8 @@ void skip_command(CringeBot &cringe, const dpp::slashcommand_t &event) {
 		return;
 	}
 
-    CringeQueueContents content = cringe.queue.dequeue();
-	stream.stream(v, content.request, content.filter);
+	CringeSong content = cringe.queue.dequeue();
+	stream.stream(v, content);
     std::string success_reason = "Successfully skipped song. Playing next in queue.";
     dpp::message message(event.command.channel_id, cringe_success_embed(success_reason).embed);
     event.edit_original_response(message);

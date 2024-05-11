@@ -8,7 +8,7 @@ CringeSong CringeYoutube::get_content(const std::string &query) {
     CringeSong song;
     char buffer[128];
     std::string result;
-    std::string cmd = fmt::format("yt-dlp -s --print title --print channel --print thumbnail --print duration --print view_count --print comment_count --print epoch --print channel_follower_count \"{}\"", sanitized);
+    std::string cmd = fmt::format("yt-dlp -s --print title --print channel --print thumbnail --print duration_string --print view_count --print comment_count --print release_timestamp --print channel_follower_count --print description --print webpage_url \"{}\"", sanitized);
     FILE *pipe = popen(cmd.c_str(), "r");
     while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
 		result += buffer;
@@ -22,7 +22,9 @@ CringeSong CringeYoutube::get_content(const std::string &query) {
     std::getline(stream, song.comment_count);
     std::getline(stream, song.upload_date);
     std::getline(stream, song.subscriber_count);
-	std::cout << song.title << "\n" << song.artist << "\n";
+	std::getline(stream, song.description);
+	std::getline(stream, song.channel_url);
+	song.url = sanitized;
     return song;
 }
 

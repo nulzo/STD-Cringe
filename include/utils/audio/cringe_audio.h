@@ -4,12 +4,13 @@
 #include <iostream>
 #include <string>
 #include <dpp/dpp.h>
+#include "utils/audio/cringe_song.h"
 
 class CringeAudioStreamer {
 public:
 	CringeAudioStreamer();
 	~CringeAudioStreamer();
-	void stream(dpp::voiceconn *voice, const std::string &request, const std::string &filter);
+	void stream(dpp::voiceconn *voice, CringeSong &song);
 };
 
 #endif

@@ -32,7 +32,7 @@ dpp::slashcommand queue_declaration() {
 void queue_command(const dpp::slashcommand_t &event, CringeQueue queue) {
     std::string embed_reason;
     dpp::embed embed;
-    std::queue<CringeQueueContents> current_queue = queue.get_queue();
+    std::queue<CringeSong> current_queue = queue.get_queue();
     int total_minutes = 0;
     int total_songs = 0;
 //    // Loop through the temporary queue

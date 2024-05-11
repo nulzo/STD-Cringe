@@ -24,27 +24,24 @@
 
 #include "utils/audio/cringe_queue.h"
 
-void CringeQueue::enqueue(const std::string &request, const std::string &filter) {
-	CringeQueueContents contents;
-	contents.request = request;
-	contents.filter = filter;
-    cringe_queue.push(contents);
+void CringeQueue::enqueue(CringeSong &song) {
+    cringe_queue.push(song);
     length++;
 }
 
-CringeQueueContents CringeQueue::dequeue() {
+CringeSong CringeQueue::dequeue() {
     length--;
-	CringeQueueContents contents = cringe_queue.front();
+	CringeSong contents = cringe_queue.front();
     cringe_queue.pop();
     return contents;
 }
 
-std::queue<CringeQueueContents> CringeQueue::get_queue() { return cringe_queue; }
+std::queue<CringeSong> CringeQueue::get_queue() { return cringe_queue; }
 
 void CringeQueue::display_queue() const {
     if (!is_empty()) {
         std::cout << "Song Queue:" << std::endl;
-        std::queue<CringeQueueContents> t_q = cringe_queue;
+        std::queue<CringeSong> t_q = cringe_queue;
     } else {
         std::cout << "Queue is empty." << std::endl;
     }
@@ -54,7 +51,7 @@ bool CringeQueue::is_empty() const { return cringe_queue.empty(); }
 
 std::string CringeQueue::peek() {
     if (!is_empty()) {
-        return cringe_queue.front().request;
+        return cringe_queue.front().title;
     } else
         return "";
 }

@@ -8,6 +8,8 @@ struct CringeSong {
 	std::string subscriber_count;
 	std::string comment_count;
 	std::string upload_date;
+	std::string channel_url;
+	std::string description;
 	std::string view_count;
 	std::string thumbnail;
 	std::string duration;

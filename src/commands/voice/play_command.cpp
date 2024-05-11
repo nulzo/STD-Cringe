@@ -67,6 +67,7 @@ void play_command(CringeBot &cringe, const dpp::slashcommand_t &event) {
     event.thinking(true);
 	CringeEmbed embed;
 	CringeAudioStreamer cringe_audio;
+	CringeYoutube cringe_youtube;
     dpp::voiceconn *voice = event.from->get_voice(event.command.guild_id);
 	dpp::guild *guild = dpp::find_guild(event.command.guild_id);
 
@@ -80,9 +81,7 @@ void play_command(CringeBot &cringe, const dpp::slashcommand_t &event) {
 			return;
 		}
 		bool is_ready = false;
-		cringe.cluster.on_voice_ready([&is_ready](const dpp::voice_ready_t &ready) {
-			is_ready = true;
-		});
+		cringe.cluster.on_voice_ready([&is_ready](const dpp::voice_ready_t &ready) { is_ready = true; });
 		while(!is_ready);
 		voice = event.from->get_voice(event.command.guild_id);
     }
@@ -90,18 +89,28 @@ void play_command(CringeBot &cringe, const dpp::slashcommand_t &event) {
 	const dpp::channel channel = event.command.channel;
     std::string request = std::get<std::string>(event.get_parameter("song"));
 	std::string filter = event.get_parameter("filter").index() > 0 ? std::get<std::string>(event.get_parameter("filter")) : "";
+	CringeSong song = cringe_youtube.get_content(request);
+	song.filter = filter;
 
     // Check if queue is not empty (or if song is currently playing)
     if (!cringe.queue.is_empty() || voice->voiceclient->is_playing()) {
-		cringe.queue.enqueue(request, filter);
+		cringe.queue.enqueue(song);
         dpp::message message(event.command.channel_id, embed.embed);
         event.edit_original_response(message);
         return;
     }
 
-	cringe_audio.stream(voice, request, filter);
-
-	embed.setTitle("Now Streaming").setDescription("some song ;p");
+	cringe_audio.stream(voice, song);
+	std::vector<std::vector<std::string>> fields = {
+			{"Title", fmt::format("**[{}]({})**", song.title, song.url), "false"},
+			{"Artist", fmt::format("*[{}]({})*", song.artist, song.url), "false"},
+			{"Requested by", event.command.usr.get_mention(), "false"},
+			{"Streaming in", find_channel(voice->channel_id)->get_mention(), "false"},
+			{"Duration", song.duration, "true"},
+			{"Views", song.view_count, "true"},
+			{"Filter", song.filter.empty() ? "*no filter*" : song.filter, "true"},
+	};
+	embed.setTitle("Now Streaming").setFields(fields).setImage(song.thumbnail).setHelp("stream a song with /play!");
     dpp::message message(channel.id, embed.embed);
     cringe.cluster.message_create(message);
     dpp::message msg(event.command.channel_id, "added song");
