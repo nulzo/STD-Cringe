@@ -1,19 +1,24 @@
 #include "utils/http/cringe_ollama.h"
 
+struct OllamaChat {
+	std::string model;
+	std::string prompt;
+};
+
 CringeOllama::CringeOllama(const std::string &endpoint) : endpoint(endpoint) {}
 
-CringeOllama::~CringeOllama() {};
+CringeOllama::~CringeOllama() = default;
 
 json CringeOllama::chat(const std::string &model, const std::string &prompt) {
-	std::string url = fmt::format("{}/api/v1/chat", endpoint);
+	std::string url = fmt::format("{}/api/generate", endpoint);
 	std::string sanitized = this->sanitize(prompt);
-	std::string query = fmt::format(R"({{ "chat": "{}", "model": "{}" }})", model, sanitized);
+	std::string query = fmt::format(R"({{ "model": "{}", "prompt": "{}", "stream": false }})", model, sanitized);
 	json response = this->curl.post(query, url);
 	return response;
 }
 
 json CringeOllama::list() {
-	std::string url = fmt::format("{}/api/v1/list", endpoint);
+	std::string url = fmt::format("{}/api/tags", endpoint);
 	json response = this->curl.get(url);
 	return response;
 }

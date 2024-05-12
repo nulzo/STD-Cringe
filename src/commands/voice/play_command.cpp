@@ -29,6 +29,8 @@
 #include "utils/embed/cringe_embed.h"
 #include "utils/audio/cringe_audio.h"
 #include "utils/audio/cringe_youtube.h"
+#include "utils/audio/cringe_ffmpeg.h"
+#include <typeinfo>
 
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -38,29 +40,17 @@ extern "C" {
 }
 
 dpp::slashcommand play_declaration() {
-    return dpp::slashcommand()
-        .set_name("play")
-        .set_description("Play a song in the voice channel you are in")
-        .add_option(dpp::command_option(
-            dpp::co_string, "song",
-            "Song you wish to stream (either query or URL)", true))
-        .add_option(
-            dpp::command_option(dpp::co_string, "filter",
-                                "Filter to apply to the song", false)
-                .add_choice(dpp::command_option_choice(
-                    "Bass Boosted", std::string("bassboost")))
-                .add_choice(dpp::command_option_choice(
-                    "Vaporwave", std::string("vaporwave")))
-                .add_choice(dpp::command_option_choice(
-                    "Nightcore", std::string("nightcore")))
-                .add_choice(dpp::command_option_choice("In The Bathroom",
-                                                       std::string("bathroom")))
-                .add_choice(
-                    dpp::command_option_choice("Lofi", std::string("lofi")))
-                .add_choice(
-                    dpp::command_option_choice("DIM", std::string("dim")))
-                .add_choice(dpp::command_option_choice("Expander",
-                                                       std::string("expand"))));
+	dpp::slashcommand slashcommand = dpp::slashcommand().set_name("play").set_description("Stream a song in a voice channel");
+	dpp::command_option song = dpp::command_option(dpp::co_string, "song", "Song you wish to stream (either query or URL)", true);
+	dpp::command_option filter_option = dpp::command_option(dpp::co_string, "filter", "Filter applied to audio stream");
+	std::vector<dpp::command_option_choice> fs = {};
+	for (auto f : filters) {
+		fs.push_back(dpp::command_option_choice(std::string(f.first.data()), std::string(f.second.data())));
+	}
+	for (auto filter : fs) {
+		filter_option.add_choice(filter);
+	}
+	return slashcommand.add_option(song).add_option(filter_option);
 }
 
 void play_command(CringeBot &cringe, const dpp::slashcommand_t &event) {

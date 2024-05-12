@@ -30,13 +30,16 @@
 dpp::slashcommand chat_declaration(CringeBot &cringe) {
 	json ollama_response = cringe.ollama.list();
 	std::vector<dpp::command_option_choice> models = {};
-	const auto response = ollama_response["response"];
-	for (auto model : response["models"]) {
+	for (auto model : ollama_response["models"]) {
 		models.push_back(dpp::command_option_choice(model["model"], std::string(model["model"])));
 	}
 	dpp::slashcommand slashcommand = dpp::slashcommand().set_name("chat").set_description("Chat with a model");
 	dpp::command_option option = dpp::command_option(dpp::co_string, "model", "The model to interact with", true);
+	int model_count = 0;
 	for (auto model : models) {
+		if(model_count++ >= 20) {
+			break;
+		}
 		option.add_choice(model);
 	}
 	return slashcommand.add_option(option).add_option(dpp::command_option(dpp::co_string, "prompt", "What to ask the model", true));
@@ -47,7 +50,7 @@ void chat_command(CringeBot &cringe, const dpp::slashcommand_t &event) {
     dpp::channel channel = event.command.channel;
     std::string prompt = std::get<std::string>(event.get_parameter("prompt"));
     std::string model = std::get<std::string>(event.get_parameter("model"));
-    json ollama_response = cringe.ollama.chat(prompt, model);
+    json ollama_response = cringe.ollama.chat(model, prompt);
     std::string response = ollama_response["response"];
     CringeEmbed cringe_embed;
     cringe_embed.setTitle("Cringe Chat").setHelp(fmt::format("ask {} a question with /chat!", model));

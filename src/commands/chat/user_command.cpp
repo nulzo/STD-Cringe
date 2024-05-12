@@ -76,12 +76,12 @@ void user_command(CringeBot &cringe, const dpp::slashcommand_t &event) {
                         user_username);
     }
     if (has_nitro == 0) {
-        prompt += " Mention that the person doesn't have Nitro, which is lame.";
+        prompt += " Mention that the person doesn't have Discord Nitro. They are VERY lame for this!";
     }
     if (has_boost == 0) {
-        prompt += " Include that this user is a stupid idiot.";
+        prompt += " Include that this user is a stupid idiot who does not boost the Discord Server.";
     }
-    json ollama_response = cringe.ollama.chat(prompt, "cringe");
+    json ollama_response = cringe.ollama.chat("cringe", prompt);
 	std::string response = ollama_response["response"];
     dpp::embed embed = info_embed(title, response, user_avatar, user_mention,
                                   user_created, user_joined_server,
