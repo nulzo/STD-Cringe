@@ -15,7 +15,7 @@ const std::map<std::string, std::string> filters = {
 		{"Lofi Hip Hop Beats to Relax/Study to", "aresample=48000,asetrate=48000*0.9,extrastereo=m=2.5:c=disabled"},
 		{"Widen Audio", "compand=attacks=0:points=-80/-169|-54/-80|-49.5/-64.6|-41.1/-41.1|-25.8/-15|-10.8/-4.5|0/0|20/8.3"},
 		{"Sigma Type Beat", "aresample=48000,asetrate=48000*0.8,bass=g=8:f=110:w=0.6"},
-		{"Paper Cut", "aexciter=level_in=3:level_out=3:amount=3:drive=8:blend=3,bass=g=2:f=100:w=0.6"}
+		{"Paper Cut", "aexciter=level_in=3:level_out=3:amount=3:drive=8:blend=8,bass=g=2:f=100:w=0.6"}
 };
 
 class CringeFFMPEG {
