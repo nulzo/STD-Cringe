@@ -30,7 +30,6 @@
 #include "utils/audio/cringe_audio.h"
 #include "utils/audio/cringe_youtube.h"
 #include "utils/audio/cringe_ffmpeg.h"
-#include <typeinfo>
 
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -45,7 +44,7 @@ dpp::slashcommand play_declaration() {
 	dpp::command_option filter_option = dpp::command_option(dpp::co_string, "filter", "Filter applied to audio stream");
 	std::vector<dpp::command_option_choice> fs = {};
 	for (auto f : filters) {
-		fs.push_back(dpp::command_option_choice(std::string(f.first.data()), std::string(f.second.data())));
+		fs.push_back(dpp::command_option_choice(std::string(f.first.data()), std::string(f.first.data())));
 	}
 	for (auto filter : fs) {
 		filter_option.add_choice(filter);
