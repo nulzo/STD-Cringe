@@ -22,7 +22,7 @@
  * IN THE SOFTWARE.
  */
 
-#include "utils/cringe_logger.h"
+#include "utils/listeners/cringe_logger.h"
 
 auto cringe_logging() -> std::shared_ptr<spdlog::logger> {
 	const int t_pool_sz = 8192;

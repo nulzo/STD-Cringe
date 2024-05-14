@@ -37,8 +37,6 @@ add_executable(${PROJECT_NAME}
         src/utils/misc/cringe_64.cpp
         src/utils/validators/validate_chat.cpp
         src/utils/database/cringe_database.cpp
-        include/connectors/cringe_database.h
-        include/validators/validate_chat.h
         include/commands/chat/info_command.h
         include/utils/audio/cringe_queue.h
         include/utils/audio/cringe_song.h

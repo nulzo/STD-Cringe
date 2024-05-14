@@ -70,10 +70,7 @@ void user_command(CringeBot &cringe, const dpp::slashcommand_t &event) {
             "Make up really good things about a user named nulzo! They are so "
             "awesome!";
     } else {
-        prompt =
-            fmt::format("Write a very short description of some shit about a "
-                        "loser who goes by the name {}.",
-                        user_username);
+        prompt = fmt::format("Write a short description about some shit about a loser who goes by the name {}.", user_username);
     }
     if (has_nitro == 0) {
         prompt += " Mention that the person doesn't have Discord Nitro. They are VERY lame for this!";
@@ -81,11 +78,15 @@ void user_command(CringeBot &cringe, const dpp::slashcommand_t &event) {
     if (has_boost == 0) {
         prompt += " Include that this user is a stupid idiot who does not boost the Discord Server.";
     }
-    json ollama_response = cringe.ollama.chat("cringe", prompt);
+    json ollama_response = cringe.ollama.chat("ethan", prompt);
 	std::string response = ollama_response["response"];
-    dpp::embed embed = info_embed(title, response, user_avatar, user_mention,
-                                  user_created, user_joined_server,
-                                  user_premium, user_has_nitro, user_is_bot);
-    dpp::message msg(event.command.channel_id, embed);
+	CringeEmbed cringe_embed;
+	std::vector<std::vector<std::string>> fields = {
+			{"Username", user_mention, "true"},
+			{"Account Created", user_created, "true"},
+			{"Joined Server", user_joined_server, "true"}
+	};
+	cringe_embed.setTitle(title).setDescription(response).setIcon(user_avatar).setHelp("learn about a user with /user!").setFields(fields);
+    dpp::message msg(event.command.channel_id, cringe_embed.embed);
     event.edit_original_response(msg);
 }

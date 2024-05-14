@@ -1,6 +1,6 @@
 #include "utils/bot/cringe_bot.h"
 
-#include "listeners/SlashcommandListener.h"
+#include "utils/listeners/cringe_slashcommand.h"
 #include "utils/audio/cringe_audio.h"
 
 CringeBot::CringeBot(const std::string &token, CringeOllama ollama)

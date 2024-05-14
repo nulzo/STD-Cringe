@@ -1,9 +1,8 @@
 #ifndef CRINGE_CRINGEBOT_H
 #define CRINGE_CRINGEBOT_H
 
-#include "utils/cringe_logger.h"
 #include "utils/audio/cringe_queue.h"
-#include "utils/cringe_logger.h"
+#include "utils/listeners/cringe_logger.h"
 #include "utils/http/cringe_ollama.h"
 
 class CringeBot {

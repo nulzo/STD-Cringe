@@ -23,7 +23,7 @@
  */
 
 #include "commands/chat/chat_command.h"
-#include "connectors/cringe_database.h"
+#include "utils/database/cringe_database.h"
 #include "utils/embed/cringe_embed.h"
 #include "utils/http/cringe_ollama.h"
 

@@ -1,4 +1,4 @@
-#include "connectors/cringe_database.h"
+#include "utils/database/cringe_database.h"
 
 #include <stdexcept>
 
