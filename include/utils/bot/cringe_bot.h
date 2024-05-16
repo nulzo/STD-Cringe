@@ -9,10 +9,11 @@ class CringeBot {
 private:
 	std::string _token;
 public:
+	std::vector<std::string> models = {"cringe", "ethan", "klim", "joeman"};
 	CringeQueue queue;
 	CringeOllama ollama;
 	dpp::cluster cluster;
-	std::shared_ptr<spdlog::logger> cringe_logger;
+	CringeLogger cringe_logger = CringeLogger();
 	explicit CringeBot(const std::string &token, CringeOllama ollama);
 	~CringeBot();
 };

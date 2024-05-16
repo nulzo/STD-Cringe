@@ -28,19 +28,10 @@
 #include "utils/http/cringe_ollama.h"
 
 dpp::slashcommand chat_declaration(CringeBot &cringe) {
-	json ollama_response = cringe.ollama.list();
-	std::vector<dpp::command_option_choice> models = {};
-	for (auto model : ollama_response["models"]) {
-		models.push_back(dpp::command_option_choice(model["model"], std::string(model["model"])));
-	}
 	dpp::slashcommand slashcommand = dpp::slashcommand().set_name("chat").set_description("Chat with a model");
 	dpp::command_option option = dpp::command_option(dpp::co_string, "model", "The model to interact with", true);
-	int model_count = 0;
-	for (auto model : models) {
-		if(model_count++ >= 20) {
-			break;
-		}
-		option.add_choice(model);
+	for(int i=0; i < std::min((int) cringe.models.size(), 25); i++) {
+		option.add_choice(dpp::command_option_choice(cringe.models[i], std::string(cringe.models[i])));
 	}
 	return slashcommand.add_option(option).add_option(dpp::command_option(dpp::co_string, "prompt", "What to ask the model", true));
 }
