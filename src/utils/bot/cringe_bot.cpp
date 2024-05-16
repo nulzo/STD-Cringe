@@ -9,12 +9,15 @@ CringeBot::CringeBot(const std::string &token, CringeOllama ollama)
         cringe_logger.log_event(event);
     });
     cluster.on_slashcommand([this](const dpp::slashcommand_t &event) {
+		cringe_logger.log_slashcommand(event);
         process_slashcommand(event, *this);
     });
 	cluster.on_message_delete([this](const dpp::message_delete_t &event) {
-
+		cringe_logger.log_message_delete(event);
 	});
-	cluster.on_message_create([&](const dpp::message_create_t &event){});
+	cluster.on_message_create([this](const dpp::message_create_t &event){
+		cringe_logger.log_message(event);
+	});
     cluster.on_ready([this](const dpp::ready_t &event) {
         if (dpp::run_once<struct register_BOT_commands>()) {
             register_slashcommands(*this);

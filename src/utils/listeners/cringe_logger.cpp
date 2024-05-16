@@ -80,81 +80,18 @@ void CringeLogger::log_start() {
 
 void CringeLogger::log_slashcommand(const dpp::slashcommand_t &event) {
 	this->log->debug("{} {} {}", color_message(this->YELLOW, event.command.usr.username),
-					 color_message(this->YELLOW, event.command.usr.username),
+					 color_message(this->CYAN, "used slashcommand"),
 					 color_message(this->MAGENTA, event.command.get_command_name()));
 }
 
-//auto cringe_logging() -> std::shared_ptr<spdlog::logger> {
-//	const int t_pool_sz = 8192;
-//	const int t_pool_snk = 5242880;
-//	const int t_pool_cnt = 10;
-//    const std::string log_name = "std_cringe.log";
-//    std::vector<spdlog::sink_ptr> sinks;
-//    static std::shared_ptr<spdlog::logger> log;
-//    spdlog::init_thread_pool(t_pool_sz, 2);
-//    auto stdout_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-//    auto rotating = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
-//        log_name, t_pool_snk, t_pool_cnt);
-//    sinks.push_back(stdout_sink);
-//    sinks.push_back(rotating);
-//    log = std::make_shared<spdlog::async_logger>(
-//        "| cringe |", sinks.begin(), sinks.end(), spdlog::thread_pool(),
-//        spdlog::async_overflow_policy::block);
-//    spdlog::register_logger(log);
-//    log->set_pattern("%n :: %H:%M:%S :: %^[%=9l]%$ :: %v");
-//    log->set_level(spdlog::level::level_enum::debug);
-//    return log;
-//}
-//
-//auto color_general(const std::string &event) -> std::string {
-//    return fmt::format("{}{}{}", WHITE, event, COLOR_RESET);
-//}
-//
-//auto color_user(const std::string &user) -> std::string {
-//    return fmt::format("{}{}{}", YELLOW, user, COLOR_RESET);
-//}
-//
-//auto color_slash(const std::string &slash) -> std::string {
-//    return fmt::format("{}\\{}{}", MAGENTA, slash, COLOR_RESET);
-//}
-//
-//auto color_message(const std::string &message) -> std::string {
-//    return fmt::format("{}{}{}", YELLOW, message, COLOR_RESET);
-//}
-//
-//auto color_debug(const std::string &message) -> std::string {
-//    return fmt::format("{}{}{}", CYAN, message, COLOR_RESET);
-//}
-//
-//auto color_info(const std::string &message) -> std::string {
-//    return fmt::format("{}{}{}", GREEN, message, COLOR_RESET);
-//}
-//
-//void log_on_start() {
-//	const int box_width = 100;
-//    fmt::print("┌{0:─^{2}}┐\n│{1: ^{2}}│\n│{3: ^{2}}│\n└{0:─^{2}}┘\n", "",
-//               "std::cringe", box_width, "version 0.0.1");
-//}
-//
-//void log_on_slash(const std::string &event, const std::string &user,
-//                  const std::shared_ptr<spdlog::logger> &log) {
-//    log->debug("{} {} {}", color_user(user), color_debug("called command:"),
-//               color_slash(event));
-//}
-//
-//void log_end_slash(const std::string &event, const std::string &user,
-//                   const std::shared_ptr<spdlog::logger> &log) {
-//    log->debug("{} {} {}", color_user(user), color_debug("command ended:"),
-//               color_slash(event));
-//}
-//
-//void log_on_message(const std::string &event, const std::string &user,
-//                    const std::shared_ptr<spdlog::logger> &log) {
-//    log->info("{} {} {}", color_user(user), color_info("sent a message:"),
-//              color_message(event));
-//}
-//
-//void log_on_message_delete(const std::string &event, const std::string &user,
-//                           const std::shared_ptr<spdlog::logger> &log) {
-//    log->error("{}{} deleted a message: {}{}", RED, user, event, COLOR_RESET);
-//}
+void CringeLogger::log_message_delete(const dpp::message_delete_t &event) {
+	this->log->debug(fmt::format("message deleted in channel {}", color_message(this->RED, event.from->creator->channel_get_sync(event.channel_id).name)));
+}
+
+void CringeLogger::log_message(const dpp::message_create_t &event) {
+	if (!event.msg.author.is_bot()) {
+		this->log->debug("{} {} {}", color_message(this->YELLOW, event.msg.author.username),
+						 color_message(this->CYAN, "sent message"),
+						 color_message(this->MAGENTA, event.msg.content));
+	}
+}
