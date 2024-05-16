@@ -4,6 +4,7 @@ WORKDIR /usr/src/app
 
 COPY ./src /usr/src/app/src
 COPY ./include /usr/src/app/include
+COPY ./cmake /usr/src/app/cmake
 COPY CMakeLists.txt .
 COPY Dockerfile .
 
@@ -20,4 +21,4 @@ RUN cmake ..
 RUN make
 
 # Set the entry point for the container
-CMD ["./cringe"]
+ENTRYPOINT ["./cringe"]
