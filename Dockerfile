@@ -21,4 +21,4 @@ RUN cmake ..
 RUN make
 
 # Set the entry point for the container
-CMD ["./cringe"]
+ENTRYPOINT ["./cringe"]
